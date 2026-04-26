@@ -1,0 +1,60 @@
+{
+  "name": "deja-vue",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "A declarative component-based GSAP library for Vue 3",
+  "author": "Andrea 'Fiad' Fiadone <hello@fiad.one>",
+  "license": "MIT",
+  "homepage": "https://github.com/fiadone/deja-vue#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fiadone/deja-vue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fiadone/deja-vue/issues"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch && npm run play",
+    "play": "vite",
+    "test": "vitest",
+    "typecheck": "vue-tsc --noEmit",
+    "release": "bumpp",
+    "prepublishOnly": "pnpm run build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "peerDependencies": {
+    "gsap": "^3.0.0",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@tsdown/css": "^0.21.7",
+    "@types/node": "^25.5.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitest/browser-playwright": "^4.1.2",
+    "bumpp": "^11.0.1",
+    "gsap": "^3.15.0",
+    "playwright": "^1.58.2",
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
+    "unocss": "^66.6.8",
+    "vite": "^8.0.3",
+    "vitepress": "^1.6.4",
+    "vitest": "^4.1.2",
+    "vitest-browser-vue": "^2.1.0",
+    "vue": "^3.5.31",
+    "vue-tsc": "^3.2.6"
+  }
+}

@@ -1,0 +1,6 @@
+export { default as Callback } from './components/Callback.vue'
+export { default as Label } from './components/Label.vue'
+export { default as Timeline } from './components/Timeline.vue'
+export { default as Tween } from './components/Tween.vue'
+export * from './constants'
+export * from './types'
