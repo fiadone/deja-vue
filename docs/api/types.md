@@ -24,7 +24,7 @@ interface AnimationInstance {
 }
 ```
 
-The `eventBus` is a custom event system that wraps GSAP's timeline events. GSAP allows only a single handler for each event on the same animation instance, but Deja Vue needs to use some events internally (e.g., the `update` event in the `useAnimationNesting` composable). The EventBus enables multiple listeners per event without conflicts.
+The `eventBus` is a custom event system that wraps GSAP's timeline events. GSAP allows only a single handler for each event on the same animation instance, but Déjà Vue needs to use some events internally (e.g., the `update` event in the `useAnimationNesting` composable). The EventBus enables multiple listeners per event without conflicts.
 
 ### ControllableAnimation
 

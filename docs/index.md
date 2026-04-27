@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: "Deja Vue"
+  name: "Déjà Vue"
   text: "Declarative GSAP Animations for Vue 3"
   tagline: Animate with Components, Not Code
   actions:

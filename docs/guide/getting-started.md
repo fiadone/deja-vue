@@ -1,10 +1,10 @@
 # Getting Started
 
-Deja Vue (*Declarative Elements* for *Javascript Animations* in *Vue*) is a Vue 3 library that provides declarative components for creating and managing GSAP animations directly in your templates. It allows you to define and nest animations using Vue components, making them more readable and maintainable.
+Déjà Vue (*Declarative Elements* for *Javascript Animations* in *Vue*) is a Vue 3 library that provides declarative components for creating and managing GSAP animations directly in your templates. It allows you to define and nest animations using Vue components, making them more readable and maintainable.
 
 ## Installation
 
-Install Deja Vue along with its peer dependencies:
+Install Déjà Vue along with its peer dependencies:
 
 ```bash
 npm install deja-vue gsap vue

@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Deja Vue",
-  description: "A declarative component-based GSAP library for Vue 3",
+  title: "Déjà Vue",
+  description: "Declarative GSAP Animations for Vue 3",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [

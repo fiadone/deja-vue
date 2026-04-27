@@ -1,6 +1,6 @@
 # Tween Component
 
-The `Tween` component is the basic building block for creating single animations in Deja Vue. It wraps GSAP's tween methods in a declarative Vue component.
+The `Tween` component is the basic building block for creating single animations in Déjà Vue. It wraps GSAP's tween methods in a declarative Vue component.
 
 ## Basic Tween
 
@@ -18,7 +18,7 @@ import { Tween } from 'deja-vue'
 
 ## Tween Methods
 
-Deja Vue supports all standard GSAP tween methods:
+Déjà Vue supports all standard GSAP tween methods:
 
 - `to`: Animate from current state to specified values
 - `from`: Animate from specified values to current state

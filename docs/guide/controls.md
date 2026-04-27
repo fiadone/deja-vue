@@ -1,6 +1,6 @@
 # Animation Controls
 
-Deja Vue provides reactive props to control your animations dynamically.
+Déjà Vue provides reactive props to control your animations dynamically.
 
 ## Progress Control
 

@@ -1,6 +1,6 @@
 # Nesting Animations
 
-Deja Vue supports nesting animations to create complex hierarchical animation structures. Child animations can be positioned relative to their parent timelines.
+Déjà Vue supports nesting animations to create complex hierarchical animation structures. Child animations can be positioned relative to their parent timelines.
 
 ## Basic Nesting
 

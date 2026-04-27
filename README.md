@@ -1,6 +1,6 @@
-# Deja Vue
+# Déjà Vue
 
-A declarative component-based GSAP library for Vue 3.
+Declarative GSAP Animations for Vue 3.
 
 ## Development
 
