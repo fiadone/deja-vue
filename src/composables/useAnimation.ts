@@ -66,15 +66,15 @@ export function useAnimation (
 
   onMounted(() => {
     // TODO: evaluate rebuilding if props or content mutations occur
-    if (!wrapper.value) return
-
-    const target = props.group ? wrapper.value.children : wrapper.value
-
-    if ('tweens' in props) {
-      props.tweens?.forEach(tween => composeAnimation(target, tween))
-    } else {
-      const tween = props as TweenAnimation
-      composeAnimation(target, tween)
+    if (wrapper.value) {
+      const target = props.group ? wrapper.value.children : wrapper.value
+  
+      if ('tweens' in props) {
+        props.tweens?.forEach(tween => composeAnimation(target, tween))
+      } else {
+        const tween = props as TweenAnimation
+        composeAnimation(target, tween)
+      }
     }
 
     ready.value = true

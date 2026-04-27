@@ -1,8 +1,8 @@
 {
   "name": "deja-vue",
   "type": "module",
-  "version": "0.0.0",
-  "description": "A declarative component-based GSAP library for Vue 3",
+  "version": "0.1.0",
+  "description": "Declarative GSAP Animations for Vue 3",
   "author": "Andrea 'Fiad' Fiadone <hello@fiad.one>",
   "license": "MIT",
   "homepage": "https://github.com/fiadone/deja-vue#readme",

@@ -8,7 +8,7 @@ const props = defineProps<NestableAnimation>()
 const emit = defineEmits(['cross'])
 
 const slots = useSlots()
-const label = String(slots.default?.()[0]?.children || '')
+const label = String(slots.default?.()[0]?.children || '').trim()
 
 if (label) {
   const { parent } = useAnimationNesting(label, props)
