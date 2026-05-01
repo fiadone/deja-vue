@@ -4,13 +4,17 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Déjà Vue",
   description: "Declarative GSAP Animations for Vue 3",
+  appearance: 'dark',
+  head: [['link', { rel: 'icon', href: '/icon.svg' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide' },
-      { text: 'API', link: '/api' }
+      { text: 'Guide', link: '/guide/getting-started' },
+      { text: 'API', link: '/api/components' }
     ],
+
+    logo: '/icon.svg',
 
     sidebar: [
       {
@@ -35,6 +39,10 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/fiadone/deja-vue' }
-    ]
+    ],
+
+    search: {
+      provider: 'local'
+    }
   }
 })

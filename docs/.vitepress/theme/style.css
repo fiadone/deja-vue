@@ -1,0 +1,46 @@
+:root {
+  --vp-c-brand-1: #74C34C;
+  --vp-c-brand-2: #AE84AE;
+  --vp-button-brand-bg: #9D6B9E;
+  --vp-button-brand-hover-bg: #AE84AE;
+  --vp-button-brand-active-bg: #AE84AE;
+}
+
+.dark {
+  --vp-c-brand-1: #ABFF84;
+  --vp-c-gutter: #0F0F11;
+  --vp-code-block-bg: #17161A;
+  --vp-sidebar-bg-color: #17161A;
+}
+
+.VPNavBar.home .VPNavBarTitle .title {
+  pointer-events: none;
+  cursor: default;
+}
+
+.VPNavBar:not(.home) .VPNavBarTitle .title {
+  transition: color .3s;
+}
+
+
+.VPNavBar:not(.home) .VPNavBarTitle .title:hover {
+  color: var(--vp-button-brand-bg);
+}
+
+.VPContent.is-home h1.heading .name {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.beta-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  border: solid 1px var(--vp-c-warning-1);
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--vp-c-warning-1);
+  -webkit-text-fill-color: var(--vp-c-warning-1);
+}

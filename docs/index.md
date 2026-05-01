@@ -3,9 +3,9 @@
 layout: home
 
 hero:
-  name: "Déjà Vue"
+  name: 'Déjà Vue<span class="beta-badge">beta</span>'
   text: "Declarative GSAP Animations for Vue 3"
-  tagline: Animate with Components, Not Code
+  tagline: Animate with ease using just components
   actions:
     - theme: brand
       text: Get Started
