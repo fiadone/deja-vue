@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  base: '/deja-vue/',
   title: "Déjà Vue",
   description: "Declarative GSAP Animations for Vue 3",
   appearance: 'dark',
