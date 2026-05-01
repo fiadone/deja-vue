@@ -1,4 +1,4 @@
-import type { EventBus } from './utils/EventBus'
+import type { Animation } from './utils/Animation'
 
 export interface ControllableAnimation {
   progress?: number
@@ -6,7 +6,7 @@ export interface ControllableAnimation {
 }
 
 export interface NestableAnimation {
-  parent?: AnimationInstance | null
+  parent?: Animation | null
   position?: gsap.Position
 }
 
@@ -21,18 +21,13 @@ export type BaseAnimation = ControllableAnimation & NestableAnimation & Wrappabl
 export type TimelineAnimation = BaseAnimation & {
   duration?: number
   options?: gsap.TimelineVars
-  tweens?: (TweenAnimationDefinition & { position?: gsap.Position })[]
+  tweens?: TweenAnimationDefinition[]
 }
 
 export type TweenAnimationDefinition = (
   | { method: 'from' | 'to', vars: gsap.TweenVars }
   | { method: 'fromTo', vars: [gsap.TweenVars, gsap.TweenVars] }
   | { method: `effect:${string}`, vars?: object }
-)
+) & Pick<NestableAnimation, 'position'>
 
 export type TweenAnimation = BaseAnimation & TweenAnimationDefinition
-
-export interface AnimationInstance {
-  eventBus: EventBus
-  timeline: gsap.core.Timeline
-}

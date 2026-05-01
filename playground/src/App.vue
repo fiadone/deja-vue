@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { shallowReactive, shallowRef, useTemplateRef } from 'vue'
 import type { ComponentPublicInstance } from 'vue'
-import { Callback, Label, Timeline, Tween } from '../../src'
+import { Callback, PositionMarker, Timeline, Tween } from '../../src'
 import { FADE_IN, GROW_IN, SLIDE_IN, COMPLEX } from './animations'
 
 const rootTimeline = useTemplateRef<ComponentPublicInstance<typeof Timeline>>('rootTimeline')
@@ -11,13 +11,26 @@ const completedAnimations = shallowReactive<Set<number>>(new Set())
 
 function callback () {
   alert('Callback')
+  if (completedAnimations.has(4)) {
+    completedAnimations.delete(4)
+  } else {
+    completedAnimations.add(4)
+  }
+}
+
+function onMarkerCross () {
+  if (completedAnimations.has(1)) {
+    completedAnimations.delete(1)
+  } else {
+    completedAnimations.add(1)
+  }
 }
 
 function onProgressInput () {
   rootTimeline.value?.animation.timeline.pause()
 }
 
-function onUpdate (timeline: gsap.core.Timeline) {
+function onRootTimelineUpdate (timeline: gsap.core.Timeline) {
   progress.value = timeline.progress()
 }
 </script>
@@ -32,9 +45,9 @@ function onUpdate (timeline: gsap.core.Timeline) {
       <div ref="content" class="flex flex-col gap-3 w-80">
         <Timeline
           ref="rootTimeline"
-          :progress="parseFloat(progress)"
+          :progress
           :toggle
-          @update="onUpdate"
+          @update="onRootTimelineUpdate"
         >
           <!-- 1. -->
           <section :class="{ 'border-green!': completedAnimations.has(0) }">
@@ -51,10 +64,8 @@ function onUpdate (timeline: gsap.core.Timeline) {
 
           <!-- 2. -->
           <section :class="{ 'border-green!': completedAnimations.has(1) }">
-            <span>2. Label</span>
-            <Label @cross="reached => completedAnimations[reached ? 'add' : 'delete'](1)">
-              marker
-            </Label>
+            <span>2. PositionMarker</span>
+            <PositionMarker label="marker" @cross="onMarkerCross" />
           </section>
 
           <div class="flex items-center gap-3">
@@ -77,7 +88,6 @@ function onUpdate (timeline: gsap.core.Timeline) {
                 class="flex gap-2"
                 group
                 @start="completedAnimations.add(3)"
-                @complete="completedAnimations.add(4)"
                 @reverse-complete="completedAnimations.delete(3)"
               >
                 <div class="flex-1 h-10 rounded-xl bg-red" />
@@ -95,14 +105,14 @@ function onUpdate (timeline: gsap.core.Timeline) {
 
           <!-- 6. -->
           <section :class="{ 'border-green!': completedAnimations.has(5) }">
-            <span>6. Timeline (playing at label)</span>
+            <span>6. Timeline (playing at Marker)</span>
             <Timeline
               group
               position="marker"
               :tweens="COMPLEX"
               class="space-y-2"
               @start="completedAnimations.add(5)"
-              @reverse-complete="completedAnimations.delete(4) && completedAnimations.delete(5)"
+              @reverse-complete="completedAnimations.delete(5)"
             >
               <div class="size-10 rounded-xl bg-red" />
               <div class="size-10 rounded-xl bg-green" />
@@ -114,7 +124,7 @@ function onUpdate (timeline: gsap.core.Timeline) {
     </main>
 
     <footer class="flex flex-shrink-0 items-center justify-between gap-4 h-20 p-4">
-      <button type="button" @click="toggle = !toggle">{{ toggle ? 'Reverse' : 'Play' }}</button>
+      <button type="button" class="w-30" @click="toggle = !toggle">{{ toggle ? 'Reverse' : 'Play' }}</button>
       <input
         v-model.number="progress"
         class="flex-auto"

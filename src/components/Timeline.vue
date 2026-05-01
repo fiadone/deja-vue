@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<TimelineAnimation>(), {
 const emit = defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, ready } = useAnimation(wrapper, props, emit, {
+const { animation, controlled, parent, ready } = useAnimation(wrapper, props, emit, {
   ...props.options,
   data: {
     ...props.options?.data,
@@ -24,9 +24,9 @@ const { animation, ready } = useAnimation(wrapper, props, emit, {
 
 watch(() => props.duration, duration => (animation.timeline.data.totalDuration = Number(duration)))
 
-provide(parentAnimationInjectionKey, animation)
+defineExpose({ animation, controlled, parent, ready })
 
-defineExpose({ animation })
+provide(parentAnimationInjectionKey, animation)
 </script>
 
 <template>
@@ -36,7 +36,18 @@ defineExpose({ animation })
     :is="tag"
     :style="initiallyHidden && !ready ? { visibility: 'hidden' } : undefined"
   >
-    <slot :animation />
+    <slot
+      :animation
+      :controlled
+      :parent
+      :ready
+    />
   </component>
-  <slot v-else :animation />
+  <slot
+    v-else
+    :animation
+    :controlled
+    :parent
+    :ready
+  />
 </template>

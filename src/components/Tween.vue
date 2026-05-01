@@ -14,9 +14,9 @@ const props = withDefaults(defineProps<TweenAnimation>(), {
 const emit = defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, ready } = useAnimation(wrapper, props, emit)
+const { animation, controlled, parent, ready } = useAnimation(wrapper, props, emit)
 
-defineExpose({ animation })
+defineExpose({ animation, controlled, parent, ready })
 </script>
 
 <template>
@@ -25,6 +25,11 @@ defineExpose({ animation })
     :is="tag"
     :style="initiallyHidden && !ready ? { visibility: 'hidden' } : undefined"
   >
-    <slot :animation />
+    <slot
+      :animation
+      :controlled
+      :parent
+      :ready
+    />
   </component>
 </template>
