@@ -2,6 +2,10 @@
 
 Declarative GSAP Animations for Vue 3.
 
+## Documentation
+
+View the [full documentation here](https://fiadone.github.io/deja-vue/).
+
 ## Development
 
 - Install dependencies:

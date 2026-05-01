@@ -6,7 +6,7 @@ export default defineConfig({
   title: "Déjà Vue",
   description: "Declarative GSAP Animations for Vue 3",
   appearance: 'dark',
-  head: [['link', { rel: 'icon', href: '/icon.svg' }]],
+  head: [['link', { rel: 'icon', href: '/deja-vue/icon.svg' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
