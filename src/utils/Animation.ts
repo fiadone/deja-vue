@@ -22,7 +22,7 @@ export class Animation extends EventBus<typeof ANIMATION_EVENTS[number]> {
     const eventCallbacks = options ? Object.entries(options).filter(([key]) => key.startsWith('on')) : []
     eventCallbacks.forEach(([key, fn]) => {
       const [firstChar, ...rest] = key.replace(/^on/, '')
-      const event = `${firstChar.toLowerCase()}${rest.join()}` as typeof ANIMATION_EVENTS[number]
+      const event = `${firstChar.toLowerCase()}${rest.join('')}` as typeof ANIMATION_EVENTS[number]
       this.on(event, fn)
     })
   }
