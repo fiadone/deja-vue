@@ -61,7 +61,6 @@ Configuration for the wrapper element around animations.
 ```typescript
 interface WrappableAnimation {
   group?: boolean
-  initiallyHidden?: boolean
   tag?: string
 }
 ```

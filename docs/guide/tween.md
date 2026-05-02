@@ -80,7 +80,6 @@ Use GSAP's built-in effects (requires GSAP 3.12+).
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `group` | `boolean` | `false` | Animate all children together |
-| `initiallyHidden` | `boolean` | `true` | Hide until animation is ready |
 | `tag` | `string` | `'div'` | HTML tag for wrapper |
 
 ### Animation Control

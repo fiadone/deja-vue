@@ -6,7 +6,6 @@ import { ANIMATION_EVENTS } from '../constants'
 import type { TweenAnimation } from '../types'
 
 const props = withDefaults(defineProps<TweenAnimation>(), {
-  initiallyHidden: true,
   tag: 'div',
   toggle: undefined
 })
@@ -20,11 +19,7 @@ defineExpose({ animation, controlled, parent, ready })
 </script>
 
 <template>
-  <component
-    ref="wrapper"
-    :is="tag"
-    :style="initiallyHidden && !ready ? { visibility: 'hidden' } : undefined"
-  >
+  <component :is="tag" ref="wrapper">
     <slot
       :animation
       :controlled

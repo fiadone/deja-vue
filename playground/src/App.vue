@@ -42,7 +42,7 @@ function onRootTimelineUpdate (timeline: gsap.core.Timeline) {
     </header>
 
     <main class="flex flex-auto flex-col items-center justify-center gap-4 p-4 mx-auto">
-      <div ref="content" class="flex flex-col gap-3 w-80">
+      <div class="flex flex-col gap-3 w-80">
         <Timeline
           ref="rootTimeline"
           :progress
@@ -54,17 +54,15 @@ function onRootTimelineUpdate (timeline: gsap.core.Timeline) {
             <span>1. Tween</span>
             <Tween
               v-bind="GROW_IN"
-              class="w-full h-10"
+              class="w-full h-10 rounded-xl bg-red"
               @start="completedAnimations.add(0)"
               @reverse-complete="completedAnimations.delete(0)"
-            >
-              <div class="w-full h-10 rounded-xl bg-red" />
-            </Tween>
+            />
           </section>
 
           <!-- 2. -->
           <section :class="{ 'border-green!': completedAnimations.has(1) }">
-            <span>2. PositionMarker</span>
+            <span>2. Marker</span>
             <PositionMarker label="marker" @cross="onMarkerCross" />
           </section>
 

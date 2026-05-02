@@ -12,7 +12,6 @@ export interface NestableAnimation {
 
 export interface WrappableAnimation {
   group?: boolean
-  initiallyHidden?: boolean
   tag?: string
 }
 

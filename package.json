@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch && npm run play",
+    "dev": "tsdown --watch",
     "play": "vite",
     "test": "vitest",
     "typecheck": "vue-tsc --noEmit",

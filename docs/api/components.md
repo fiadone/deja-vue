@@ -11,7 +11,6 @@ The basic animation component for single tweens. Under the hood, `Tween` uses a 
 | `method` | `'from' \| 'to' \| 'fromTo' \| 'effect:%NAME%'` | - | GSAP tween method |
 | `vars` | `gsap.TweenVars \| [gsap.TweenVars, gsap.TweenVars]` | - | Animation variables |
 | `group` | `boolean` | `false` | Animate children as group |
-| `initiallyHidden` | `boolean` | `true` | Hide element initially |
 | `tag` | `string` | `'div'` | Wrapper element tag |
 | `progress` | `number` | - | Animation progress (0-1) |
 | `toggle` | `boolean \| undefined` | - | Play/reverse control |
@@ -66,7 +65,6 @@ Component for creating complex animation sequences. `Timeline` can manage nested
 | `duration` | `number` | - | Total timeline duration |
 | `options` | `gsap.TimelineVars` | - | GSAP timeline options |
 | `group` | `boolean` | `false` | Animate children as group |
-| `initiallyHidden` | `boolean` | `true` | Hide element initially |
 | `tag` | `string` | `'div'` | Wrapper element tag |
 | `progress` | `number` | - | Timeline progress (0-1) |
 | `toggle` | `boolean \| undefined` | - | Play/reverse control |

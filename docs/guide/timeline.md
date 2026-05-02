@@ -67,7 +67,6 @@ import { Timeline, Tween } from 'deja-vue'
 | `duration` | `number` | - | Total timeline duration |
 | `options` | `gsap.TimelineVars` | - | GSAP timeline options |
 | `group` | `boolean` | `false` | Animate all children as group |
-| `initiallyHidden` | `boolean` | `true` | Hide until animation is ready |
 | `tag` | `string` | `'div'` | HTML tag for wrapper |
 
 ### Control

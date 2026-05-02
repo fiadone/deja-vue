@@ -6,7 +6,6 @@ import { ANIMATION_EVENTS, parentAnimationInjectionKey } from '../constants'
 import type { TimelineAnimation } from '../types'
 
 const props = withDefaults(defineProps<TimelineAnimation>(), {
-  initiallyHidden: true,
   tag: 'div',
   toggle: undefined
 })
@@ -24,17 +23,16 @@ const { animation, controlled, parent, ready } = useAnimation(wrapper, props, em
 
 watch(() => props.duration, duration => (animation.timeline.data.totalDuration = Number(duration)))
 
-defineExpose({ animation, controlled, parent, ready })
-
 provide(parentAnimationInjectionKey, animation)
+
+defineExpose({ animation, controlled, parent, ready })
 </script>
 
 <template>
   <component
     v-if="tweens"
-    ref="wrapper"
     :is="tag"
-    :style="initiallyHidden && !ready ? { visibility: 'hidden' } : undefined"
+    ref="wrapper"
   >
     <slot
       :animation
