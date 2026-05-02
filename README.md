@@ -1,4 +1,4 @@
-# Déjà Vue
+# Déjà Vue (beta)
 
 Declarative GSAP Animations for Vue 3.
 
