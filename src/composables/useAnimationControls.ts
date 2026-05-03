@@ -1,5 +1,5 @@
-import { computed, toValue, watch } from 'vue'
 import type { MaybeRefOrGetter } from 'vue'
+import { computed, toValue, watch } from 'vue'
 
 import type { ControllableAnimation } from '../types'
 import type { Animation } from '../utils/Animation'

@@ -1,12 +1,12 @@
-import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue'
 import type { ShallowRef } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue'
 
 import type { TimelineAnimation, TweenAnimation, TweenAnimationDefinition } from '../types'
 
-import { useAnimationControls } from './useAnimationControls'
-import { useAnimationNesting } from './useAnimationNesting'
 import { ANIMATION_EVENTS } from '../constants'
 import { Animation } from '../utils/Animation'
+import { useAnimationControls } from './useAnimationControls'
+import { useAnimationNesting } from './useAnimationNesting'
 
 export function useAnimation (wrapper: Readonly<ShallowRef<HTMLElement | null>>) {
   const { props, emit } = getCurrentInstance()! as {
