@@ -13,11 +13,11 @@ withDefaults(defineProps<TimelineAnimation>(), {
 defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, controlled, parent } = useAnimation(wrapper)
+const { animation, controlled, parent, progress } = useAnimation(wrapper)
 
 provide(parentAnimationInjectionKey, animation)
 
-defineExpose({ animation, controlled, parent })
+defineExpose({ animation, controlled, parent, progress })
 </script>
 
 <template>
@@ -30,6 +30,7 @@ defineExpose({ animation, controlled, parent })
       :animation
       :controlled
       :parent
+      :progress
     />
   </component>
   <slot
@@ -37,5 +38,6 @@ defineExpose({ animation, controlled, parent })
     :animation
     :controlled
     :parent
+    :progress
   />
 </template>

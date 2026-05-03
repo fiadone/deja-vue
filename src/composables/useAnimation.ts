@@ -1,5 +1,5 @@
 import type { ShallowRef } from 'vue'
-import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, shallowRef, watch } from 'vue'
 
 import type { TimelineAnimation, TweenAnimation, TweenAnimationDefinition } from '../types'
 
@@ -25,6 +25,7 @@ export function useAnimation (wrapper: Readonly<ShallowRef<HTMLElement | null>>)
     : undefined
   
   const animation = new Animation(options)
+  const progress = shallowRef(0)
 
   const { controlled } = useAnimationControls(animation, {
     progress: () => props.progress,
@@ -34,6 +35,7 @@ export function useAnimation (wrapper: Readonly<ShallowRef<HTMLElement | null>>)
   const { parent } = useAnimationNesting(animation, props)
 
   ANIMATION_EVENTS.forEach(event => animation.on(event, () => emit(event, animation.timeline)))
+  animation.on('update', () => (progress.value = animation.timeline.progress()))
 
   if ('duration' in props) {
     watch(() => props.duration, duration => {
@@ -55,6 +57,7 @@ export function useAnimation (wrapper: Readonly<ShallowRef<HTMLElement | null>>)
   return {
     animation,
     controlled,
-    parent
+    parent,
+    progress
   }
 }

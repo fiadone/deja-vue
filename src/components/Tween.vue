@@ -13,9 +13,9 @@ withDefaults(defineProps<TweenAnimation>(), {
 defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, controlled, parent } = useAnimation(wrapper)
+const { animation, controlled, parent, progress } = useAnimation(wrapper)
 
-defineExpose({ animation, controlled, parent })
+defineExpose({ animation, controlled, parent, progress })
 </script>
 
 <template>
@@ -24,6 +24,7 @@ defineExpose({ animation, controlled, parent })
       :animation
       :controlled
       :parent
+      :progress
     />
   </component>
 </template>

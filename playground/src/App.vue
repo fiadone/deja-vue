@@ -54,10 +54,14 @@ function onRootTimelineUpdate (timeline: gsap.core.Timeline) {
             <span>1. Tween</span>
             <Tween
               v-bind="GROW_IN"
-              class="w-full h-10 rounded-xl bg-red"
+              v-slot="{ progress: internalProgress }"
               @start="completedAnimations.add(0)"
               @reverse-complete="completedAnimations.delete(0)"
-            />
+            >
+              <div class="flex items-center justify-center w-full h-10 rounded-xl bg-red">
+                <span>{{ internalProgress }}</span>
+              </div>
+            </Tween>
           </section>
 
           <!-- 2. -->
