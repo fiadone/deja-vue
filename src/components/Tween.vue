@@ -5,17 +5,17 @@ import { useAnimation } from '../composables/useAnimation'
 import { ANIMATION_EVENTS } from '../constants'
 import type { TweenAnimation } from '../types'
 
-const props = withDefaults(defineProps<TweenAnimation>(), {
+withDefaults(defineProps<TweenAnimation>(), {
   tag: 'div',
   toggle: undefined
 })
 
-const emit = defineEmits([...ANIMATION_EVENTS])
+defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, controlled, parent, ready } = useAnimation(wrapper, props, emit)
+const { animation, controlled, parent } = useAnimation(wrapper)
 
-defineExpose({ animation, controlled, parent, ready })
+defineExpose({ animation, controlled, parent })
 </script>
 
 <template>
@@ -24,7 +24,6 @@ defineExpose({ animation, controlled, parent, ready })
       :animation
       :controlled
       :parent
-      :ready
     />
   </component>
 </template>

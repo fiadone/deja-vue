@@ -1,31 +1,23 @@
 <script setup lang="ts">
-import { provide, useTemplateRef, watch } from 'vue'
+import { provide, useTemplateRef } from 'vue'
 
 import { useAnimation } from '../composables/useAnimation'
 import { ANIMATION_EVENTS, parentAnimationInjectionKey } from '../constants'
 import type { TimelineAnimation } from '../types'
 
-const props = withDefaults(defineProps<TimelineAnimation>(), {
+withDefaults(defineProps<TimelineAnimation>(), {
   tag: 'div',
   toggle: undefined
 })
 
-const emit = defineEmits([...ANIMATION_EVENTS])
+defineEmits([...ANIMATION_EVENTS])
 
 const wrapper = useTemplateRef<HTMLElement>('wrapper')
-const { animation, controlled, parent, ready } = useAnimation(wrapper, props, emit, {
-  ...props.options,
-  data: {
-    ...props.options?.data,
-    totalDuration: Number(props.duration)
-  }
-})
-
-watch(() => props.duration, duration => (animation.timeline.data.totalDuration = Number(duration)))
+const { animation, controlled, parent } = useAnimation(wrapper)
 
 provide(parentAnimationInjectionKey, animation)
 
-defineExpose({ animation, controlled, parent, ready })
+defineExpose({ animation, controlled, parent })
 </script>
 
 <template>
@@ -38,7 +30,6 @@ defineExpose({ animation, controlled, parent, ready })
       :animation
       :controlled
       :parent
-      :ready
     />
   </component>
   <slot
@@ -46,6 +37,5 @@ defineExpose({ animation, controlled, parent, ready })
     :animation
     :controlled
     :parent
-    :ready
   />
 </template>

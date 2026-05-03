@@ -28,9 +28,5 @@ export const COMPLEX = [
   {
     method: 'to' as const,
     vars: { rotate: 180, stagger: 0.1 }
-  },
-  {
-    method: 'to' as const,
-    vars: { xPercent: 0, stagger: 0.1 }
   }
 ]

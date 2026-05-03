@@ -7,14 +7,11 @@ Core composable for creating and managing animations. Used internally by the `Tw
 ```typescript
 function useAnimation(
   wrapper: Readonly<ShallowRef<HTMLElement | null>>,
-  props: TimelineAnimation | TweenAnimation,
-  emit: (event: typeof ANIMATION_EVENTS[number], timeline: gsap.core.Timeline) => void,
   options?: gsap.TimelineVars
 ): {
   animation: Animation
   controlled: ComputedRef<boolean>
   parent: { parent: Animation | null }
-  ready: ShallowRef<boolean>
 }
 ```
 
@@ -30,7 +27,6 @@ function useAnimation(
 - `animation`: The Animation instance with eventBus and timeline
 - `controlled`: Computed ref indicating if animation is controlled (via progress or toggle)
 - `parent`: Object containing the parent animation instance or null
-- `ready`: Shallow ref indicating when animation is ready for use
 
 ### useAnimation Behavior
 

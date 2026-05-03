@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, shallowRef } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue'
 import type { ShallowRef } from 'vue'
 
 import type { TimelineAnimation, TweenAnimation, TweenAnimationDefinition } from '../types'
@@ -8,14 +8,23 @@ import { useAnimationNesting } from './useAnimationNesting'
 import { ANIMATION_EVENTS } from '../constants'
 import { Animation } from '../utils/Animation'
 
-export function useAnimation (
-  wrapper: Readonly<ShallowRef<HTMLElement | null>>,
-  props: TimelineAnimation | TweenAnimation,
-  emit: (event: typeof ANIMATION_EVENTS[number], timeline: gsap.core.Timeline) => void,
-  options?: gsap.TimelineVars
-) {
+export function useAnimation (wrapper: Readonly<ShallowRef<HTMLElement | null>>) {
+  const { props, emit } = getCurrentInstance()! as {
+    props: TimelineAnimation | TweenAnimation
+    emit: (event: typeof ANIMATION_EVENTS[number], timeline: gsap.core.Timeline) => void
+  }
+
+  const options = 'options' in props
+    ? {
+        ...props.options,
+        data: {
+          ...props.options?.data,
+          totalDuration: Number(props.duration)
+        }
+      } as gsap.TimelineVars
+    : undefined
+  
   const animation = new Animation(options)
-  const ready = shallowRef(false)
 
   const { controlled } = useAnimationControls(animation, {
     progress: () => props.progress,
@@ -26,6 +35,12 @@ export function useAnimation (
 
   ANIMATION_EVENTS.forEach(event => animation.on(event, () => emit(event, animation.timeline)))
 
+  if ('duration' in props) {
+    watch(() => props.duration, duration => {
+      animation.timeline.data.totalDuration = Number(duration)
+    })
+  }
+
   onMounted(() => {
     if (wrapper.value) {
       // TODO: evaluate rebuilding if props or options or content mutations occur
@@ -33,8 +48,6 @@ export function useAnimation (
       const definition = 'tweens' in props ? props.tweens || [] : props as TweenAnimationDefinition
       animation.compose(target, definition)
     }
-
-    ready.value = true
   })
 
   onUnmounted(() => animation.dispose())
@@ -42,7 +55,6 @@ export function useAnimation (
   return {
     animation,
     controlled,
-    parent,
-    ready
+    parent
   }
 }

@@ -150,10 +150,10 @@ Controls are fully reactive and work with computed properties and watchers:
 ```vue
 <template>
   <div>
-    <input v-model.number="position" type="range" min="0" max="100">
+    <input v-model.number="position" type="range" min="0" max="1" step="0.0001">
     <Tween
       method="to"
-      :progress="animationProgress"
+      :progress
       :vars="{ x: 300, duration: 1 }"
     >
       <div>Moving Element</div>
@@ -165,8 +165,7 @@ Controls are fully reactive and work with computed properties and watchers:
 import { computed, ref } from 'vue'
 import { Tween } from 'deja-vue'
 
-const position = ref(0)
-const animationProgress = computed(() => position.value / 100)
+const progress = ref(0)
 </script>
 ```
 
