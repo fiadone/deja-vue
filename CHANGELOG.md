@@ -1,3 +1,20 @@
+# [1.0.0](https://github.com/fiadone/deja-vue/compare/v0.2.0...v1.0.0) (2026-05-03)
+
+
+### Code Refactoring
+
+* **useAnimation:** automatically retrieve props and emit from current instance ([92892e0](https://github.com/fiadone/deja-vue/commit/92892e069424f2ad7767fa4fbd1c67011052d591))
+
+
+### Features
+
+* **useAnimation:** expose progress ([5383382](https://github.com/fiadone/deja-vue/commit/5383382d9a367c5da8ad65d55766e181ef322b01))
+
+
+### BREAKING CHANGES
+
+* **useAnimation:** useAnimation doesn't accept props and emit params anymore nor expose the ready ref
+
 # [0.2.0](https://github.com/fiadone/deja-vue/compare/v0.1.0...v0.2.0) (2026-05-02)
 
 
