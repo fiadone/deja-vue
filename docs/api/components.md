@@ -35,6 +35,7 @@ The basic animation component for single tweens. Under the hood, `Tween` uses a 
 | `animation` | `Animation` | Animation instance |
 | `controlled` | `ComputedRef<boolean>` | Whether animation is controlled |
 | `parent` | `{ parent: Animation \| null }` | Parent animation info |
+| `progress` | `ComputedRef<number>` | Current animation progress (0-1) |
 
 ### Slot Props
 
@@ -45,7 +46,7 @@ The default slot receives the same exposed properties:
   <Tween
     method="to"
     :vars="{ x: 100, duration: 1 }"
-    v-slot="{ animation, controlled }"
+    v-slot="{ animation, controlled, progress }"
   >
     <div>Animated Element</div>
   </Tween>
@@ -82,6 +83,7 @@ Same as Tween component:
 | `animation` | `Animation` | Animation instance |
 | `controlled` | `ComputedRef<boolean>` | Whether animation is controlled |
 | `parent` | `{ parent: Animation \| null }` | Parent animation info |
+| `progress` | `ComputedRef<number>` | Current timeline progress (0-1) |
 
 ### Usage Modes
 
