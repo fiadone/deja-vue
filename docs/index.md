@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: 'Déjà Vue<span class="beta-badge">beta</span>'
+  name: "Déjà Vue"
   text: "Declarative GSAP Animations for Vue 3"
   tagline: Animate with ease using just components
   actions:
