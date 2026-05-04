@@ -1,4 +1,4 @@
-# [1.0.0](https://github.com/fiadone/deja-vue/compare/v0.2.0...v1.0.0) (2026-05-03)
+# [1.0.1](https://github.com/fiadone/deja-vue/compare/v0.2.0...v1.0.0) (2026-05-04)
 
 
 ### Code Refactoring
