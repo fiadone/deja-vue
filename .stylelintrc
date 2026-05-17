@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "@stylistic/stylelint-config",
+    "stylelint-config-idiomatic-order",
+    "stylelint-config-recommended-vue"
+  ],
+  "ignoreFiles": [
+    "**/dist/**",
+    "**/.vitepress/cache/**",
+    "**/.vitepress/dist/**",
+    "**/.vitepress/.temp/**",
+    "**/node_modules/**"
+  ],
+  "rules": {
+    "color-function-notation": "modern",
+    "function-no-unknown": [true, { "ignoreFunctions": ["v-bind"] }],
+    "rule-empty-line-before": ["always", { "except": ["first-nested"], "ignore": ["after-comment"] }],
+    "selector-pseudo-class-no-unknown": [true, { "ignorePseudoClasses": ["deep", "global", "slotted"] }],
+    "@stylistic/string-quotes": "single",
+    "value-keyword-case": ["lower", { "camelCaseSvgKeywords": true, "ignoreFunctions": ["v-bind"] }]
+  }
+}

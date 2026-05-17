@@ -2,8 +2,8 @@ import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  platform: 'browser',
-  plugins: [vue()],
+  dts: { vue: true },
   exports: true,
-  dts: { vue: true }
+  platform: 'browser',
+  plugins: [vue()]
 })

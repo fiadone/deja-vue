@@ -23,6 +23,6 @@ export function patchObject <T extends object> (target: T, changes: T) {
   }
 }
 
-export function toNonEmptyArray<T = any> (data: T[]): NonEmptyArray<T> | null {
+export function toNonEmptyArray<T = unknown> (data: T[]): NonEmptyArray<T> | null {
   return data.length ? data as NonEmptyArray<T> : null
 }

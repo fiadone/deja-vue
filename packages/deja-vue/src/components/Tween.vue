@@ -7,8 +7,8 @@ import { useAnimationScope } from '../composables/useAnimationScope'
 import { useStableTweenVars } from '../composables/useStableTweenVars'
 import { ANIMATION_EVENTS } from '../constants'
 import type { AnimationEventEmitter, ControllableAnimation, DejaVueInstance, TweenDefinition } from '../types'
-import { Animation } from '../utils/Animation'
 import { cloneObject } from '../utils'
+import { Animation } from '../utils/Animation'
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
@@ -19,14 +19,14 @@ const animation = new Animation()
 const progress = defineModel<number>('progress', { default: undefined })
 const [triggerState, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
 const trigger = {
-  actions: () => props.triggerActions,
   once: triggerModifier.once,
-  state: triggerState
+  state: triggerState,
+  actions: () => props.triggerActions
 }
 
 const { controlled, direction } = useAnimationControls(animation, { progress, trigger })
 const { parent } = useAnimationNesting({ animation })
-const { $el, target, AnimationScope } = useAnimationScope()
+const { $el, AnimationScope, target } = useAnimationScope()
 const tweenVars = useStableTweenVars(() => props.vars)
 const seamless = computed(() => props.seamless)
 

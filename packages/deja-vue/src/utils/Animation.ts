@@ -62,11 +62,11 @@ export class Animation extends EventBus<AnimationEvent> {
     } else if (this.timeline.isActive()) {
       this.once(['complete', 'reverseComplete'], () => this.remove(child))
     } else {
-        const startTime = child.timeline.startTime()
-        const duration = child.timeline.duration()
-        this.timeline.remove(child.timeline)
-        this.timeline.getChildren(false, true, true).forEach(child => (child.startTime() > startTime && child.startTime(child.startTime() - duration)))
-        this.timeline.invalidate()
+      const startTime = child.timeline.startTime()
+      const duration = child.timeline.duration()
+      this.timeline.remove(child.timeline)
+      this.timeline.getChildren(false, true, true).forEach(child => (child.startTime() > startTime && child.startTime(child.startTime() - duration)))
+      this.timeline.invalidate()
     }
   }
 
@@ -82,7 +82,7 @@ export class Animation extends EventBus<AnimationEvent> {
       definition.forEach(tween => this.compose(target, tween, false))
     } else if (definition.method.startsWith('effect')) {
       try {
-        const [_, effect] = definition.method.split(':')
+        const [, effect] = definition.method.split(':')
         this.timeline[effect](target, definition.vars)
       } catch {
         console.warn('[deja-vue] Missing or unknown gsap effect.')
@@ -103,7 +103,7 @@ export class Animation extends EventBus<AnimationEvent> {
     this.timeline?.clear(true)
   }
 
-  dispose() {
+  dispose () {
     super.dispose()
     this.ctx?.revert()
     this.timeline?.kill()

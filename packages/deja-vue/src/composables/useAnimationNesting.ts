@@ -2,7 +2,7 @@ import type { MaybeRefOrGetter } from 'vue'
 import { computed, inject, nextTick, onUnmounted, toValue, useAttrs, watch } from 'vue'
 
 import { dejaVueParentInstance } from '../constants'
-import type { AnimationNestableChild, AnimationChild } from '../types'
+import type { AnimationChild, AnimationNestableChild } from '../types'
 import { toNonEmptyArray } from '../utils'
 import { Animation } from '../utils/Animation'
 

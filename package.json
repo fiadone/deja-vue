@@ -15,12 +15,31 @@
     "dev:lib": "npm run dev -w deja-vue",
     "preview:docs": "npm run preview -w @deja-vue/docs",
     "preview:landing": "npm run preview -w @deja-vue/landing",
+    "lint": "npm run lint:script && npm run lint:style",
+    "lint:fix": "npm run lint:script:fix && npm run lint:style:fix",
+    "lint:script": "eslint .",
+    "lint:script:fix": "eslint . --fix",
+    "lint:style": "stylelint \"**/*.{css,vue}\"",
+    "lint:style:fix": "stylelint \"**/*.{css,vue}\" --fix",
     "release": "npm run release -w deja-vue",
-    "typecheck": "npm run typecheck -w deja-vue && npm run typecheck -w @deja-vue/landing",
+    "typecheck": "npm run typecheck -w deja-vue && npm run typecheck -w @deja-vue/landing && npm run typecheck -w @deja-vue/docs",
     "commit": "cz"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@stylistic/stylelint-config": "^5.0.0",
     "commitizen": "^4.3.1",
-    "cz-conventional-changelog": "^3.3.0"
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^10.4.0",
+    "eslint-plugin-perfectionist": "^5.9.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "eslint-plugin-vue": "^10.9.1",
+    "globals": "^17.6.0",
+    "stylelint": "^17.11.1",
+    "stylelint-config-idiomatic-order": "^10.0.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "typescript-eslint": "^8.59.3",
+    "vue-eslint-parser": "^10.4.0"
   }
 }

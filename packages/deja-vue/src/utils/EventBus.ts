@@ -1,12 +1,14 @@
+type EventCallback = (...args: unknown[]) => void
+
 export class EventBus <E extends string> {
-  private bus: Map<E, Set<CallableFunction>>
+  private bus: Map<E, Set<EventCallback>>
 
   constructor (events?: E[]) {
     this.bus = new Map()
     events?.forEach(event => this.bus.set(event, new Set()))
   }
 
-  on (event: E | E[], callback: CallableFunction) {
+  on (event: E | E[], callback: EventCallback) {
     if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.on(e, callback))
@@ -16,8 +18,8 @@ export class EventBus <E extends string> {
     }
   }
 
-  once (event: E | E[], callback: CallableFunction) {
-    const fn = (...args: any[]) => {
+  once (event: E | E[], callback: EventCallback) {
+    const fn = (...args: unknown[]) => {
       this.off(event, fn)
       callback(...args)
     }
@@ -25,7 +27,7 @@ export class EventBus <E extends string> {
     this.on(event, fn)
   }
 
-  off (event: E | E[], callback: CallableFunction) {
+  off (event: E | E[], callback: EventCallback) {
     if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.off(e, callback))
@@ -34,13 +36,13 @@ export class EventBus <E extends string> {
     }
   }
 
-  dispatch (event: E, ...args: any[]) {
+  dispatch (event: E, ...args: unknown[]) {
     if (!this.bus?.has(event)) return
     this.bus.get(event)!.forEach(callback => callback(...args))
   }
 
   dispose () {
     this.bus?.clear()
-    this.bus = null as unknown as Map<E, Set<CallableFunction>>
+    this.bus = null as unknown as Map<E, Set<EventCallback>>
   }
 }

@@ -23,5 +23,8 @@ function onCross () {
 </script>
 
 <template>
-  <slot :crossed :parent />
+  <slot
+    :crossed
+    :parent
+  />
 </template>

@@ -37,7 +37,7 @@ export function useAnimationControls (animation: Animation, controls: AnimationC
     animation.timeline.progress(currentValue)
   }, { flush: 'sync', immediate: true })
 
-  watch(controls.trigger.state, (value) => {
+  watch(controls.trigger.state, value => {
     if (value === undefined) return
     const [onTrue, onFalse = onTrue] = triggerActions.value
     const action = value ? onTrue : onFalse

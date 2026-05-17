@@ -31,9 +31,9 @@ export function useSplitText (domTarget: MaybeRefOrGetter<gsap.DOMTarget>, optio
   const target = computed(() => toValue(domTarget))
   const instance = shallowRef<SplitText>()
   const state = shallowReactive({
+    chars: [] as Element[],
     lines: [] as Element[],
-    words: [] as Element[],
-    chars: [] as Element[]
+    words: [] as Element[]
   })
 
   function destroy () {

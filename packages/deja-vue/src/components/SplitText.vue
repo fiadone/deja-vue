@@ -23,8 +23,8 @@ const target = computed(() => {
 
 defineExpose({
   $el,
-  target,
   seamless: true,
+  target,
   ...toRefs(state)
 })
 </script>

@@ -15,7 +15,7 @@ const AnimationScopePropTypes = {
   parent: Object as PropType<DejaVueInstanceExposed['parent']>,
   progress: Number as PropType<DejaVueInstanceExposed['progress']>,
   seamless: Boolean as PropType<DejaVueInstanceExposed['seamless']>,
-  target: [String, Object] as PropType<gsap.TweenTarget>,
+  target: [String, Object] as PropType<gsap.TweenTarget>
 }
 
 export function resolveChildrenTarget (children: DejaVueNode[]) {
@@ -45,7 +45,7 @@ export function useAnimationScope (childrenTargetResolver = resolveChildrenTarge
 
   return {
     $el,
-    target,
-    AnimationScope
+    AnimationScope,
+    target
   }
 }

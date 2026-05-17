@@ -1,0 +1,37 @@
+{
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always",
+    "source.fixAll.stylelint": "always",
+    "source.organizeImports": "never",
+    "source.removeUnusedImports": "always"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    ".gitignore": ".gitattributes, .gitmodules, .gitmessage",
+    "*.ts": "$(capture)*.ts, $(capture).*.ts",
+    "*.vue": "$(capture)*.vue, $(capture).*.ts",
+    "package.json": "package-lock.json, .npmrc*, .npmignore"
+  },
+  "explorer.sortOrder": "foldersNestsFiles",
+  "css.format.enable": false,
+  "css.lint.unknownAtRules": "ignore",
+  "js/ts.format.enabled": false,
+  "js/ts.format.semicolons": "remove",
+  "eslint.format.enable": true,
+  "eslint.useFlatConfig": true,
+  "eslint.validate": [
+    "typescript",
+    "vue"
+  ],
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "stylelint.validate": [
+    "css",
+    "vue"
+  ]
+}

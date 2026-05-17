@@ -2,56 +2,56 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  base: '/deja-vue/docs/',
-  title: "Déjà Vue",
-  titleTemplate: "Declarative GSAP Animations for Vue 3",
-  description: "Declarative GSAP Animations for Vue 3",
   appearance: 'dark',
-  head: [['link', { rel: 'icon', href: '/deja-vue/docs/icon.svg' }]],
+  base: '/deja-vue/docs/',
   cleanUrls: true,
+  description: 'Declarative GSAP Animations for Vue 3',
+  head: [['link', { href: '/deja-vue/docs/icon.svg', rel: 'icon' }]],
   themeConfig: {
+    logo: '/icon.svg',
+
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Concepts', link: '/guide/concepts' },
-      { text: 'Guide', link: '/guide/getting-started' },
-      { text: 'API', link: '/api/components' }
+      { link: '/', text: 'Home' },
+      { link: '/guide/concepts', text: 'Concepts' },
+      { link: '/guide/getting-started', text: 'Guide' },
+      { link: '/api/components', text: 'API' }
     ],
 
-    logo: '/icon.svg',
+    search: {
+      provider: 'local'
+    },
 
     sidebar: [
       {
-        text: 'Guide',
         items: [
-          { text: 'Getting Started', link: '/guide/getting-started' },
-          { text: 'Core concepts', link: '/guide/concepts' },
-          { text: 'Animation targets', link: '/guide/targeting' },
-          { text: 'Tween Component', link: '/guide/tween' },
-          { text: 'Timeline Component', link: '/guide/timeline' },
-          { text: 'Animation Controls', link: '/guide/controls' },
-          { text: 'Nesting Animations', link: '/guide/nesting' },
-          { text: 'Split text', link: '/guide/split-text' },
-          { text: 'Upgrading', link: '/guide/migration' },
-          { text: 'Troubleshooting', link: '/guide/troubleshooting' }
-        ]
+          { link: '/guide/getting-started', text: 'Getting Started' },
+          { link: '/guide/concepts', text: 'Core concepts' },
+          { link: '/guide/targeting', text: 'Animation targets' },
+          { link: '/guide/tween', text: 'Tween Component' },
+          { link: '/guide/timeline', text: 'Timeline Component' },
+          { link: '/guide/controls', text: 'Animation Controls' },
+          { link: '/guide/nesting', text: 'Nesting Animations' },
+          { link: '/guide/split-text', text: 'Split text' },
+          { link: '/guide/migration', text: 'Upgrading' },
+          { link: '/guide/troubleshooting', text: 'Troubleshooting' }
+        ],
+        text: 'Guide'
       },
       {
-        text: 'API Reference',
         items: [
-          { text: 'Components', link: '/api/components' },
-          { text: 'Composables', link: '/api/composables' },
-          { text: 'Types', link: '/api/types' }
-        ]
+          { link: '/api/components', text: 'Components' },
+          { link: '/api/composables', text: 'Composables' },
+          { link: '/api/types', text: 'Types' }
+        ],
+        text: 'API Reference'
       }
     ],
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/fiadone/deja-vue' }
-    ],
-
-    search: {
-      provider: 'local'
-    }
-  }
+    ]
+  },
+  title: 'Déjà Vue',
+  titleTemplate: 'Declarative GSAP Animations for Vue 3'
 })

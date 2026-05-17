@@ -26,14 +26,14 @@ const animation = new Animation({
 const progress = defineModel<number>('progress', { default: undefined })
 const [triggerState, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
 const trigger = {
-  actions: () => props.triggerActions,
   once: triggerModifier.once,
-  state: triggerState
+  state: triggerState,
+  actions: () => props.triggerActions
 }
 
 const { controlled, direction } = useAnimationControls(animation, { progress, trigger })
 const { parent } = useAnimationNesting({ animation })
-const { $el, target, AnimationScope } = useAnimationScope()
+const { $el, AnimationScope, target } = useAnimationScope()
 const seamless = computed(() => props.seamless)
 
 const instance: DejaVueInstance = {
