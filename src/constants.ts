@@ -1,6 +1,7 @@
 import type { InjectionKey } from 'vue'
-import type { Animation } from './utils/Animation'
 
-export const ANIMATION_EVENTS = ['complete', 'interrupt', 'repeat', 'reverseComplete', 'start', 'update'] as const
+import type { AnimationEvent, DejaVueInstance } from './types'
 
-export const parentAnimationInjectionKey: InjectionKey<Animation> = Symbol('parent-animation')
+export const ANIMATION_EVENTS = ['complete', 'interrupt', 'repeat', 'reverseComplete', 'start', 'update'] as AnimationEvent[]
+
+export const dejaVueParentInstance: InjectionKey<DejaVueInstance> = Symbol('deja-vue-parent-instance')
