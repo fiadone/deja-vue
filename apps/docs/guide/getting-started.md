@@ -5,6 +5,9 @@
 
 Déjà Vue (*Declarative Elements* for *Javascript Animations* in *Vue*) lets you define and nest GSAP animations as Vue components.
 
+> [!NOTE]
+> Examples often pass `vars` inline because that keeps the documentation focused on the animation concept being introduced. In application code, always prefer moving tween definitions into named constants, refs, or computed values and pass those references to the component. Déjà Vue keeps inline vars stable enough to avoid unnecessary recomposition, but referenced definitions still remain the best practice and make animation intent clearer, easier to reuse, easier to type, and easier to change deliberately.
+
 ## Installation
 
 ```bash

@@ -47,6 +47,8 @@ Patterns: **[Nesting animations](./nesting.md)**.
 
 **`Tween`** watches **`target`**, **`method`**, and stable **`vars`** ([`useStableTweenVars`](../api/composables.md#usestabletweenvars)). On change it **`clear(true)`** and **`compose`** again. Prefer **`progress` / `trigger`** for playback UI; use GSAP **`repeat`**, **`yoyo`** for loop behavior inside one definition.
 
+The docs use inline `vars` to keep examples compact and clear. Déjà Vue stabilizes those values internally, so inline objects are safe even if, in application code, it is still clearer and strongly recommended as best practice to name tween definitions in script and pass them by reference, especially when they are reused, typed, or derived from state.
+
 ## Direction
 
 **`direction`** (`1` | `-1` | `0`) reflects scrub direction and is available on the component instance and default slot. **`Marker`** **`@cross`** passes the parent’s direction at the crossing.
