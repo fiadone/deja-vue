@@ -1,48 +1,24 @@
 # Timeline Component
 
-The `Timeline` component allows you to create complex animations. It provides a declarative way to build and manage GSAP (nested) timelines.
+> [!TIP]
+> Read **[Core concepts](./concepts.md)** for nesting and rebuild behavior.
+
+The `Timeline` component sequences nested **`Tween`**, **`Timeline`**, **`Marker`**, **`SplitText`**, and other nestables. There is **no `tweens` prop** — build sequences in the template.
 
 ## What is a Timeline?
 
-A timeline is a container that manages multiple animations (tweens, labels, callbacks) and controls when they play relative to each other. Déjà Vue's `Timeline` component makes it easy to compose these sequences declaratively.
+A timeline holds child animations, labels, and callbacks on one GSAP timeline. Target resolution matches **`Tween`** ([Animation targets](./targeting.md)).
 
-## Basic Timeline
-
-Use the `tweens` prop to define an array of animations:
-
-```vue
-<template>
-  <Timeline :tweens>
-    <div>Animated Content</div>
-  </Timeline>
-</template>
-
-<script setup>
-import { Timeline } from 'deja-vue'
-
-const tweens = [
-  { method: 'to', vars: { x: 100, duration: 1 } },
-  { method: 'to', vars: { y: 100, duration: 1 }, position: '+=0.5' }
-]
-</script>
-```
-
-## Timeline with Nested Components
-
-Use nested `Tween` components for more control:
+## Basic timeline
 
 ```vue
 <template>
   <Timeline>
     <Tween method="to" :vars="{ x: 100, duration: 1 }">
-      <div>First animation</div>
+      <div class="target">First target</div>
     </Tween>
-    <Tween
-      method="to"
-      position="+=0.5"
-      :vars="{ y: 100, duration: 1 }"
-    >
-      <div>Second animation (delayed)</div>
+    <Tween method="to" position="+=0.5" :vars="{ y: 100, duration: 1 }">
+      <div class="target">Second target</div>
     </Tween>
   </Timeline>
 </template>
@@ -52,240 +28,98 @@ import { Timeline, Tween } from 'deja-vue'
 </script>
 ```
 
-## Props Reference
-
-### Sequence Definition
+## Props reference
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `tweens` | `TweenAnimationDefinition[]` | Array of tween definitions |
+| `duration` | `number` | Fixed total duration |
+| `options` | `gsap.TimelineVars` | GSAP options |
+| `progress` | `number` | `v-model:progress` |
+| `trigger` | `boolean` | `v-model:trigger` |
+| `triggerActions` | `TweenAction \| [TweenAction, TweenAction]` | Trigger mapping |
+| `parent` | `DejaVueInstance \| null` | Parent |
+| `position` | `gsap.Position` | Position on parent |
 
-### Configuration
+Use **`v-model:trigger.once`** to run the trigger watcher once.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `duration` | `number` | - | Total timeline duration |
-| `options` | `gsap.TimelineVars` | - | GSAP timeline options |
-| `group` | `boolean` | `false` | Animate all children as group |
-| `tag` | `string` | `'div'` | HTML tag for wrapper |
+## Positioning
 
-### Control
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `progress` | `number` | Scrub timeline (0-1) |
-| `toggle` | `boolean` | Play/reverse control |
-
-### Nesting
-
-| Prop | Type | Description |
-|------|------|-------------|
-| `parent` | `Animation \| null` | Parent animation |
-| `position` | `gsap.Position` | Position in parent |
-
-## Positioning Animations
-
-Control when each animation starts in the timeline using the `position` prop:
+Use **`position`** on nested children:
 
 ```vue
-<template>
-  <Timeline>
-    <!-- Starts immediately -->
-    <Tween method="to" :vars="{ x: 100, duration: 1 }">
-      <div>Animation 1</div>
-    </Tween>
-    
-    <!-- Starts 0.5s after animation 1 ends (+=0.5) -->
-    <Tween
-      method="to"
-      position="+=0.5"
-      :vars="{ y: 100, duration: 1 }"
-    >
-      <div>Animation 2</div>
-    </Tween>
-    
-    <!-- Starts 0.3s before animation 2 ends (-=0.3) -->
-    <Tween
-      method="to"
-      position="-=0.3"
-      :vars="{ rotation: 360, duration: 1 }"
-    >
-      <div>Animation 3</div>
-    </Tween>
-  </Timeline>
-</template>
-
-<script setup>
-import { Timeline, Tween } from 'deja-vue'
-</script>
-```
-
-### Position Syntax
-
-GSAP's position syntax works within timelines:
-
-- `"+=1"` - Start 1 second after parent's current time
-- `"-=0.5"` - Start 0.5 seconds before parent's current time
-- `"1"` - Start at absolute time 1
-- `"label"` - Start at named label
-- Not specified - Start immediately after previous
-
-## Timeline with Position Markers and Callbacks
-
-Use `PositionMarker` and `Callback` components for advanced control:
-
-```vue
-<template>
-  <Timeline>
-    <PositionMarker label="start" />
-    
-    <Tween method="from" :vars="{ opacity: 0, duration: 1 }">
-      <div>Fade in</div>
-    </Tween>
-    
-    <PositionMarker label="middle" />
-    
-    <Tween method="to" :vars="{ x: 200, duration: 2 }">
-      <div>Move right</div>
-    </Tween>
-    
-    <Callback :fn="onMiddle" position="middle" />
-    
-    <PositionMarker label="end" />
-    
-    <Tween
-      method="to"
-      position="+=0.5"
-      :vars="{ opacity: 0, duration: 1 }"
-    >
-      <div>Fade out</div>
-    </Tween>
-    
-    <Callback :fn="onComplete" position="end" />
-  </Timeline>
-</template>
-
-<script setup>
-import { Timeline, Tween, PositionMarker, Callback } from 'deja-vue'
-
-const onMiddle = (timeline) => {
-  console.log('Middle of timeline reached')
-}
-
-const onComplete = (timeline) => {
-  console.log('Timeline complete!', timeline)
-}
-</script>
-```
-
-## Timeline Duration
-
-Set an explicit duration for the timeline:
-
-```vue
-<template>
-  <Timeline :duration="3">
-    <Tween method="to" :vars="{ x: 100 }">
-      <div>Will take 3 seconds total</div>
-    </Tween>
-  </Timeline>
-</template>
-
-<script setup>
-import { Timeline, Tween } from 'deja-vue'
-</script>
-```
-
-## GSAP Timeline Options
-
-Pass any GSAP timeline options:
-
-```vue
-<template>
-  <Timeline 
-    :options="{ 
-      repeat: 2,           // Repeat 2 times
-      repeatDelay: 1,      // 1 second between repeats
-      yoyo: true,          // Play backwards between repeats
-      paused: true,        // Start paused
-    }"
-  >
-    <Tween method="to" :vars="{ x: 100, duration: 1 }">
-      <div>Advanced timeline</div>
-    </Tween>
-  </Timeline>
-</template>
-
-<script setup>
-import { Timeline, Tween } from 'deja-vue'
-</script>
-```
-
-## Events
-
-Timelines emit the same events as tweens:
-
-```vue
-<Timeline 
-  :tweens
-  @start="onStart"
-  @update="onUpdate"
-  @complete="onComplete"
->
-  <!-- ... -->
+<Timeline>
+  <Tween method="to" :vars="{ x: 100, duration: 1 }" />
+  <Tween method="to" position="+=0.5" :vars="{ y: 100, duration: 1 }" />
+  <Tween method="to" position="-=0.3" :vars="{ rotation: 360, duration: 1 }" />
 </Timeline>
 ```
 
-Available events:
-- `start` - Timeline started
-- `update` - Timeline frame updated
-- `complete` - Timeline finished
-- `repeat` - Timeline repeated
-- `reverseComplete` - Reverse finished
-- `interrupt` - Timeline interrupted
+## Markers
 
-## Complex Example
-
-Combine multiple concepts:
+Use **`Marker`** for labels and cross events (replaces separate callback/label components):
 
 ```vue
 <template>
-  <Timeline :duration="5">
-    <PositionMarker label="intro" />
+  <Timeline>
+    <Marker label="start" />
+
     <Tween method="from" :vars="{ opacity: 0, duration: 1 }">
-      <div class="title">Welcome</div>
+      <div class="target">Fade target</div>
     </Tween>
-    
-    <PositionMarker label="content" />
-    <Tween 
-      group
-      method="from" 
-      position="+=0.5"
-      :vars="{ x: -50, opacity: 0, duration: 0.5, stagger: 0.1 }" 
-    >
-      <div v-for="item in 3" :key="item" class="item">
-        Item {{ item }}
-      </div>
+
+    <Marker label="middle" @cross="onMiddle" />
+
+    <Tween method="to" :vars="{ x: 200, duration: 2 }">
+      <div class="target">Move target</div>
     </Tween>
-    
-    <Callback :fn="logContent" position="content" />
-    
-    <PositionMarker label="outro" />
-    <Tween
-      method="to"
-      position="+=1"
-      :vars="{ opacity: 0, duration: 1 }"
-    >
-      <div>Goodbye</div>
-    </Tween>
+
+    <Marker label="end" />
   </Timeline>
 </template>
 
 <script setup>
-import { Timeline, Tween, PositionMarker, Callback } from 'deja-vue'
+import { Timeline, Tween, Marker } from 'deja-vue'
 
-const logContent = (timeline) => {
-  console.log('Content section reached', timeline.progress())
+function onMiddle (direction) {
+  console.log('Crossed middle', direction === 1 ? 'forward' : 'reverse')
 }
 </script>
+```
+
+## Timeline duration
+
+```vue
+<Timeline :duration="3">
+  <Tween method="to" :vars="{ x: 100 }">
+    <div class="target">Target</div>
+  </Tween>
+</Timeline>
+```
+
+When **`duration`** is a positive number, the timeline preserves that fixed total duration as children are added or removed. **`0`**, **`undefined`**, or clearing the prop restores natural timing by removing the stored total duration, resetting **`timeScale(1)`**, and invalidating the timeline.
+
+## GSAP timeline options
+
+```vue
+<Timeline :options="{ repeat: 2, yoyo: true, paused: true }">
+  <Tween method="to" :vars="{ x: 100, duration: 1 }">
+    <div class="target">Target</div>
+  </Tween>
+</Timeline>
+```
+
+## Events and slot
+
+Same as **`Tween`**: events **`(animation, parent)`**; slot scope includes **`direction`**, **`progress`**, etc.
+
+## Nested timeline
+
+```vue
+<Timeline>
+  <Tween method="to" :vars="{ x: 100, duration: 1 }" />
+  <Timeline position="+=0.5">
+    <Tween method="to" :vars="{ y: 50, duration: 0.5 }" />
+    <Tween method="to" position="<" :vars="{ rotation: 90, duration: 0.5 }" />
+  </Timeline>
+</Timeline>
 ```
