@@ -24,11 +24,11 @@ const animation = new Animation({
 })
 
 const progress = defineModel<number>('progress', { default: undefined })
-const [triggerValue, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
+const [triggerState, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
 const trigger = {
   actions: () => props.triggerActions,
   once: triggerModifier.once,
-  value: triggerValue
+  state: triggerState
 }
 
 const { controlled, direction } = useAnimationControls(animation, { progress, trigger })

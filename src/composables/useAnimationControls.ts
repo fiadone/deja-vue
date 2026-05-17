@@ -1,4 +1,5 @@
-import { computed, ref, toValue, watch, type MaybeRefOrGetter, type ModelRef } from 'vue'
+import type { MaybeRefOrGetter, ModelRef } from 'vue'
+import { computed, ref, toValue, watch } from 'vue'
 
 import type { AnimationDirection, ControllableAnimation, TweenAction } from '../types'
 import type { Animation } from '../utils/Animation'
@@ -8,12 +9,12 @@ type AnimationControls = {
   trigger: {
     actions: MaybeRefOrGetter<ControllableAnimation['triggerActions']>
     once: true | undefined
-    value: ModelRef<ControllableAnimation['trigger']>
+    state: ModelRef<ControllableAnimation['trigger']>
   }
 }
 
 export function useAnimationControls (animation: Animation, controls: AnimationControls) {
-  const controlled = controls.progress.value !== undefined || controls.trigger.value !== undefined
+  const controlled = controls.progress.value !== undefined || controls.trigger.state.value !== undefined
   const direction = ref<AnimationDirection>(0)
   const triggerActions = computed<[TweenAction, TweenAction]>(() => {
     const value = toValue(controls.trigger.actions)
@@ -22,7 +23,7 @@ export function useAnimationControls (animation: Animation, controls: AnimationC
     return ['play', 'reverse']
   })
 
-  if (controlled && toValue(controls.trigger.value) !== true) animation.timeline.pause()
+  if (controlled && controls.trigger.state.value !== true) animation.timeline.pause()
 
   animation.on('update', () => {
     const progress = animation.timeline.progress()
@@ -34,9 +35,9 @@ export function useAnimationControls (animation: Animation, controls: AnimationC
     if (currentValue === undefined || currentValue === previousValue) return
     if (previousValue !== undefined) direction.value = currentValue > previousValue ? 1 : -1
     animation.timeline.progress(currentValue)
-  }, { immediate: true, flush: 'sync' })
+  }, { flush: 'sync', immediate: true })
 
-  watch(controls.trigger.value, (value) => {
+  watch(controls.trigger.state, (value) => {
     if (value === undefined) return
     const [onTrue, onFalse = onTrue] = triggerActions.value
     const action = value ? onTrue : onFalse

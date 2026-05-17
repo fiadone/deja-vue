@@ -41,7 +41,7 @@ interface AnimationControls {
   trigger: {
     actions: MaybeRefOrGetter<TweenAction | [TweenAction, TweenAction] | undefined>
     once: true | undefined
-    value: ModelRef<boolean | undefined>
+    state: ModelRef<boolean | undefined>
   }
 }
 ```
