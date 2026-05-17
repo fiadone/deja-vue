@@ -7,6 +7,7 @@ export class EventBus <E extends string> {
   }
 
   on (event: E | E[], callback: CallableFunction) {
+    if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.on(e, callback))
     } else {
@@ -25,6 +26,7 @@ export class EventBus <E extends string> {
   }
 
   off (event: E | E[], callback: CallableFunction) {
+    if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.off(e, callback))
     } else if (this.bus.has(event) && this.bus.get(event)!.has(callback)) {
@@ -33,13 +35,12 @@ export class EventBus <E extends string> {
   }
 
   dispatch (event: E, ...args: any[]) {
-    if (!this.bus.has(event)) return
+    if (!this.bus?.has(event)) return
     this.bus.get(event)!.forEach(callback => callback(...args))
   }
 
   dispose () {
-    this.bus.clear()
-    // @ts-expect-error null is not assignable to Map<string, Set<CallableFunction>>
-    this.bus = null
+    this.bus?.clear()
+    this.bus = null as unknown as Map<E, Set<CallableFunction>>
   }
 }
