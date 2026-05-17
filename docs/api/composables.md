@@ -1,112 +1,103 @@
 # Composables API
 
-## useAnimation
+> [!TIP]
+> Read **[Core concepts](../guide/concepts.md)** for how these composables fit together.
 
-Core composable for creating and managing animations. Used internally by the `Tween` and `Timeline` components.
+## useAnimationScope
+
+Resolves **DOM targets** for `Tween` / `Timeline` and renders **`AnimationScope`** (slot props: `animation`, `controlled`, `direction`, `parent`, `progress`, `target`).
 
 ```typescript
-function useAnimation(
-  wrapper: Readonly<ShallowRef<HTMLElement | null>>,
-  options?: gsap.TimelineVars
-): {
-  animation: Animation
-  controlled: ComputedRef<boolean>
-  parent: { parent: Animation | null }
+function useAnimationScope(): {
+  $el: ShallowRef<Element | null>
+  target: ComputedRef<gsap.TweenTarget>
+  AnimationScope: Component
 }
 ```
 
-### useAnimation Parameters
+Root attributes on the component: **`is`**, **`target`**. When **`target`** changes, previous targets get `killTweensOf` + `clearProps`.
 
-- `wrapper`: Ref to the wrapper element that will be animated
-- `props`: Animation configuration (TimelineAnimation or TweenAnimation)
-- `emit`: Event emitter function for animation events
-- `options`: Additional GSAP timeline options (merged with props.options if present)
-
-### useAnimation Returns
-
-- `animation`: The Animation instance with eventBus and timeline
-- `controlled`: Computed ref indicating if animation is controlled (via progress or toggle)
-- `parent`: Object containing the parent animation instance or null
-
-### useAnimation Behavior
-
-- Initializes the animation on mount
-- Automatically composes tweens if using Timeline mode
-- Sets up event listeners for all GSAP timeline events
-- Cleans up on unmount
+Seamless children (`seamless: true`, e.g. **`SplitText`** or nested **`Tween`**) contribute **`child.target`** to the parent list.
 
 ## useAnimationControls
 
-Composable for controlling animations with reactive props.
+Syncs **`defineModel`** refs with a timeline and tracks scrub **direction**.
 
 ```typescript
 function useAnimationControls(
   animation: Animation,
-  controls: {
-    progress?: MaybeRefOrGetter<number>
-    toggle?: MaybeRefOrGetter<boolean | undefined>
-  }
+  controls: AnimationControls
 ): {
-  controlled: ComputedRef<boolean>
+  controlled: boolean
+  direction: Ref<AnimationDirection> // 1 | -1 | 0
 }
 ```
 
-### useAnimationControls Parameters
+### AnimationControls
 
-- `animation`: The Animation instance to control
-- `controls`: Object with optional progress and toggle control values
-- `progress`: Controls scrubbing (0-1). When provided, animation pauses at that position
-- `toggle`: Controls play/pause state. `true` plays, `false` reverses animation
+```typescript
+interface AnimationControls {
+  progress: ModelRef<number | undefined>
+  trigger: {
+    actions: MaybeRefOrGetter<TweenAction | [TweenAction, TweenAction] | undefined>
+    once: true | undefined
+    value: ModelRef<boolean | undefined>
+  }
+}
+```
 
-### useAnimationControls Returns
-
-- `controlled`: ComputedRef\<boolean> that indicates if any controls are active
-
-### useAnimationControls Behavior
-
-- If both progress and toggle are provided, progress takes precedence
-- Changes to progress continuously scrub the animation
-- Changes to toggle trigger play/reverse actions
-- Animation pauses when controls are active (unless toggle is true)
+- **`progress`**: scrubs `animation.timeline.progress()`; updates **`direction`** when the value moves up/down.
+- **`trigger`**: `true` → first action (or single action); `false` → second action or same if one action. Default actions: **`play`** / **`reverse`**.
+- **`trigger.actions`**: e.g. `['play', 'restart']` or `'pause'` (string applies to both sides).
+- **`trigger.once`**: pass the **`.once`** modifier from **`v-model:trigger.once`**.
 
 ## useAnimationNesting
 
-Composable for nesting animations in parent timelines via provide/inject.
+Registers one or more children on the injected parent’s **`animation`** timeline.
 
 ```typescript
+type NestableChild =
+  | { animation: Animation }
+  | { callback: gsap.Callback }
+  | { label: MaybeRefOrGetter<string | undefined> }
+
 function useAnimationNesting(
-  child?: Animation | gsap.Callback | string,
-  options?: NestableAnimation
+  input: NestableChild | NestableChild[]
 ): {
-  parent: Animation | null
+  parent: DejaVueInstance | null
 }
 ```
 
-### useAnimationNesting Parameters
+Non-prop attributes: **`parent`**, **`position`**. Watches children + position; **`parent.animation.add`** / **`remove`** after `nextTick`. Supports **multiple** children (e.g. **`Marker`**: callback + label).
 
-- `child`: The child animation, callback function, or label string to nest
-- `options`: Nesting configuration
-  - `parent`: Explicitly set parent (overrides injected parent if provided)
-  - `position`: GSAP position parameter for when to add the child in parent timeline
+## useStableTweenVars
 
-### useAnimationNesting Returns
+Keeps a **stable object reference** for `vars` while syncing property changes, so `watch` on tween definition does not thrash on new object identity every render.
 
-- `parent`: The parent animation instance or null if no parent found
+```typescript
+function useStableTweenVars(
+  vars: MaybeRefOrGetter<gsap.TweenVars | [gsap.TweenVars, gsap.TweenVars]>
+): gsap.TweenVars | [gsap.TweenVars, gsap.TweenVars]
+```
 
-### useAnimationNesting Behavior
+Used internally by **`Tween`**; export for custom animation components.
 
-- Automatically injects parent animation from Timeline context (if available)
-- Only adds child to parent animation on mount (after nextTick)
-- Removes child from parent on unmount
-- Handles different child types: Animation instances, callbacks, and labels
-- If child is an Animation and no parent exists, disposes the animation on unmount
+The root shape must stay stable. Switching between a single vars object and a **`fromTo`** tuple at runtime is not supported in place; key the **`Tween`** by **`method`** or another shape key to recreate it.
 
-### Positioning
+## useSplitText
 
-When nesting animations, use GSAP position syntax:
+```typescript
+function useSplitText(
+  target: MaybeRefOrGetter<gsap.DOMTarget>,
+  options?: SplitTextOptions
+): {
+  instance: ShallowRef<SplitText | undefined>
+  state: { lines: Element[]; words: Element[]; chars: Element[] }
+}
+```
 
-- `"+=1"` - Start 1 second after parent's current time
-- `"-=0.5"` - Start 0.5 seconds before parent's current time
-- `1` - Start at absolute time 1
-- `"label"` - Start at named label
-- `undefined` or not provided - Start immediately after previous animation
+`type` defaults to **`'lines,words,chars'`**. The composable waits for a real target before creating SplitText and reverts/kills the instance during cleanup.
+
+Register **`SplitText`** with GSAP in your app setup before using this composable. The library does not register GSAP plugins on its own.
+
+See [`SplitText` component](./components.md#splittext) — place inside a **`Tween`** slot.
