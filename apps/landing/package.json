@@ -1,0 +1,24 @@
+{
+  "name": "@deja-vue/landing",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "deja-vue": "*",
+    "gsap": "^3.15.0",
+    "vue": "^3.5.34"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "typescript": "^6.0.2",
+    "unocss": "^66.6.8",
+    "vite": "^8.0.12",
+    "vue-tsc": "^3.2.9"
+  }
+}

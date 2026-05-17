@@ -2,32 +2,46 @@
 
 Declarative GSAP Animations for Vue 3.
 
-## Documentation
+## Landing page And Documentation
 
-View the [full documentation here](https://fiadone.github.io/deja-vue/).
+Open the [landing page](https://fiadone.github.io/deja-vue/) or jump
+straight to the [documentation](https://fiadone.github.io/deja-vue/docs/).
 
 ## Development
 
-- Install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-- Run the playground:
+Run the landing page:
 
 ```bash
-npm run playground
+npm run dev:landing
 ```
 
-- Run the unit tests:
+Run the docs locally:
 
 ```bash
-npm run test
+npm run dev:docs
 ```
 
-- Build the library:
+Run type checks:
 
 ```bash
-npm run build
+npm run typecheck
+```
+
+Build the library:
+
+```bash
+npm run build:lib
+```
+
+Build the landing page and docs locally:
+
+```bash
+npm run build:landing
+npm run build:docs
 ```

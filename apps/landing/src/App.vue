@@ -3,5 +3,7 @@
 </script>
 
 <template>
-  <!-- Test component here -->
+  <div>
+    <!-- Showcase -->
+  </div>
 </template>

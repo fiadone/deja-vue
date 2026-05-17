@@ -4,9 +4,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/deja-vue/docs/',
   title: "Déjà Vue",
+  titleTemplate: "Declarative GSAP Animations for Vue 3",
   description: "Declarative GSAP Animations for Vue 3",
   appearance: 'dark',
-  head: [['link', { rel: 'icon', href: '/icon.svg' }]],
+  head: [['link', { rel: 'icon', href: '/deja-vue/docs/icon.svg' }]],
   cleanUrls: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config

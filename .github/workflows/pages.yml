@@ -1,11 +1,12 @@
-name: Docs
+name: Pages
 
 on:
   push:
     branches: [main]
     paths:
-      - "docs/**"
-      - ".github/workflows/docs.yml"
+      - "apps/landing/**"
+      - "apps/docs/**"
+      - ".github/workflows/pages.yml"
 
 permissions:
   contents: read
@@ -33,12 +34,19 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: npm ci
-      - name: Build with VitePress
-        run: npm run docs:build
+      - name: Build docs
+        run: npm run build:docs
+      - name: Build landing
+        run: npm run build:landing
+      - name: Compose Pages artifact
+        run: |
+          rm -rf apps/landing/dist/docs
+          mkdir -p apps/landing/dist/docs
+          cp -R apps/docs/.vitepress/dist/. apps/landing/dist/docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: apps/landing/dist
 
   deploy:
     environment:

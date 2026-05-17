@@ -1,67 +1,26 @@
 {
-  "name": "deja-vue",
+  "name": "deja-vue-workspace",
+  "private": true,
   "type": "module",
-  "version": "1.0.1",
-  "description": "Declarative GSAP Animations for Vue 3",
-  "author": "Andrea 'Fiad' Fiadone <hello@fiad.one>",
-  "license": "MIT",
-  "homepage": "https://github.com/fiadone/deja-vue#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/fiadone/deja-vue.git"
-  },
-  "bugs": {
-    "url": "https://github.com/fiadone/deja-vue/issues"
-  },
-  "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "dist"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
-    "docs:build": "vitepress build docs",
-    "docs:dev": "vitepress dev docs",
-    "play": "vite",
-    "preview": "vite preview",
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "prepublishOnly": "npm run build",
-    "release": "bumpp",
-    "typecheck": "vue-tsc --noEmit",
+    "build:docs": "npm run build -w @deja-vue/docs",
+    "build:landing": "npm run build -w @deja-vue/landing",
+    "build:lib": "npm run build -w deja-vue",
+    "dev:docs": "npm run dev -w @deja-vue/docs",
+    "dev:landing": "npm run dev -w @deja-vue/landing",
+    "dev:lib": "npm run dev -w deja-vue",
+    "preview:docs": "npm run preview -w @deja-vue/docs",
+    "preview:landing": "npm run preview -w @deja-vue/landing",
+    "release": "npm run release -w deja-vue",
+    "typecheck": "npm run typecheck -w deja-vue && npm run typecheck -w @deja-vue/landing",
     "commit": "cz"
   },
-  "peerDependencies": {
-    "gsap": "^3.0.0",
-    "vue": "^3.5.0"
-  },
   "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^13.0.1",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/npm": "^13.1.5",
-    "@semantic-release/release-notes-generator": "^14.1.1",
-    "@tsdown/css": "^0.22.0",
-    "@types/node": "^25.5.0",
-    "@vitejs/plugin-vue": "^6.0.5",
-    "bumpp": "^11.1.0",
     "commitizen": "^4.3.1",
-    "cz-conventional-changelog": "^3.3.0",
-    "gsap": "^3.15.0",
-    "semantic-release": "^25.0.3",
-    "tsdown": "^0.22.0",
-    "typescript": "^6.0.2",
-    "unocss": "^66.6.8",
-    "vite": "^8.0.12",
-    "vitepress": "^1.6.4",
-    "vue": "^3.5.34",
-    "vue-tsc": "^3.2.9"
-  },
-  "dependencies": {
-    "vue-unwrap": "^1.0.0"
+    "cz-conventional-changelog": "^3.3.0"
   }
 }
