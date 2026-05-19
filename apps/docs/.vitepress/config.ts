@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from 'node:url'
+
 import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
@@ -53,5 +55,12 @@ export default defineConfig({
     ]
   },
   title: 'Déjà Vue',
-  titleTemplate: 'Declarative GSAP Animations for Vue 3'
+  titleTemplate: 'Declarative GSAP Animations for Vue 3',
+  vite: {
+    resolve: {
+      alias: {
+        'deja-vue': fileURLToPath(new URL('../../../packages/deja-vue/src/index.ts', import.meta.url))
+      }
+    }
+  }
 })

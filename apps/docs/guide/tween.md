@@ -7,16 +7,20 @@ The `Tween` component maps GSAP tween methods through **`method`** and **`vars`*
 
 ## Basic Tween
 
+<ClientOnly>
+  <TweenBasicDemo />
+</ClientOnly>
+
 ```vue
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
 <template>
   <Tween method="to" :vars="{ x: 100, duration: 1 }">
     <div class="target">Target</div>
   </Tween>
 </template>
-
-<script setup>
-import { Tween } from 'deja-vue'
-</script>
 ```
 
 ## Animation target
@@ -32,13 +36,19 @@ Same as GSAP. For **`fromTo`**, pass **`vars`** as a two-element array.
 `vars` may update reactively, but its shape must stay compatible with **`method`**. If you switch between a single vars object (`from`, `to`, `effect:%NAME%`) and a **`fromTo`** tuple, key the component so Vue recreates it:
 
 ```vue
-<Tween
-  :key="method"
-  :method="method"
-  :vars="method === 'fromTo'
-    ? [{ opacity: 0 }, { opacity: 1 }]
-    : { opacity: 1 }"
-/>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween
+    :key="method"
+    :method="method"
+    :vars="method === 'fromTo'
+      ? [{ opacity: 0 }, { opacity: 1 }]
+      : { opacity: 1 }"
+  />
+</template>
 ```
 
 ## Props reference
@@ -67,24 +77,20 @@ Use **`v-model:trigger.once`** to run the trigger watcher once.
 
 Scope props: **`animation`**, **`controlled`**, **`direction`**, **`parent`**, **`progress`**, **`target`**.
 
-```vue
-<Tween method="to" :vars="{ x: 100, duration: 1 }" v-slot="{ progress }">
-  <div class="target">Progress: {{ progress }}</div>
-</Tween>
-```
-
-## Nested seamless tweens
-
-Chain tweens that each target the previous layer’s elements:
+<ClientOnly>
+  <TweenProgressSlotDemo />
+</ClientOnly>
 
 ```vue
-<Tween method="from" :vars="{ scale: 0, stagger: 0.1 }">
-  <Tween seamless method="to" :vars="{ x: 200, stagger: 0.1 }">
-    <Tween seamless method="to" :vars="{ rotate: 180, stagger: 0.1 }">
-      <div v-for="n in 3" :key="n" class="box" />
-    </Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween method="to" :vars="{ x: 100, duration: 1 }" v-slot="{ progress }">
+    <div class="target">Progress: {{ progress }}</div>
   </Tween>
-</Tween>
+</template>
 ```
 
 ## Events
@@ -96,26 +102,51 @@ Chain tweens that each target the previous layer’s elements:
 ## Template ref
 
 ```vue
-<Tween ref="tweenRef" method="to" :vars="{ x: 100, duration: 1 }">
-  <div class="target">Target</div>
-</Tween>
+<script setup>
+import { ref } from 'vue'
+import { Tween } from 'deja-vue'
 
-<!-- tweenRef.animation.timeline.play() -->
+const tweenRef = ref()
+</script>
+
+<template>
+  <Tween ref="tweenRef" method="to" :vars="{ x: 100, duration: 1 }">
+    <div class="target">Target</div>
+  </Tween>
+
+  <!-- tweenRef.animation.timeline.play() -->
+</template>
 ```
 
 ## Examples
 
+<ClientOnly>
+  <TweenStaggerDemo />
+</ClientOnly>
+
 ```vue
-<Tween method="from" :vars="{ opacity: 0, duration: 0.5 }">
-  <div class="target">Target</div>
-</Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween method="from" :vars="{ opacity: 0, duration: 0.5 }">
+    <div class="target">Target</div>
+  </Tween>
+</template>
 ```
 
 ```vue
-<Tween
-  method="from"
-  :vars="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }"
->
-  <div v-for="item in 5" :key="item" class="box">Box {{ item }}</div>
-</Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween
+    method="from"
+    :vars="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }"
+  >
+    <div v-for="item in 5" :key="item" class="box">Box {{ item }}</div>
+  </Tween>
+</template>
 ```

@@ -1,0 +1,152 @@
+.demo {
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  margin: 1.25rem 0 1.5rem;
+  background: var(--vp-code-block-bg);
+}
+
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--vp-c-divider);
+  gap: 0.5rem 0.75rem;
+}
+
+.demo-button {
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.demo-button:hover {
+  border-color: var(--vp-button-brand-bg);
+  color: var(--vp-button-brand-bg);
+}
+
+.demo-controls {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.demo-content {
+  position: relative;
+  overflow: hidden;
+  min-height: 140px;
+  padding: 1.25rem 1rem;
+}
+
+.demo-row {
+  display: flex;
+  min-height: 96px;
+  align-items: center;
+}
+
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.demo-box {
+  display: flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: var(--vp-button-brand-bg);
+  color: var(--vp-c-bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.demo-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.demo-target {
+  display: inline-flex;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  font-size: 0.875rem;
+}
+
+.demo-split {
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.demo-label {
+  color: var(--vp-c-text-2);
+  font-size: 0.75rem;
+}
+
+.demo-range {
+  min-width: 8rem;
+  max-width: 14rem;
+  flex: 1;
+  accent-color: var(--vp-button-brand-bg);
+}
+
+.demo-button {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  font-size: 0.8125rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.demo-button:hover {
+  border-color: var(--vp-button-brand-bg);
+  color: var(--vp-button-brand-bg);
+}
+
+.demo-progress {
+  color: var(--vp-c-text-2);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.demo-markers {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+  gap: 0.35rem;
+}
+
+.demo-marker {
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: var(--vp-c-bg);
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.6875rem;
+}
+
+.demo-marker.is-active {
+  color: var(--vp-c-brand-1);
+  outline: 1px solid var(--vp-c-brand-1);
+}

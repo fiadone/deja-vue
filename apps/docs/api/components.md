@@ -114,6 +114,14 @@ Adds a **timeline label** (optional) and a **callback** when playback crosses th
 ### Marker usage
 
 ```vue
+<script setup>
+import { Marker, Timeline, Tween } from 'deja-vue'
+
+function onCross (direction) {
+  console.log('Crossed', direction === 1 ? 'forward' : 'reverse')
+}
+</script>
+
 <template>
   <Timeline>
     <Marker label="intro" @cross="onCross" />
@@ -122,27 +130,29 @@ Adds a **timeline label** (optional) and a **callback** when playback crosses th
     </Tween>
   </Timeline>
 </template>
-
-<script setup>
-import { Marker, Timeline, Tween } from 'deja-vue'
-
-function onCross (direction) {
-  console.log('Crossed', direction === 1 ? 'forward' : 'reverse')
-}
-</script>
 ```
 
 Slot-driven trigger:
 
 ```vue
-<Marker v-slot="{ crossed }" @cross="onCross">
-  <Tween
-    method="from"
-    :trigger="crossed"
-    :trigger-actions="['play', 'restart']"
-    :vars="{ opacity: 0 }"
-  >
-    <div class="target">Target</div>
-  </Tween>
-</Marker>
+<script setup>
+import { Marker, Tween } from 'deja-vue'
+
+function onCross (direction) {
+  console.log('Crossed', direction)
+}
+</script>
+
+<template>
+  <Marker v-slot="{ crossed }" @cross="onCross">
+    <Tween
+      method="from"
+      :trigger="crossed"
+      :trigger-actions="['play', 'restart']"
+      :vars="{ opacity: 0 }"
+    >
+      <div class="target">Target</div>
+    </Tween>
+  </Marker>
+</template>
 ```

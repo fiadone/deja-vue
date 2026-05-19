@@ -33,7 +33,15 @@ Slot content is split unless **`is`** targets the root element.
 
 ### Example
 
+<ClientOnly>
+  <SplitTextDemo />
+</ClientOnly>
+
 ```vue
+<script setup>
+import { Timeline, Tween, SplitText } from 'deja-vue'
+</script>
+
 <template>
   <Timeline>
     <Tween
@@ -52,10 +60,6 @@ Slot content is split unless **`is`** targets the root element.
     </Tween>
   </Timeline>
 </template>
-
-<script setup>
-import { Timeline, Tween, SplitText } from 'deja-vue'
-</script>
 ```
 
 A single **`Tween`** without **`Timeline`** works the same way.
@@ -65,19 +69,29 @@ A single **`Tween`** without **`Timeline`** works the same way.
 Wrap the tween in **`Marker`** and drive **`trigger`** from the slot:
 
 ```vue
-<Marker v-slot="{ crossed }" @cross="onCross">
-  <Tween
-    :trigger="crossed"
-    :trigger-actions="['play', 'restart']"
-    :parent="null"
-    method="from"
-    :vars="{ rotate: 360, scale: 0, stagger: 0.1 }"
-  >
-    <SplitText type="chars">
-      <p class="target">Split text target</p>
-    </SplitText>
-  </Tween>
-</Marker>
+<script setup>
+import { Marker, SplitText, Tween } from 'deja-vue'
+
+function onCross (direction) {
+  console.log('Crossed', direction)
+}
+</script>
+
+<template>
+  <Marker v-slot="{ crossed }" @cross="onCross">
+    <Tween
+      :trigger="crossed"
+      :trigger-actions="['play', 'restart']"
+      :parent="null"
+      method="from"
+      :vars="{ rotate: 360, scale: 0, stagger: 0.1 }"
+    >
+      <SplitText type="chars">
+        <p class="target">Split text target</p>
+      </SplitText>
+    </Tween>
+  </Marker>
+</template>
 ```
 
 ## useSplitText

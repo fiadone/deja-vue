@@ -27,7 +27,13 @@ Check **`triggerActions`**. Default is **`play`** / **`reverse`**. Use e.g. **`[
 Keep **`vars`** compatible with **`method`**. If you switch between a single vars object and a **`fromTo`** tuple, use a key so Vue recreates the component:
 
 ```vue
-<Tween :key="method" :method="method" :vars="vars" />
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween :key="method" :method="method" :vars="vars" />
+</template>
 ```
 
 ## Nesting / parent not found

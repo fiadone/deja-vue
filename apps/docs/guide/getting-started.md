@@ -24,40 +24,44 @@ GSAP plugins are not registered by the library. Register any plugin you use, suc
 ## Basic usage
 
 ```vue
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
 <template>
   <Tween method="to" :vars="{ x: 100, duration: 1 }">
     <div class="target">Target</div>
   </Tween>
 </template>
-
-<script setup>
-import { Tween } from 'deja-vue'
-</script>
 ```
 
 The slotted element is the tween **target** (not an extra wrapper).
 
-## Declarative sequences
+## Programmatic control
 
-Use nested components inside **`Timeline`** (no `tweens` array prop):
+### Trigger
 
-```vue
-<Timeline>
-  <Tween method="to" :vars="{ x: 100, duration: 1 }" />
-  <Tween method="to" :vars="{ y: 50, duration: 0.5 }" />
-</Timeline>
-```
-
-## Reactive controls
+<ClientOnly>
+  <TweenTriggerDemo />
+</ClientOnly>
 
 ```vue
-<Tween
-  v-model:progress="progress"
-  method="to"
-  :vars="{ x: 100, duration: 1 }"
->
-  <div class="target">Target</div>
-</Tween>
+<script setup>
+import { ref } from 'vue'
+import { Tween } from 'deja-vue'
+
+const trigger = ref(false)
+</script>
+
+<template>
+  <Tween
+    v-model:trigger="trigger"
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+  >
+    <div class="target">Target</div>
+  </Tween>
+</template>
 ```
 
 See [Animation controls](./controls.md) for **`trigger`** and **`triggerActions`**.
@@ -65,12 +69,67 @@ See [Animation controls](./controls.md) for **`trigger`** and **`triggerActions`
 Use **`v-model:trigger.once`** when a trigger should run only for the first defined value change:
 
 ```vue
-<Tween
-  v-model:trigger.once="entered"
-  :trigger-actions="['play', 'restart']"
-  method="from"
-  :vars="{ opacity: 0 }"
-/>
+<script setup>
+import { ref } from 'vue'
+import { Tween } from 'deja-vue'
+
+const entered = ref(false)
+</script>
+
+<template>
+  <Tween
+    v-model:trigger.once="entered"
+    :trigger-actions="['play', 'restart']"
+    method="from"
+    :vars="{ opacity: 0 }"
+  />
+</template>
+```
+
+### Progress
+
+<ClientOnly>
+  <ControlsProgressDemo />
+</ClientOnly>
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Tween } from 'deja-vue'
+
+const progress = ref(0)
+</script>
+
+<template>
+  <Tween
+    v-model:progress="progress"
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+  >
+    <div class="target">Target</div>
+  </Tween>
+</template>
+```
+
+## Declarative sequences
+
+Use nested components inside **`Timeline`** (no `tweens` array prop):
+
+<ClientOnly>
+  <TimelineSequenceDemo />
+</ClientOnly>
+
+```vue
+<script setup>
+import { Timeline, Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Timeline>
+    <Tween method="to" :vars="{ x: 100, duration: 1 }" />
+    <Tween method="to" :vars="{ y: 50, duration: 0.5 }" />
+  </Timeline>
+</template>
 ```
 
 ## Reactivity of `vars`

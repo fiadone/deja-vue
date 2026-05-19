@@ -3,10 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vitepress build",
+    "build": "npm run lint:fix && vitepress build",
     "dev": "vitepress dev",
+    "lint": "eslint .vitepress",
+    "lint:fix": "eslint .vitepress --fix",
     "preview": "vitepress preview",
-    "typecheck": "vue-tsc --noEmit"
+    "typecheck": "npm run lint && vue-tsc --noEmit"
   },
   "dependencies": {
     "deja-vue": "*",

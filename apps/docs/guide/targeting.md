@@ -8,31 +8,49 @@
 ## Default: slot content
 
 ```vue
-<Tween method="to" :vars="{ x: 80, duration: 0.6 }">
-  <div class="target">Target</div>
-</Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween method="to" :vars="{ x: 80, duration: 0.6 }">
+    <div class="target">Target</div>
+  </Tween>
+</template>
 ```
 
 ## `target="self"` with `is`
 
 ```vue
-<Tween is="section" target="self" method="to" :vars="{ opacity: 0.4, duration: 0.5 }">
-  <div class="target">Target</div>
-</Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween is="section" target="self" method="to" :vars="{ opacity: 0.4, duration: 0.5 }">
+    <div class="target">Target</div>
+  </Tween>
+</template>
 ```
 
 ## `is` + selector
 
 ```vue
-<Tween
-  is="div"
-  target=".highlight"
-  method="to"
-  :vars="{ scale: 1.05, duration: 0.3 }"
->
-  <div class="target">Target</div>
-  <div class="highlight">Highlighted target</div>
-</Tween>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween
+    is="div"
+    target=".highlight"
+    method="to"
+    :vars="{ scale: 1.05, duration: 0.3 }"
+  >
+    <div class="target">Target</div>
+    <div class="highlight">Highlighted target</div>
+  </Tween>
+</template>
 ```
 
 ## Multiple nodes and stagger
@@ -44,11 +62,17 @@ Several slot roots → array target; use **`stagger`** in **`vars`**.
 Set **`seamless`** on a nested **`Tween`** so the **parent** scope uses that child’s **`target`** (not only its wrapper DOM). Used for chained tweens on the same elements:
 
 ```vue
-<Tween method="from" :vars="{ scale: 0, stagger: 0.1 }">
-  <Tween seamless method="to" :vars="{ x: 200, stagger: 0.1 }">
-    <div class="target">Target</div>
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween method="from" :vars="{ scale: 0, stagger: 0.1 }">
+    <Tween seamless method="to" :vars="{ x: 200, stagger: 0.1 }">
+      <div class="target">Target</div>
+    </Tween>
   </Tween>
-</Tween>
+</template>
 ```
 
 ## `SplitText`
