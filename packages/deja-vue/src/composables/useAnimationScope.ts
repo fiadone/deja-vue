@@ -6,7 +6,7 @@ import { getNodeElement, useUnwrap } from 'vue-unwrap'
 import type { DejaVueInstanceExposed, DejaVueNode, WrappableAnimation } from '../types'
 import { toNonEmptyArray } from '../utils'
 
-type AnimationScopeProps = Omit<DejaVueInstanceExposed, '$el'>
+export type AnimationScopeProps = Omit<DejaVueInstanceExposed, '$el'>
 
 const AnimationScopePropTypes = {
   animation: Object as PropType<DejaVueInstanceExposed['animation']>,
@@ -31,10 +31,10 @@ export function useAnimationScope (childrenTargetResolver = resolveChildrenTarge
   const attrs = useAttrs() as WrappableAnimation
   const { $el, children, Unwrap: AnimationScope } = useUnwrap<DejaVueNode, AnimationScopeProps>(AnimationScopePropTypes)
   const target = computed<gsap.TweenTarget>(() => {
-    if (attrs.target && typeof attrs.target !== 'string') return attrs.target
-    if (!attrs.is || attrs.target === 'children') return toNonEmptyArray(childrenTargetResolver(children))
-    if (!attrs.target || attrs.target === 'self') return $el.value
-    return toNonEmptyArray(gsap.utils.toArray<Element>(attrs.target, $el.value)) // ensure scoped DOM query selection
+    if (!attrs.is || !attrs.target || attrs.target === 'children') return toNonEmptyArray(childrenTargetResolver(children))
+    if (typeof attrs.target !== 'string') return attrs.target
+    if (attrs.is && attrs.target === 'self') return $el.value
+    return toNonEmptyArray(gsap.utils.toArray<Element>(attrs.target, $el.value)) // try scoped DOM query selection
   })
 
   watch(target, (_, previousTarget) => {

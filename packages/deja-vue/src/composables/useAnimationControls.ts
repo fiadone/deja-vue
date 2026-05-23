@@ -1,29 +1,23 @@
-import type { MaybeRefOrGetter, ModelRef } from 'vue'
-import { computed, ref, toValue, watch } from 'vue'
+import type { ComputedRef, EffectScope, MaybeRefOrGetter, ModelRef, Reactive, WatchOptions } from 'vue'
+import { effectScope, ref, toValue, watch } from 'vue'
 
+import type { Animation } from '../core/Animation'
 import type { AnimationDirection, ControllableAnimation, TweenAction } from '../types'
-import type { Animation } from '../utils/Animation'
 
-type AnimationControls = {
+export interface AnimationControls {
   progress: ModelRef<ControllableAnimation['progress']>
-  trigger: {
-    actions: MaybeRefOrGetter<ControllableAnimation['triggerActions']>
-    once: true | undefined
-    state: ModelRef<ControllableAnimation['trigger']>
-  }
+  trigger: ComputedRef<unknown>
+  triggerAction: MaybeRefOrGetter<TweenAction | undefined>
+  triggerOptions: Reactive<WatchOptions>
 }
 
 export function useAnimationControls (animation: Animation, controls: AnimationControls) {
-  const controlled = controls.progress.value !== undefined || controls.trigger.state.value !== undefined
   const direction = ref<AnimationDirection>(0)
-  const triggerActions = computed<[TweenAction, TweenAction]>(() => {
-    const value = toValue(controls.trigger.actions)
-    if (typeof value === 'string' && value.trim()) return [value, value]
-    if (Array.isArray(value) && value.length) return [value[0] || 'play', value[1] || value[0] || 'reverse']
-    return ['play', 'reverse']
-  })
+  const controlled = controls.progress.value !== undefined || controls.trigger.value !== undefined
+  let triggerScope: EffectScope
 
-  if (controlled && controls.trigger.state.value !== true) animation.timeline.pause()
+  if (controlled) animation.timeline.pause()
+  if (controls.progress.value === undefined) controls.progress.value = 0
 
   animation.on('update', () => {
     const progress = animation.timeline.progress()
@@ -32,17 +26,22 @@ export function useAnimationControls (animation: Animation, controls: AnimationC
   })
 
   watch(controls.progress, (currentValue, previousValue) => {
+    if (previousValue === undefined) return
     if (currentValue === undefined || currentValue === previousValue) return
-    if (previousValue !== undefined) direction.value = currentValue > previousValue ? 1 : -1
+    direction.value = currentValue > previousValue ? 1 : -1
     animation.timeline.progress(currentValue)
-  }, { flush: 'sync', immediate: true })
+  }, { flush: 'post' })
 
-  watch(controls.trigger.state, value => {
-    if (value === undefined) return
-    const [onTrue, onFalse = onTrue] = triggerActions.value
-    const action = value ? onTrue : onFalse
-    animation.run(action)
-  }, { flush: 'sync', once: controls.trigger.once })
+  watch(controls.triggerOptions, watchOptions => {
+    triggerScope?.stop()
+    triggerScope = effectScope()
+    triggerScope.run(() => {
+      watch(controls.trigger, () => {
+        const action = toValue(controls.triggerAction) || 'play'
+        animation.run(action)
+      }, watchOptions)
+    })
+  }, { immediate: true })
 
   return {
     controlled,

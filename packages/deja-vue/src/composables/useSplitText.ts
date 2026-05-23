@@ -1,6 +1,9 @@
+import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import type { MaybeRefOrGetter } from 'vue'
 import { computed, onUnmounted, shallowReactive, shallowRef, toValue, watchEffect } from 'vue'
+
+gsap.registerPlugin(SplitText)
 
 // reconstruct the SplitText.Vars to make it compatible with Vue's props definition,
 // since the original type from GSAP includes an index signature ([key: string]: any)

@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import type { WatchOptions } from 'vue'
 import { computed, onUnmounted, watch } from 'vue'
 
-import { useAnimationControls } from '../composables/useAnimationControls'
+import { type AnimationControls, useAnimationControls } from '../composables/useAnimationControls'
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import { useAnimationScope } from '../composables/useAnimationScope'
-import { useStableTweenVars } from '../composables/useStableTweenVars'
+import { useStableObjectProp } from '../composables/useStableObjectProp'
+import { useTweenVars } from '../composables/useTweenVars'
 import { ANIMATION_EVENTS } from '../constants'
-import type { AnimationEventEmitter, ControllableAnimation, DejaVueInstance, TweenDefinition } from '../types'
+import { Animation } from '../core/Animation'
+import type { AnimationComposeDefinition, AnimationEventEmitter, ControllableAnimation, DejaVueInstance, TweenDefinition } from '../types'
 import { cloneObject } from '../utils'
-import { Animation } from '../utils/Animation'
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
@@ -17,31 +19,33 @@ const props = defineProps<ControllableAnimation & TweenDefinition & { seamless?:
 const animation = new Animation()
 
 const progress = defineModel<number>('progress', { default: undefined })
-const [triggerState, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
-const trigger = {
-  once: triggerModifier.once,
-  state: triggerState,
-  actions: () => props.triggerActions
+
+const controls: AnimationControls = {
+  progress,
+  trigger: computed(() => props.trigger),
+  triggerAction: computed(() => props.triggerAction),
+  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions ?? {})
 }
 
-const { controlled, direction } = useAnimationControls(animation, { progress, trigger })
+const { controlled, direction } = useAnimationControls(animation, controls)
 const { parent } = useAnimationNesting({ animation })
 const { $el, AnimationScope, target } = useAnimationScope()
-const tweenVars = useStableTweenVars(() => props.vars)
+const { method, vars } = useTweenVars(props)
 const seamless = computed(() => props.seamless)
 
 for (const event of ANIMATION_EVENTS) {
   animation.on(event, () => emit(event, animation, parent))
 }
 
-watch([target, () => props.method, tweenVars], ([currentTarget, method, vars]) => {
+watch([target, method, vars], async ([currentTarget, currentMethod, currentVars]) => {
   animation.clear(true)
-  if (!currentTarget || !method || !vars) return
-  animation.compose(currentTarget, {
-    method,
-    vars: cloneObject(vars) // prevent gsap from mutating tweenVars
-  } as TweenDefinition)
-})
+  if (!currentTarget || !currentMethod) return
+  animation.compose({
+    method: currentMethod,
+    target: currentTarget,
+    vars: cloneObject(currentVars)
+  } as AnimationComposeDefinition)
+}, { deep: true })
 
 onUnmounted(() => animation.dispose())
 

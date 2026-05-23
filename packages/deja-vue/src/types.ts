@@ -1,9 +1,10 @@
-import type { Component, ComputedRef, ModelRef, Ref, ShallowRef, UnwrapRef } from 'vue'
+import type { Component, ComputedRef, ModelRef, Ref, ShallowRef, UnwrapRef, WatchOptions } from 'vue'
 import type { NodeRef } from 'vue-unwrap'
 
-import type { Animation } from './utils/Animation'
+import type { Animation } from './core/Animation'
 
 export type NonEmptyArray<T> = [T, ...T[]]
+export type PlainObject<T> = [T] extends [readonly unknown[]] ? never : T
 
 export type DejaVueNode = DejaVueComponent | NodeRef
 
@@ -29,6 +30,12 @@ export type DejaVueInstanceExposed = {
 
 export type AnimationChild = Animation | gsap.Callback | string
 
+export type AnimationComposeDefinition = { target: gsap.TweenTarget } & (
+  | { method: 'fromTo', vars: [gsap.TweenVars, gsap.TweenVars] }
+  | { method: 'from' | 'to', vars: gsap.TweenVars }
+  | { method: string, vars: Record<string, unknown> }
+)
+
 export type AnimationDirection = 1 | -1 | 0
 
 export type AnimationEvent = 'complete' | 'interrupt' | 'repeat' | 'reverseComplete' | 'start' | 'update'
@@ -43,8 +50,8 @@ export type AnimationNestableChild = {
 export type ControllableAnimation = {
   progress?: number
 } & (
-  | { trigger?: boolean, triggerActions?: TweenAction | [TweenAction, TweenAction] }
-  | { trigger?: never, triggerActions?: never }
+  | { trigger?: unknown, triggerAction?: TweenAction, triggerOptions?: WatchOptions }
+  | { trigger?: never, triggerAction?: never, triggerOptions?: never }
 )
 
 export type WrappableAnimation = (
@@ -55,7 +62,8 @@ export type WrappableAnimation = (
 export type TweenAction = 'play' | 'pause' | 'restart' | 'resume' | 'reverse'
 
 export type TweenDefinition = (
-  | { method: 'from' | 'to', vars: gsap.TweenVars }
-  | { method: 'fromTo', vars: [gsap.TweenVars, gsap.TweenVars] }
-  | { method: `effect:${string}`, vars?: gsap.TweenVars }
+  | { from: gsap.TweenVars, to: gsap.TweenVars, effect?: never, effectOptions?: never }
+  | { from: gsap.TweenVars, to?: never, effect?: never, effectOptions?: never }
+  | { from?: never, to: gsap.TweenVars, effect?: never, effectOptions?: never }
+  | { from?: never, to?: never, effect?: string, effectOptions?: Record<string, unknown> }
 )

@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { WatchOptions } from 'vue'
 import { computed, onUnmounted, provide, watch } from 'vue'
 
-import { useAnimationControls } from '../composables/useAnimationControls'
+import { type AnimationControls, useAnimationControls } from '../composables/useAnimationControls'
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import { useAnimationScope } from '../composables/useAnimationScope'
+import { useStableObjectProp } from '../composables/useStableObjectProp'
 import { ANIMATION_EVENTS, dejaVueParentInstance } from '../constants'
+import { Animation } from '../core/Animation'
 import type { AnimationEventEmitter, ControllableAnimation, DejaVueInstance } from '../types'
-import { Animation } from '../utils/Animation'
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
@@ -24,14 +26,15 @@ const animation = new Animation({
 })
 
 const progress = defineModel<number>('progress', { default: undefined })
-const [triggerState, triggerModifier] = defineModel<boolean, 'once'>('trigger', { default: undefined })
-const trigger = {
-  once: triggerModifier.once,
-  state: triggerState,
-  actions: () => props.triggerActions
+
+const controls: AnimationControls = {
+  progress,
+  trigger: computed(() => props.trigger),
+  triggerAction: computed(() => props.triggerAction),
+  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions ?? {})
 }
 
-const { controlled, direction } = useAnimationControls(animation, { progress, trigger })
+const { controlled, direction } = useAnimationControls(animation, controls)
 const { parent } = useAnimationNesting({ animation })
 const { $el, AnimationScope, target } = useAnimationScope()
 const seamless = computed(() => props.seamless)

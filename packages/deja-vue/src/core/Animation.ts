@@ -1,7 +1,8 @@
 import { gsap } from 'gsap'
 
 import { ANIMATION_EVENTS } from '../constants'
-import type { AnimationChild, AnimationEvent, TweenAction, TweenDefinition } from '../types'
+import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenAction } from '../types'
+import { applyTimelineTotalDuration, resolveTimelinePosition } from '../utils/timeline'
 import { EventBus } from './EventBus'
 
 export class Animation extends EventBus<AnimationEvent> {
@@ -29,7 +30,7 @@ export class Animation extends EventBus<AnimationEvent> {
     }
   }
 
-  add (child: AnimationChild, position?: gsap.Position, timeShift?: boolean) {
+  add (child: AnimationChild, position?: gsap.Position, timeShift = true) {
     if (!this.timeline) return
     if (typeof child === 'string') {
       this.timeline.addLabel(child, position)
@@ -38,18 +39,15 @@ export class Animation extends EventBus<AnimationEvent> {
     } else if (this.timeline.isActive()) {
       this.once(['complete', 'reverseComplete'], () => this.add(child, position, timeShift))
     } else {
-      if (timeShift && (typeof position === 'number' || (typeof position === 'string' && position in this.timeline.labels))) {
-        const startTime = typeof position === 'number' ? position : this.timeline.labels[position]
-        const duration = child.timeline.duration()
-        this.timeline.getChildren(false, true, true).forEach(child => (child.startTime() > startTime && child.startTime(child.startTime() + duration)))
-        this.timeline.add(child.timeline, position)
-        this.timeline.invalidate()
+      const targetTime = timeShift ? resolveTimelinePosition(this.timeline, position) : null
+      if (targetTime !== null) {
+        // Strictly after targetTime so co-located parallel siblings are not shifted.
+        this.timeline.shiftChildren(child.timeline.duration(), false, targetTime + Number.EPSILON)
+        this.timeline.add(child.timeline, targetTime)
       } else {
         this.timeline.add(child.timeline, position)
       }
-      // preserve parent's total duration (if defined)
-      const totalDuration = 'totalDuration' in (this.timeline.data || {}) ? this.timeline.data.totalDuration : undefined
-      if (totalDuration) this.timeline.duration(totalDuration)
+      applyTimelineTotalDuration(this.timeline)
     }
   }
 
@@ -64,33 +62,27 @@ export class Animation extends EventBus<AnimationEvent> {
     } else {
       const startTime = child.timeline.startTime()
       const duration = child.timeline.duration()
+      const endTime = startTime + duration
       this.timeline.remove(child.timeline)
-      this.timeline.getChildren(false, true, true).forEach(child => (child.startTime() > startTime && child.startTime(child.startTime() - duration)))
-      this.timeline.invalidate()
+      this.timeline.shiftChildren(-duration, false, endTime)
+      applyTimelineTotalDuration(this.timeline)
     }
   }
 
-  compose (target: gsap.TweenTarget, definition: TweenDefinition | TweenDefinition[], withContext = true) {
-    if (!this.timeline || !target || (Array.isArray(target) && !target.length)) return
+  compose (definition: AnimationComposeDefinition, withContext = true) {
+    if (!this.timeline || !definition.target || (Array.isArray(definition.target) && !definition.target.length)) return
 
     if (withContext) {
-      this.ctx = gsap.context(() => this.compose(target, definition, false))
+      this.ctx = gsap.context(() => this.compose(definition, false))
       return
     }
 
-    if (Array.isArray(definition)) {
-      definition.forEach(tween => this.compose(target, tween, false))
-    } else if (definition.method.startsWith('effect')) {
-      try {
-        const [, effect] = definition.method.split(':')
-        this.timeline[effect](target, definition.vars)
-      } catch {
-        console.warn('[deja-vue] Missing or unknown gsap effect.')
-      }
-    } else if (definition.method === 'fromTo') {
-      this.timeline.fromTo(target, ...definition.vars)
+    if (definition.method === 'fromTo') {
+      this.timeline.fromTo(definition.target, ...definition.vars as [gsap.TweenVars, gsap.TweenVars])
+    } else if (definition.method in this.timeline) {
+      this.timeline[definition.method](definition.target, definition.vars)
     } else {
-      this.timeline[definition.method](target, definition.vars)
+      console.warn('[deja-vue] Missing or unknown gsap effect.')
     }
   }
 

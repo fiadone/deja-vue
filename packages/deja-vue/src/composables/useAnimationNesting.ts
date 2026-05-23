@@ -2,11 +2,11 @@ import type { MaybeRefOrGetter } from 'vue'
 import { computed, inject, nextTick, onUnmounted, toValue, useAttrs, watch } from 'vue'
 
 import { dejaVueParentInstance } from '../constants'
+import { Animation } from '../core/Animation'
 import type { AnimationChild, AnimationNestableChild } from '../types'
 import { toNonEmptyArray } from '../utils'
-import { Animation } from '../utils/Animation'
 
-type AnimationNestingTarget = (
+export type AnimationNestingTarget = (
   | { animation: Animation }
   | { callback: gsap.Callback }
   | { label: MaybeRefOrGetter<string | undefined> }
