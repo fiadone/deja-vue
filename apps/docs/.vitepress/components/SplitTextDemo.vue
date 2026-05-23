@@ -1,14 +1,13 @@
-<script setup lang="ts">
-//
-</script>
-
 <template>
   <Demo v-slot="scope">
-    <Timeline v-model:trigger="scope.trigger">
-      <Tween method="from" :vars="{ y: 24, opacity: 0, stagger: 0.04 }">
-        <SplitText type="chars" :reduce-white-space="true">
+    <Timeline
+      :trigger="scope.trigger"
+      :trigger-action="scope.triggerAction"
+    >
+      <Tween :from="{ opacity: 0, y: 10, stagger: 0.05 }">
+        <SplitText type="chars">
           <p class="demo-split">
-            Split text target
+            Animated text
           </p>
         </SplitText>
       </Tween>

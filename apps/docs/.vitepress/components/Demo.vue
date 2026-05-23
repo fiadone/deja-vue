@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const progress = ref(0)
 const trigger = ref(false)
+const triggerAction = ref('play')
 
-function setProgress (value: number) {
-  progress.value = value
-}
-
-function setTriggerState (value: boolean) {
-  trigger.value = value
-}
+watch(trigger, value => {
+  triggerAction.value = value ? 'reverse' : 'play'
+}, { flush: 'post' })
 </script>
 
 <template>
@@ -19,9 +16,9 @@ function setTriggerState (value: boolean) {
       <slot
         name="controls"
         :progress
-        :set-progress
-        :set-trigger-state
+        :set-progress="(value: number) => progress = value"
         :trigger
+        :trigger-action
       >
         <button
           class="demo-button"
@@ -35,9 +32,8 @@ function setTriggerState (value: boolean) {
     <div class="demo-content">
       <slot
         :progress
-        :set-progress
-        :set-trigger-state
         :trigger
+        :trigger-action
       />
     </div>
   </div>

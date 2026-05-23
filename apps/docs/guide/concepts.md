@@ -36,18 +36,19 @@ Comfort with **Vue 3** (`<script setup>`, props, refs, `v-model`, slots) and **G
          │
          inject(parent) ──► useAnimationNesting
                                    │
-                                   └── parent.animation.add(child, position)
+                                   └── parent.animation.add / remove
+                                       (Animation children: timeShift + shiftChildren)
 ```
 
-**`Marker`** can register both a **label** and a **callback** in one nesting call.
+**`Marker`** can register both a **label** and a **callback** in one nesting call (raw GSAP placement, no **`shiftChildren`**).
 
 Patterns: **[Nesting animations](./nesting.md)**.
 
-## Compose, stable vars, and rebuild
+## Compose, stable props, and rebuild
 
-**`Tween`** watches **`target`**, **`method`**, and stable **`vars`** ([`useStableTweenVars`](../api/composables.md#usestabletweenvars)). On change it **`clear(true)`** and **`compose`** again. Prefer **`progress` / `trigger`** for playback UI; use GSAP **`repeat`**, **`yoyo`** for loop behavior inside one definition.
+**`Tween`** watches **`target`**, the derived GSAP **method** (`to`, `from`, `fromTo`, or **`effect`**), and stable **`from` / `to` / `effect-options`** (patched in place via [`useStableObjectProp`](../api/composables.md#usestableobjectprop); the compose watcher is **deep**). On change it **`clear(true)`** and **`compose`** again with an [`AnimationComposeDefinition`](../api/types.md#animationcomposedefinition). Prefer **`progress` / `trigger`** for playback UI; use GSAP **`repeat`**, **`yoyo`** for loop behavior inside one definition.
 
-The docs use inline `vars` to keep examples compact and clear. Déjà Vue stabilizes those values internally, so inline objects are safe even if, in application code, it is still clearer and strongly recommended as best practice to name tween definitions in script and pass them by reference, especially when they are reused, typed, or derived from state.
+The docs use inline tween objects to keep examples compact. Déjà Vue stabilizes those values internally, so inline objects are safe; in application code, naming definitions in script and passing them by reference remains best practice for reuse, typing, and clarity.
 
 ## Direction
 
@@ -65,9 +66,9 @@ Guides: imperative, instructional. API: tables-first. Cross-links avoid duplicat
 | DOM targeting | [Animation targets](./targeting.md) |
 | Single tweens, seamless chains | [Tween](./tween.md) |
 | Sequences (nested only) | [Timeline](./timeline.md) |
-| Scrub / trigger / triggerActions | [Controls](./controls.md) |
+| Scrub / trigger / trigger-action | [Controls](./controls.md) |
 | Parent `position`, Marker | [Nesting](./nesting.md) |
-| Split text in Tween slot | [Split text](./split-text.md) |
-| Upgrading | [Upgrading](./migration.md) |
+| SplitText in Tween slot | [SplitText](./split-text.md) |
+| Upgrading to v2 | [Upgrading to v2](./migration.md) |
 | Issues | [Troubleshooting](./troubleshooting.md) |
 | Props / types | [Components API](../api/components.md), [Types](../api/types.md) |

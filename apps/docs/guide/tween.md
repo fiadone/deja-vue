@@ -11,14 +11,19 @@ The `Tween` component maps GSAP tween methods through **`method`** and **`vars`*
   <TweenBasicDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="to" :vars="{ x: 100, duration: 1 }">
-    <div class="target">Target</div>
+  <Tween
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
@@ -35,7 +40,7 @@ Same as GSAP. For **`fromTo`**, pass **`vars`** as a two-element array.
 
 `vars` may update reactively, but its shape must stay compatible with **`method`**. If you switch between a single vars object (`from`, `to`, `effect:%NAME%`) and a **`fromTo`** tuple, key the component so Vue recreates it:
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
@@ -81,14 +86,23 @@ Scope props: **`animation`**, **`controlled`**, **`direction`**, **`parent`**, *
   <TweenProgressSlotDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="to" :vars="{ x: 100, duration: 1 }" v-slot="{ progress }">
-    <div class="target">Progress: {{ progress }}</div>
+  <Tween
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+    v-slot="{ progress }"
+  >
+    <div
+      class="target"
+    >
+      Progress:
+      {{ progress }}
+    </div>
   </Tween>
 </template>
 ```
@@ -101,17 +115,24 @@ import { Tween } from 'deja-vue'
 
 ## Template ref
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const tweenRef = ref()
 </script>
 
 <template>
-  <Tween ref="tweenRef" method="to" :vars="{ x: 100, duration: 1 }">
-    <div class="target">Target</div>
+  <Tween
+    ref="tweenRef"
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 
   <!-- tweenRef.animation.timeline.play() -->
@@ -124,19 +145,24 @@ const tweenRef = ref()
   <TweenStaggerDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="from" :vars="{ opacity: 0, duration: 0.5 }">
-    <div class="target">Target</div>
+  <Tween
+    method="from"
+    :vars="{ opacity: 0, duration: 0.5 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
@@ -146,7 +172,14 @@ import { Tween } from 'deja-vue'
     method="from"
     :vars="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }"
   >
-    <div v-for="item in 5" :key="item" class="box">Box {{ item }}</div>
+    <div
+      v-for="item in 5"
+      :key="item"
+      class="box"
+    >
+      Box
+      {{ item }}
+    </div>
   </Tween>
 </template>
 ```

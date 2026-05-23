@@ -28,7 +28,7 @@ features:
     details: Drive playback with props, models, triggers, and progress values so animations can respond naturally to application state.
   - title: "🧭 Nested timelines"
     details: Combine timelines, child tweens, labels, and marker callbacks to coordinate multi-step sequences without losing readability.
-  - title: "✂️ Split text effects"
+  - title: "✂️ SplitText effects"
     details: Animate words, lines, or characters through SplitText utilities designed for expressive hero sections and editorial layouts.
   - title: "🛡️ TypeScript ready"
     details: Work with typed components, composables, events, and animation definitions for better editor feedback as your motion grows.

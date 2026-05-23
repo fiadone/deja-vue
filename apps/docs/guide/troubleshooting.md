@@ -12,7 +12,7 @@
 ## Wrong element animated
 
 1. **Nested `Tween` without `seamless`** — Parent may tween wrapper DOM; set **`seamless`** on inner tweens for chains.
-2. **`SplitText` outside `Tween` slot** — Parent must wrap **`SplitText`** so **`seamless`** / **`target`** apply ([Split text](./split-text.md)).
+2. **`SplitText` outside `Tween` slot** — Parent must wrap **`SplitText`** so **`seamless`** / **`target`** apply ([SplitText](./split-text.md)).
 
 ## `progress` does not scrub
 
@@ -20,19 +20,30 @@ Use **`v-model:progress`**. Bind a defined number, not `undefined`. Pause manual
 
 ## `trigger` does unexpected action
 
-Check **`triggerActions`**. Default is **`play`** / **`reverse`**. Use e.g. **`['play', 'restart']`** for different off behavior.
+Each **`trigger`** change runs **`trigger-action`** (default **`play`**) in the trigger watcher. Bind the action in the **same template** as **`trigger`**, e.g. **`:trigger-action="trigger ? 'reverse' : 'play'"`**.
 
-## Tween vars shape warning
+Avoid updating **`trigger-action`** only in a separate **`watch(trigger, …, { flush: 'post' })`** — that can run **after** the library watcher has already fired. The docs **`Demo`** wrapper uses a post watcher to supply **`trigger-action`** to slot demos; in your app, prefer inline bindings. Use **`trigger-options`** (e.g. **`{ flush: 'post' }`**) only when you intentionally need to align watcher timing. See **[Animation controls](./controls.md)**.
 
-Keep **`vars`** compatible with **`method`**. If you switch between a single vars object and a **`fromTo`** tuple, use a key so Vue recreates the component:
+## Tween kind / prop mismatch
 
-```vue
+Use only one kind per **`Tween`**: **`to`**, **`from`**, **`from`** + **`to`**, or **`effect`**. Switching kind at runtime can leave stale keys on stable objects — use a **`:key`** so Vue recreates the component:
+
+```html
 <script setup>
+import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
+
+const mode = ref<'to' | 'fromTo'>('to')
 </script>
 
 <template>
-  <Tween :key="method" :method="method" :vars="vars" />
+  <Tween
+    :key="mode"
+    v-bind="mode === 'fromTo'
+      ? { from: { opacity: 0 }, to: { opacity: 1 } }
+      : { to: { opacity: 1 } }"
+  />
 </template>
 ```
 
@@ -41,11 +52,15 @@ import { Tween } from 'deja-vue'
 - **`parent="null"`** opts out of inject.
 - Manual **`parent`** must be the **`DejaVueInstance`** ref (template ref on **`Timeline`** / **`Tween`**), not only `animation`.
 
+## Conditional tweens land in the wrong order
+
+Each nestable registers independently. Without **`position`**, a child added after **`v-if`** becomes true is appended at the **timeline end**, not reinserted at its template slot. **Remove** still collapses trailing siblings. Set an explicit **`position`** (label, absolute time, **`+=`**, etc.) or see **[Dynamic children](./nesting.md#dynamic-children-v-if-lists)**.
+
 ## Marker `cross` fires oddly
 
 **`@cross`** receives **`direction`** from the **parent** animation’s **`direction`** ref at crossing time. Use `direction === 1` vs `-1` for forward vs reverse.
 
-## Split text flicker
+## SplitText flicker
 
 Avoid recreating large **`SplitText`** option objects every render. **`type`** defaults to **`lines,words,chars`** if omitted.
 

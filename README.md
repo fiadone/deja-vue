@@ -20,7 +20,7 @@ npm install deja-vue gsap
 
 ## Usage
 
-```vue
+```html
 <script setup lang="ts">
 import { Tween } from 'deja-vue'
 </script>

@@ -7,35 +7,47 @@
 
 ## Default: slot content
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="to" :vars="{ x: 80, duration: 0.6 }">
-    <div class="target">Target</div>
+  <Tween
+    method="to"
+    :vars="{ x: 80, duration: 0.6 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
 
 ## `target="self"` with `is`
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween is="section" target="self" method="to" :vars="{ opacity: 0.4, duration: 0.5 }">
-    <div class="target">Target</div>
+  <Tween
+    is="section"
+    method="to"
+    target="self"
+    :vars="{ opacity: 0.4, duration: 0.5 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
 
 ## `is` + selector
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
@@ -43,12 +55,19 @@ import { Tween } from 'deja-vue'
 <template>
   <Tween
     is="div"
-    target=".highlight"
     method="to"
+    target=".highlight"
     :vars="{ scale: 1.05, duration: 0.3 }"
   >
-    <div class="target">Target</div>
-    <div class="highlight">Highlighted target</div>
+    <div class="target">
+      Target
+    </div>
+    <div
+      class="highlight"
+    >
+      Highlighted
+      target
+    </div>
   </Tween>
 </template>
 ```
@@ -61,15 +80,24 @@ Several slot roots → array target; use **`stagger`** in **`vars`**.
 
 Set **`seamless`** on a nested **`Tween`** so the **parent** scope uses that child’s **`target`** (not only its wrapper DOM). Used for chained tweens on the same elements:
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="from" :vars="{ scale: 0, stagger: 0.1 }">
-    <Tween seamless method="to" :vars="{ x: 200, stagger: 0.1 }">
-      <div class="target">Target</div>
+  <Tween
+    method="from"
+    :vars="{ scale: 0, stagger: 0.1 }"
+  >
+    <Tween
+      seamless
+      method="to"
+      :vars="{ x: 200, stagger: 0.1 }"
+    >
+      <div class="target">
+        Target
+      </div>
     </Tween>
   </Tween>
 </template>

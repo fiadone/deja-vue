@@ -1,28 +1,13 @@
-<script setup lang="ts">
-//
-</script>
-
 <template>
   <Demo v-slot="scope">
-    <Timeline v-model:trigger="scope.trigger">
-      <Tween method="from" :vars="{ scale: 0, stagger: 0.1 }">
-        <Tween
-          seamless
-          method="to"
-          :vars="{ rotate: 360, stagger: 0.1 }"
-        >
-          <Tween
-            seamless
-            method="to"
-            :vars="{ x: 100, stagger: 0.1 }"
-          >
-            <div
-              v-for="n in 3"
-              :key="n"
-              class="demo-box"
-            >
-              {{ n }}
-            </div>
+    <Timeline
+      :trigger="scope.trigger"
+      :trigger-action="scope.triggerAction"
+    >
+      <Tween :from="{ opacity: 0, stagger: 0.1 }">
+        <Tween seamless :to="{ rotate: 90, stagger: 0.1 }">
+          <Tween seamless :to="{ x: 100, stagger: 0.1 }">
+            <div v-for="n in 3" :key="n" class="demo-box" />
           </Tween>
         </Tween>
       </Tween>

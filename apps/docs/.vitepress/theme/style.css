@@ -1,30 +1,33 @@
 :root {
-  --vp-c-brand-1: #74C34C;
-  --vp-c-brand-2: #AE84AE;
-  --vp-button-brand-bg: #9D6B9E;
-  --vp-button-brand-hover-bg: #AE84AE;
-  --vp-button-brand-active-bg: #AE84AE;
+  --vp-c-brand-1: #74c34c;
+  --vp-c-brand-2: #ae84ae;
+  --vp-button-brand-bg: #9d6b9e;
+  --vp-button-brand-hover-bg: #ae84ae;
+  --vp-button-brand-active-bg: #ae84ae;
 }
 
 .dark {
-  --vp-c-brand-1: #ABFF84;
-  --vp-c-gutter: #0F0F11;
-  --vp-code-block-bg: #17161A;
-  --vp-sidebar-bg-color: #17161A;
+  --vp-c-brand-1: #abff84;
+  --vp-c-gutter: #0f0f11;
+  --vp-code-block-bg: #17161a;
+  --vp-sidebar-bg-color: #17161a;
 }
 
 .VPNavBar.home .VPNavBarTitle .title {
-  pointer-events: none;
   cursor: default;
+  pointer-events: none;
 }
 
 .VPNavBar:not(.home) .VPNavBarTitle .title {
-  transition: color .3s;
+  transition: color 0.3s;
 }
-
 
 .VPNavBar:not(.home) .VPNavBarTitle .title:hover {
   color: var(--vp-button-brand-bg);
+}
+
+.VPSidebar {
+  overscroll-behavior: none !important;
 }
 
 .VPContent.is-home h1.heading .name {
@@ -38,9 +41,9 @@
   padding: 0.25rem 0.5rem;
   border: solid 1px var(--vp-c-warning-1);
   border-radius: 0.75rem;
+  color: var(--vp-c-warning-1);
   font-size: 0.75rem;
   font-weight: 400;
   line-height: 1;
-  color: var(--vp-c-warning-1);
   -webkit-text-fill-color: var(--vp-c-warning-1);
 }

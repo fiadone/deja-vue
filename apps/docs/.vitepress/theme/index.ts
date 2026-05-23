@@ -1,5 +1,3 @@
-import { gsap } from 'gsap'
-import { SplitText as GSAPSplitText } from 'gsap/SplitText'
 import DefaultTheme from 'vitepress/theme'
 import type { App, Component } from 'vue'
 
@@ -7,8 +5,6 @@ import { SplitText, Timeline, Tween } from 'deja-vue'
 
 import './demo.css'
 import './style.css'
-
-gsap.registerPlugin(GSAPSplitText)
 
 const demoComponents = import.meta.glob<{ default: Component }>(
   '../components/**/*.vue',

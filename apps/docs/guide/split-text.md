@@ -37,9 +37,9 @@ Slot content is split unless **`is`** targets the root element.
   <SplitTextDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
-import { Timeline, Tween, SplitText } from 'deja-vue'
+import { SplitText, Timeline, Tween } from 'deja-vue'
 </script>
 
 <template>
@@ -54,8 +54,17 @@ import { Timeline, Tween, SplitText } from 'deja-vue'
         ease: 'power2.out'
       }"
     >
-      <SplitText type="chars" :reduce-white-space="true">
-        <p class="target">Split text target</p>
+      <SplitText
+        type="chars"
+        :reduce-white-space="true"
+      >
+        <p
+          class="target"
+        >
+          Split
+          text
+          target
+        </p>
       </SplitText>
     </Tween>
   </Timeline>
@@ -68,7 +77,7 @@ A single **`Tween`** without **`Timeline`** works the same way.
 
 Wrap the tween in **`Marker`** and drive **`trigger`** from the slot:
 
-```vue
+```html
 <script setup>
 import { Marker, SplitText, Tween } from 'deja-vue'
 
@@ -78,16 +87,27 @@ function onCross (direction) {
 </script>
 
 <template>
-  <Marker v-slot="{ crossed }" @cross="onCross">
+  <Marker
+    @cross="onCross"
+    v-slot="{ crossed }"
+  >
     <Tween
+      method="from"
+      :parent="null"
       :trigger="crossed"
       :trigger-actions="['play', 'restart']"
-      :parent="null"
-      method="from"
       :vars="{ rotate: 360, scale: 0, stagger: 0.1 }"
     >
-      <SplitText type="chars">
-        <p class="target">Split text target</p>
+      <SplitText
+        type="chars"
+      >
+        <p
+          class="target"
+        >
+          Split
+          text
+          target
+        </p>
       </SplitText>
     </Tween>
   </Marker>
@@ -98,7 +118,7 @@ function onCross (direction) {
 
 For custom components when you already hold a DOM ref:
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
 import { useSplitText } from 'deja-vue'
@@ -108,7 +128,12 @@ const { state } = useSplitText(root, { type: 'words,chars' })
 </script>
 
 <template>
-  <p ref="root" class="target">Split text target</p>
+  <p
+    ref="root"
+    class="target">Split
+    text
+    target</p
+  >
 </template>
 ```
 

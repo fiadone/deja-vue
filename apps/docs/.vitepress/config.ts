@@ -34,8 +34,8 @@ export default defineConfig({
           { link: '/guide/timeline', text: 'Timeline Component' },
           { link: '/guide/controls', text: 'Animation Controls' },
           { link: '/guide/nesting', text: 'Nesting Animations' },
-          { link: '/guide/split-text', text: 'Split text' },
-          { link: '/guide/migration', text: 'Upgrading' },
+          { link: '/guide/split-text', text: 'SplitText' },
+          { link: '/guide/migration', text: 'Upgrading to v2' },
           { link: '/guide/troubleshooting', text: 'Troubleshooting' }
         ],
         text: 'Guide'

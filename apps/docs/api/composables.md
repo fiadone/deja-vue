@@ -1,14 +1,16 @@
 # Composables API
 
 > [!TIP]
-> Read **[Core concepts](../guide/concepts.md)** for how these composables fit together.
+> Read **[Core concepts](../guide/concepts.md)** if **`Animation`** vs **`animation.timeline`** is unclear.
 
 ## useAnimationScope
 
 Resolves **DOM targets** for `Tween` / `Timeline` and renders **`AnimationScope`** (slot props: `animation`, `controlled`, `direction`, `parent`, `progress`, `target`).
 
 ```typescript
-function useAnimationScope(): {
+function useAnimationScope(
+  childrenTargetResolver?: typeof resolveChildrenTarget
+): {
   $el: ShallowRef<Element | null>
   target: ComputedRef<gsap.TweenTarget>
   AnimationScope: Component
@@ -21,9 +23,16 @@ Seamless children (`seamless: true`, e.g. **`SplitText`** or nested **`Tween`**)
 
 ## useAnimationControls
 
-Syncs **`defineModel`** refs with a timeline and tracks scrub **direction**.
+Syncs **`v-model:progress`** and watches **`trigger`** with a timeline; tracks scrub **direction**.
 
 ```typescript
+interface AnimationControls {
+  progress: ModelRef<number | undefined>
+  trigger: ComputedRef<unknown>
+  triggerAction: MaybeRefOrGetter<TweenAction | undefined>
+  triggerOptions: Reactive<WatchOptions>
+}
+
 function useAnimationControls(
   animation: Animation,
   controls: AnimationControls
@@ -33,60 +42,87 @@ function useAnimationControls(
 }
 ```
 
-### AnimationControls
+### Progress
 
-```typescript
-interface AnimationControls {
-  progress: ModelRef<number | undefined>
-  trigger: {
-    actions: MaybeRefOrGetter<TweenAction | [TweenAction, TweenAction] | undefined>
-    once: true | undefined
-    state: ModelRef<boolean | undefined>
-  }
-}
+- **`v-model:progress`**: timeline **`update`** writes progress; the progress watcher scrubs **`animation.timeline.progress()`** and updates **`direction`** when the value moves up/down (watcher **`flush: 'post'`**).
+- When **`progress`** or **`trigger`** is bound, the timeline starts **paused**.
+
+### Trigger
+
+| Prop / attribute | Type | Description |
+|------------------|------|-------------|
+| **`trigger`** | `unknown` | Watched for changes |
+| **`trigger-action`** | `TweenAction` | Action run on each change (default **`play`**) |
+| **`trigger-options`** | `WatchOptions` | Passed to the trigger **`watch`** (e.g. **`{ once: true }`**, **`{ flush: 'post' }`**) |
+
+Bind **`trigger-action`** together with **`trigger`** in the same template:
+
+```html
+<Tween
+  :to="{ x: 100 }"
+  :trigger="trigger"
+  :trigger-action="trigger ? 'reverse' : 'play'"
+/>
 ```
-
-- **`progress`**: scrubs `animation.timeline.progress()`; updates **`direction`** when the value moves up/down.
-- **`trigger`**: `true` → first action (or single action); `false` → second action or same if one action. Default actions: **`play`** / **`reverse`**.
-- **`trigger.actions`**: e.g. `['play', 'restart']` or `'pause'` (string applies to both sides).
-- **`trigger.once`**: pass the **`.once`** modifier from **`v-model:trigger.once`**.
 
 ## useAnimationNesting
 
 Registers one or more children on the injected parent’s **`animation`** timeline.
 
 ```typescript
-type NestableChild =
+type AnimationNestingTarget =
   | { animation: Animation }
   | { callback: gsap.Callback }
   | { label: MaybeRefOrGetter<string | undefined> }
 
 function useAnimationNesting(
-  input: NestableChild | NestableChild[]
+  input: AnimationNestingTarget | AnimationNestingTarget[]
 ): {
   parent: DejaVueInstance | null
 }
 ```
 
-Non-prop attributes: **`parent`**, **`position`**. Watches children + position; **`parent.animation.add`** / **`remove`** after `nextTick`. Supports **multiple** children (e.g. **`Marker`**: callback + label).
+Non-prop attributes: **`parent`**, **`position`**. Watches children and **`position`**; on change, **`parent.animation.remove`** then **`add`** after **`nextTick`**. Each nestable registers independently — omitting **`position`** appends at the parent timeline end on add. Nested **`Animation`** children use **`timeShift: true`** by default (**`shiftChildren`** on add/remove); labels and callbacks do not. See **[Nesting animations](../guide/nesting.md#dynamic-children-v-if-lists)** for **`v-if`** behavior.
 
-## useStableTweenVars
+Supports **multiple** children (e.g. **`Marker`**: callback + label).
 
-Keeps a **stable object reference** for `vars` while syncing property changes, so `watch` on tween definition does not thrash on new object identity every render.
+## useStableObjectProp
+
+Keeps a **reactive object reference stable** while patching properties in place (used for **`from`**, **`to`**, **`effect-options`**, **`trigger-options`**).
 
 ```typescript
-function useStableTweenVars(
-  vars: MaybeRefOrGetter<gsap.TweenVars | [gsap.TweenVars, gsap.TweenVars]>
-): gsap.TweenVars | [gsap.TweenVars, gsap.TweenVars]
+function useStableObjectProp<T extends object>(
+  objectProp: MaybeRefOrGetter<PlainObject<T>>
+): Reactive<T>
 ```
 
-Used internally by **`Tween`**; export for custom animation components.
-
-The root shape must stay stable. Switching between a single vars object and a **`fromTo`** tuple at runtime is not supported in place; key the **`Tween`** by **`method`** or another shape key to recreate it.
+Incoming objects are cloned once; later updates use **`patchObject`** (sync flush) so nested keys update without replacing the root reference. **`Tween`**’s compose watcher can stay **deep** without re-running on every parent re-render that passes a new object literal with the same values.
 
 ## useSplitText
 
 ```typescript
+interface SplitTextOptions {
+  type?: string
+  mask?: 'lines' | 'words' | 'chars'
+  wordDelimiter?: string | RegExp
+  linesClass?: string
+  wordsClass?: string
+  charsClass?: string
+  aria?: 'auto' | 'hidden' | 'none'
+  tag?: string
+  propIndex?: boolean
+  deepSlice?: boolean
+  smartWrap?: boolean
+  specialChars?: string[] | RegExp
+  reduceWhiteSpace?: boolean
+  autoSplit?: boolean
+  ignore?: gsap.DOMTarget
+  prepareText?: (text: string) => string
+  overwrite?: boolean
+  onSplit?: (splitText: SplitText) => void
+  onRevert?: (splitText: SplitText) => void
+}
+
 function useSplitText(
   target: MaybeRefOrGetter<gsap.DOMTarget>,
   options?: SplitTextOptions
@@ -98,6 +134,8 @@ function useSplitText(
 
 `type` defaults to **`'lines,words,chars'`**. The composable waits for a real target before creating SplitText and reverts/kills the instance during cleanup.
 
-Register **`SplitText`** with GSAP in your app setup before using this composable. The library does not register GSAP plugins on its own.
+**`SplitText`** is registered with GSAP when this module loads, so manual **`gsap.registerPlugin(SplitText)`** is not required.
+
+Option descriptions and template prop names: [SplitText guide — Props](../guide/split-text.md#props-splittextoptions).
 
 See [`SplitText` component](./components.md#splittext) — place inside a **`Tween`** slot.

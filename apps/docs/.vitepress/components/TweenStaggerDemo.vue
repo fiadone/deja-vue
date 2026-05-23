@@ -1,23 +1,13 @@
-<script setup lang="ts">
-//
-</script>
-
 <template>
   <Demo v-slot="scope">
     <Tween
-      v-model:trigger="scope.trigger"
-      method="from"
-      :vars="{ opacity: 0, y: 20, stagger: 0.1 }"
+      is="div"
+      class="demo-boxes"
+      :from="{ opacity: 0, stagger: 0.1 }"
+      :trigger="scope.trigger"
+      :trigger-action="scope.triggerAction"
     >
-      <div class="demo-boxes">
-        <div
-          v-for="item in 5"
-          :key="item"
-          class="demo-box"
-        >
-          {{ item }}
-        </div>
-      </div>
+      <div v-for="n in 5" :key="n" class="demo-box" />
     </Tween>
   </Demo>
 </template>

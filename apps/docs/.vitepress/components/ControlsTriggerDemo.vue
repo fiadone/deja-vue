@@ -1,17 +1,11 @@
-<script setup lang="ts">
-//
-</script>
-
 <template>
   <Demo v-slot="scope">
     <Tween
-      v-model:trigger="scope.trigger"
-      method="from"
-      :vars="{ opacity: 0, yPercent: 50 }"
+      :from="{ opacity: 0 }"
+      :trigger="scope.trigger"
+      :trigger-action="scope.triggerAction"
     >
-      <div class="demo-box">
-        Reveal
-      </div>
+      <div class="demo-box" />
     </Tween>
   </Demo>
 </template>

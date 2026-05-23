@@ -113,7 +113,7 @@ Adds a **timeline label** (optional) and a **callback** when playback crosses th
 
 ### Marker usage
 
-```vue
+```html
 <script setup>
 import { Marker, Timeline, Tween } from 'deja-vue'
 
@@ -124,9 +124,17 @@ function onCross (direction) {
 
 <template>
   <Timeline>
-    <Marker label="intro" @cross="onCross" />
-    <Tween method="to" :vars="{ x: 100, duration: 1 }">
-      <div class="target">Target</div>
+    <Marker
+      label="intro"
+      @cross="onCross"
+    />
+    <Tween
+      method="to"
+      :vars="{ x: 100, duration: 1 }"
+    >
+      <div class="target">
+        Target
+      </div>
     </Tween>
   </Timeline>
 </template>
@@ -134,7 +142,7 @@ function onCross (direction) {
 
 Slot-driven trigger:
 
-```vue
+```html
 <script setup>
 import { Marker, Tween } from 'deja-vue'
 
@@ -144,14 +152,19 @@ function onCross (direction) {
 </script>
 
 <template>
-  <Marker v-slot="{ crossed }" @cross="onCross">
+  <Marker
+    @cross="onCross"
+    v-slot="{ crossed }"
+  >
     <Tween
       method="from"
       :trigger="crossed"
       :trigger-actions="['play', 'restart']"
       :vars="{ opacity: 0 }"
     >
-      <div class="target">Target</div>
+      <div class="target">
+        Target
+      </div>
     </Tween>
   </Marker>
 </template>

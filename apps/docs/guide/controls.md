@@ -13,9 +13,10 @@ Scrub between **0** and **1**. While scrubbing, **`direction`** becomes **`1`** 
   <ControlsProgressDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const progress = ref(0.5)
@@ -29,12 +30,12 @@ function pauseForScrub () {
 <template>
   <input
     v-model.number="progress"
-    type="range"
-    min="0"
     max="1"
+    min="0"
     step="0.01"
-    @pointerdown="pauseForScrub"
+    type="range"
     @keydown="pauseForScrub"
+    @pointerdown="pauseForScrub"
   >
   <Tween
     ref="tweenRef"
@@ -42,7 +43,9 @@ function pauseForScrub () {
     method="to"
     :vars="{ x: 200, duration: 2 }"
   >
-    <div class="target">Target</div>
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
@@ -65,9 +68,10 @@ Override with **`triggerActions`**:
 
 A single action string applies to both **`true`** and **`false`**.
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const isPlaying = ref(false)
@@ -78,8 +82,8 @@ const isPlaying = ref(false)
     {{ isPlaying ? 'Reverse' : 'Play' }}
   </button>
   <Tween
-    method="to"
     v-model:trigger="isPlaying"
+    method="to"
     :vars="{ rotation: 360, duration: 3, repeat: -1 }"
   >
     <div class="box" />
@@ -89,9 +93,10 @@ const isPlaying = ref(false)
 
 Custom actions:
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const crossed = ref(false)
@@ -100,8 +105,8 @@ const crossed = ref(false)
 <template>
   <Tween
     v-model:trigger="crossed"
-    :trigger-actions="['play', 'restart']"
     method="from"
+    :trigger-actions="['play', 'restart']"
     :vars="{ opacity: 0 }"
   />
 </template>
@@ -109,9 +114,10 @@ const crossed = ref(false)
 
 Listen only once by adding the **`.once`** modifier to the trigger model:
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const crossed = ref(false)
@@ -120,8 +126,8 @@ const crossed = ref(false)
 <template>
   <Tween
     v-model:trigger.once="crossed"
-    :trigger-actions="['play', 'restart']"
     method="from"
+    :trigger-actions="['play', 'restart']"
     :vars="{ opacity: 0 }"
   />
 </template>
@@ -133,10 +139,12 @@ Both models can be bound on the same component. **Pause the timeline when the us
 
 ## Programmatic control
 
-```vue
+```html
 const tweenRef = ref()
 // tweenRef.value.animation.timeline.play()
 // tweenRef.value.direction // Ref<1 | -1 | 0>
+
+
 ```
 
 ## Scroll / hover patterns

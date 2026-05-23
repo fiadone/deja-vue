@@ -23,14 +23,19 @@ GSAP plugins are not registered by the library. Register any plugin you use, suc
 
 ## Basic usage
 
-```vue
+```html
 <script setup>
 import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween method="to" :vars="{ x: 100, duration: 1 }">
-    <div class="target">Target</div>
+  <Tween
+    method="to"
+    :vars="{ x: 100, duration: 1 }"
+  >
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
@@ -45,9 +50,10 @@ The slotted element is the tween **target** (not an extra wrapper).
   <TweenTriggerDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const trigger = ref(false)
@@ -59,7 +65,9 @@ const trigger = ref(false)
     method="to"
     :vars="{ x: 100, duration: 1 }"
   >
-    <div class="target">Target</div>
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
@@ -68,9 +76,10 @@ See [Animation controls](./controls.md) for **`trigger`** and **`triggerActions`
 
 Use **`v-model:trigger.once`** when a trigger should run only for the first defined value change:
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const entered = ref(false)
@@ -79,8 +88,8 @@ const entered = ref(false)
 <template>
   <Tween
     v-model:trigger.once="entered"
-    :trigger-actions="['play', 'restart']"
     method="from"
+    :trigger-actions="['play', 'restart']"
     :vars="{ opacity: 0 }"
   />
 </template>
@@ -92,9 +101,10 @@ const entered = ref(false)
   <ControlsProgressDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
 
 const progress = ref(0)
@@ -106,7 +116,9 @@ const progress = ref(0)
     method="to"
     :vars="{ x: 100, duration: 1 }"
   >
-    <div class="target">Target</div>
+    <div class="target">
+      Target
+    </div>
   </Tween>
 </template>
 ```
@@ -119,15 +131,21 @@ Use nested components inside **`Timeline`** (no `tweens` array prop):
   <TimelineSequenceDemo />
 </ClientOnly>
 
-```vue
+```html
 <script setup>
 import { Timeline, Tween } from 'deja-vue'
 </script>
 
 <template>
   <Timeline>
-    <Tween method="to" :vars="{ x: 100, duration: 1 }" />
-    <Tween method="to" :vars="{ y: 50, duration: 0.5 }" />
+    <Tween
+      method="to"
+      :vars="{ x: 100, duration: 1 }"
+    />
+    <Tween
+      method="to"
+      :vars="{ y: 50, duration: 0.5 }"
+    />
   </Timeline>
 </template>
 ```
