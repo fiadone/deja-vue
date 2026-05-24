@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue'
-import { computed, inject, nextTick, onUnmounted, toValue, useAttrs, watch } from 'vue'
+import { computed, inject, onUnmounted, toValue, useAttrs, watch } from 'vue'
 
 import { dejaVueParentInstance } from '../constants'
 import { Animation } from '../core/Animation'
@@ -31,13 +31,12 @@ export function useAnimationNesting (target: AnimationNestingTarget | AnimationN
       if (!currentChildren && !previousChildren) return
       previousChildren?.slice(currentChildren?.length || 0).forEach(child => parent.animation.remove(child))
       if (!currentChildren) return
-      await nextTick() // wait for parent to be mounted
       currentChildren.forEach((child, index) => {
         if (child === previousChildren?.[index] && currentPosition === previousPosition) return
         if (previousChildren?.[index]) parent.animation.remove(previousChildren[index])
         parent.animation.add(child, currentPosition)
       })
-    }, { immediate: true })
+    }, { flush: 'post' })
   }
 
   onUnmounted(() => {

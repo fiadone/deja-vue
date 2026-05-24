@@ -24,7 +24,7 @@ const controls: AnimationControls = {
   progress,
   trigger: computed(() => props.trigger),
   triggerAction: computed(() => props.triggerAction),
-  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions ?? {})
+  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions)
 }
 
 const { controlled, direction } = useAnimationControls(animation, controls)

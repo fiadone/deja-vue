@@ -18,11 +18,13 @@ const props = defineProps<ControllableAnimation & {
   seamless?: boolean
 }>()
 
+const options = useStableObjectProp<gsap.TimelineVars>(() => props.options)
+
 const animation = new Animation({
-  ...props.options,
+  ...options,
   data: typeof props.duration === 'number' && props.duration > 0
-    ? { ...props.options?.data, totalDuration: props.duration }
-    : props.options?.data
+    ? { ...options.data, totalDuration: props.duration }
+    : options.data
 })
 
 const progress = defineModel<number>('progress', { default: undefined })
@@ -31,7 +33,7 @@ const controls: AnimationControls = {
   progress,
   trigger: computed(() => props.trigger),
   triggerAction: computed(() => props.triggerAction),
-  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions ?? {})
+  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions)
 }
 
 const { controlled, direction } = useAnimationControls(animation, controls)
@@ -53,6 +55,11 @@ const instance: DejaVueInstance = {
 for (const event of ANIMATION_EVENTS) {
   animation.on(event, () => emit(event, animation, parent))
 }
+
+watch(options, vars => {
+  Object.assign(animation.timeline.vars, vars)
+  animation.timeline.invalidate()
+})
 
 watch(() => props.duration, duration => {
   if (typeof duration === 'number' && duration > 0) {

@@ -14,25 +14,9 @@ export function isObject (value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-export function patch (target: unknown, change: unknown): boolean {
-  if (JSON.stringify(target) === JSON.stringify(change)) return true
-
-  if (isObject(change) && isObject(target)) {
-    patchObject(target, change)
-    return true
-  }
-
-  if (Array.isArray(change) && Array.isArray(target)) {
-    patchArray(target, change)
-    return true
-  }
-
-  return false
-}
-
 export function patchArray (target: unknown[], changes: unknown[]) {
   for (let i = 0; i < changes.length; i++) {
-    if (!patch(target[i], changes[i])) {
+    if (!syncData(target[i], changes[i])) {
       target[i] = changes[i]
     }
   }
@@ -42,7 +26,7 @@ export function patchArray (target: unknown[], changes: unknown[]) {
 
 export function patchObject <T extends object> (target: T, changes: T) {
   for (const key in changes) {
-    if (!patch(target[key], changes[key])) {
+    if (!syncData(target[key], changes[key])) {
       target[key] = changes[key]
     }
   }
@@ -52,6 +36,30 @@ export function patchObject <T extends object> (target: T, changes: T) {
       delete target[key]
     }
   }
+}
+
+export function syncData (target: unknown, changes: unknown): boolean {
+  if (Object.is(target, changes)) return true
+  if (!isObject(target) && !Array.isArray(target)) return false
+
+  try {
+    // try string-based comparison first (it will fail if circular references are met)
+    if (JSON.stringify(target) === JSON.stringify(changes)) return true
+  } catch {
+    if (target === changes) return true
+  }
+
+  if (isObject(changes) && isObject(target)) {
+    patchObject(target, changes)
+    return true
+  }
+
+  if (Array.isArray(changes) && Array.isArray(target)) {
+    patchArray(target, changes)
+    return true
+  }
+
+  return false
 }
 
 export function toNonEmptyArray<T = unknown> (data: T[]): NonEmptyArray<T> | null {
