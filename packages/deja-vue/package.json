@@ -35,7 +35,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
-    "vue-unwrap": "^1.0.1"
+    "vue-unwrap": "^2.0.0"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",

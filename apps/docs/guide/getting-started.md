@@ -1,12 +1,6 @@
 # Getting Started
 
-> [!TIP]
-> Read **[Core concepts](./concepts.md)** first (~2 minutes).
-
-Déjà Vue (*Declarative Elements* for *Javascript Animations* in *Vue*) lets you define and nest GSAP animations as Vue components.
-
-> [!NOTE]
-> Examples often pass `vars` inline because that keeps the documentation focused on the animation concept being introduced. In application code, always prefer moving tween definitions into named constants, refs, or computed values and pass those references to the component. Déjà Vue keeps inline vars stable enough to avoid unnecessary recomposition, but referenced definitions still remain the best practice and make animation intent clearer, easier to reuse, easier to type, and easier to change deliberately.
+Déjà Vue lets you define and nest GSAP animations as Vue components.
 
 ## Installation
 
@@ -14,12 +8,10 @@ Déjà Vue (*Declarative Elements* for *Javascript Animations* in *Vue*) lets yo
 npm install deja-vue gsap vue
 ```
 
-- **vue**: ^3.5.0  
-- **gsap**: ^3.0.0  
+- **vue**: ^3.5.0
+- **gsap**: ^3.0.0
 
-Includes **[vue-unwrap](https://www.npmjs.com/package/vue-unwrap)** for slot/DOM unwrapping.
-
-GSAP plugins are not registered by the library. Register any plugin you use, such as **`SplitText`** or **`ScrollTrigger`**, in your app setup with **`gsap.registerPlugin(...)`**.
+Register GSAP plugins (e.g. **`ScrollTrigger`**) in your app setup. **`SplitText`** is registered automatically when imported from **`deja-vue`**.
 
 ## Basic usage
 
@@ -29,22 +21,13 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
-  >
-    <div class="target">
-      Target
-    </div>
+  <Tween :to="{ x: 100, duration: 1 }">
+    <div class="target" />
   </Tween>
 </template>
 ```
 
-The slotted element is the tween **target** (not an extra wrapper).
-
-## Programmatic control
-
-### Trigger
+## Trigger
 
 <ClientOnly>
   <TweenTriggerDemo />
@@ -60,42 +43,15 @@ const trigger = ref(false)
 </script>
 
 <template>
-  <Tween
-    v-model:trigger="trigger"
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
-  >
-    <div class="target">
-      Target
-    </div>
+  <Tween :to="{ x: 100, duration: 1 }" :trigger>
+    <div class="target" />
   </Tween>
 </template>
 ```
 
-See [Animation controls](./controls.md) for **`trigger`** and **`triggerActions`**.
+See [Animation controls](./controls.md).
 
-Use **`v-model:trigger.once`** when a trigger should run only for the first defined value change:
-
-```html
-<script setup>
-import { ref } from 'vue'
-
-import { Tween } from 'deja-vue'
-
-const entered = ref(false)
-</script>
-
-<template>
-  <Tween
-    v-model:trigger.once="entered"
-    method="from"
-    :trigger-actions="['play', 'restart']"
-    :vars="{ opacity: 0 }"
-  />
-</template>
-```
-
-### Progress
+## Progress
 
 <ClientOnly>
   <ControlsProgressDemo />
@@ -113,19 +69,14 @@ const progress = ref(0)
 <template>
   <Tween
     v-model:progress="progress"
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
+    :to="{ x: 100, duration: 1 }"
   >
-    <div class="target">
-      Target
-    </div>
+    <div class="target" />
   </Tween>
 </template>
 ```
 
-## Declarative sequences
-
-Use nested components inside **`Timeline`** (no `tweens` array prop):
+## Sequences
 
 <ClientOnly>
   <TimelineSequenceDemo />
@@ -138,32 +89,22 @@ import { Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
-    <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    />
-    <Tween
-      method="to"
-      :vars="{ y: 50, duration: 0.5 }"
-    />
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
+    </Tween>
+    <Tween :to="{ y: 50, duration: 0.5 }">
+      <div class="target" />
+    </Tween>
   </Timeline>
 </template>
 ```
 
-## Reactivity of `vars`
-
-**`vars`** are synced in place (stable reference) when properties change, and the tween recomposes when **`target`**, **`method`**, or **`vars`** meaningfully change. For playback, prefer **`progress`** / **`trigger`**.
-
-Keep **`vars`** shape compatible with **`method`**. If you switch between a single vars object and a **`fromTo`** tuple, key the **`Tween`** so Vue recreates it.
-
-## What you'll learn
+## Next
 
 - [Core concepts](./concepts.md)
 - [Animation targets](./targeting.md)
-- [Tween](./tween.md) — methods, seamless nesting, slot scope
-- [Timeline](./timeline.md) — nested sequences, Marker
-- [Animation controls](./controls.md) — progress, trigger, direction
+- [Tween](./tween.md)
+- [Timeline](./timeline.md)
+- [Controls](./controls.md)
 - [Nesting](./nesting.md)
-- [Split text](./split-text.md) — `SplitText` inside `Tween`
-- [Upgrading](./migration.md)
-- [Troubleshooting](./troubleshooting.md)
+- [Split text](./split-text.md)

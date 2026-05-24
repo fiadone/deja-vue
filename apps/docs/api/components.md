@@ -1,115 +1,88 @@
 # Components API
 
-> [!TIP]
-> Narrative explanations: **[Core concepts](../guide/concepts.md)** and **[Animation targets](../guide/targeting.md)**.
-
 ## Tween
 
-Single-tween component backed by an internal GSAP timeline (one composed tween per instance).
-
-Targets are resolved by [`useAnimationScope`](./composables.md#useanimationscope). Pass root attributes **`is`** and **`target`** on `Tween` when you need a custom scope (see [Animation targets](../guide/targeting.md)).
+Single GSAP tween per instance.
 
 ### Tween props
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `method` | `'from' \| 'to' \| 'fromTo' \| 'effect:%NAME%'` | GSAP tween method |
-| `vars` | `gsap.TweenVars \| [gsap.TweenVars, gsap.TweenVars]` | Tween variables (updated in place via [`useStableTweenVars`](./composables.md#usestabletweenvars)) |
-| `seamless` | `boolean` | When `true`, parent scope uses this instance’s **`target`** instead of its root DOM (nested tween chains) |
+| `from` | `gsap.TweenVars` | **`from`** vars |
+| `to` | `gsap.TweenVars` | **`to`** vars |
+| `effect` | `string` | GSAP effect name |
+| `effectOptions` | `Record<string, unknown>` | Effect options |
+| `seamless` | `boolean` | Parent scope uses this instance’s **`tweenTarget`** |
+| `tweenTarget` | [`AnimationTarget`](./types.md#animationtarget) | DOM resolution (`'self'`, `'children'`, selector, or `gsap.TweenTarget`) |
 | `progress` | `number` | `v-model:progress` — scrub 0–1 |
-| `trigger` | `boolean \| undefined` | `v-model:trigger` or `v-model:trigger.once` — paired with optional **`triggerActions`** |
-| `triggerActions` | `TweenAction \| [TweenAction, TweenAction]` | Action when trigger is `true` / `false` (default `['play', 'reverse']`; a string applies to both) |
-| `parent` | `DejaVueInstance \| null` | Parent (non-prop attribute or inject) |
+| `trigger` | `unknown` | Watched value; use with **`v-model:trigger`** |
+| `triggerAction` | `TweenAction` | Action on each **`trigger`** change (default **`play`**) |
+| `triggerOptions` | `WatchOptions` | Trigger watcher options |
+| `parent` | `DejaVueAnimationPublicInstance \| null` | Parent timeline |
 | `position` | `gsap.Position` | Position on parent timeline |
 
-`vars` shape must stay compatible with **`method`**. When switching between a single vars object and a **`fromTo`** tuple, key the component by method or another shape key.
+One tween kind per instance: **`to`**, **`from`**, **`from`** + **`to`**, or **`effect`**. Key the component when switching kind at runtime — see **[Troubleshooting](../guide/troubleshooting.md#tween-kind-prop-mismatch)**.
 
-Root attributes: **`is`**, **`target`** (see [targeting](../guide/targeting.md)).
+Root attribute: **`is`**. See [Animation targets](../guide/targeting.md).
 
 ### Tween events
 
-Handlers receive **`(animation, parent)`**:
+**`(animation, parent)`** — use **`animation.timeline`** for GSAP.
 
-- **`animation`** — [`Animation`](./types.md#animation) wrapper; use **`animation.timeline`** for GSAP.
-- **`parent`** — Parent **`DejaVueInstance`** or `null`.
+`start`, `complete`, `update`, `repeat`, `reverseComplete`, `interrupt`.
 
-| Event | Description |
-|-------|-------------|
-| `start` | Started |
-| `complete` | Completed |
-| `update` | Updated |
-| `repeat` | Repeated |
-| `reverseComplete` | Reverse completed |
-| `interrupt` | Interrupted |
+### Tween slot
 
-### Tween exposed / slot
-
-Default slot receives scope props from **`AnimationScope`**: **`animation`**, **`controlled`**, **`direction`**, **`parent`**, **`progress`**, **`target`**.
-
-`defineExpose` matches **`DejaVueInstance`**: **`$el`**, **`animation`**, **`controlled`**, **`direction`**, **`parent`**, **`progress`**, **`seamless`**, **`target`**.
+**`animation`**, **`direction`**, **`parent`**, **`progress`**.
 
 ## Timeline
 
-Container timeline for nested **`Tween`**, **`Timeline`**, **`Marker`**, **`SplitText`**, etc.
-
-Does **not** accept a **`tweens`** array — define sequences with nested components only.
+Container for nested **`Tween`**, **`Timeline`**, **`Marker`**, **`SplitText`**, etc.
 
 ### Timeline props
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `duration` | `number` | Positive fixed total duration (`data.totalDuration` + GSAP `duration`); `0` / clearing restores natural timing |
+| `duration` | `number` | Fixed total duration; clearing restores natural timing |
 | `options` | `gsap.TimelineVars` | GSAP timeline options |
+| `seamless` | `boolean` | Parent scope uses this instance’s **`tweenTarget`** |
+| `tweenTarget` | [`AnimationTarget`](./types.md#animationtarget) | DOM resolution |
 | `progress` | `number` | `v-model:progress` |
-| `trigger` | `boolean \| undefined` | `v-model:trigger` or `v-model:trigger.once` |
-| `triggerActions` | `TweenAction \| [TweenAction, TweenAction]` | Trigger actions (default `['play', 'reverse']`; a string applies to both) |
-| `parent` | `DejaVueInstance \| null` | Parent |
+| `trigger` | `unknown` | Watched value; use with **`v-model:trigger`** |
+| `triggerAction` | `TweenAction` | Action on each **`trigger`** change (default **`play`**) |
+| `triggerOptions` | `WatchOptions` | Trigger watcher options |
+| `parent` | `DejaVueAnimationPublicInstance \| null` | Parent |
 | `position` | `gsap.Position` | Position on parent |
 
-### Timeline events
-
-Same as **`Tween`**: **`(animation, parent)`**.
-
-### Timeline exposed / slot
-
-Same scope props as **`Tween`**. **`provide(dejaVueParentInstance)`** injects the full **`DejaVueInstance`** instance (not only the inner `Animation`).
+Same events and slot as **`Tween`**.
 
 ## SplitText
 
-GSAP **SplitText** integration. Register the GSAP plugin in your app setup, then place **`SplitText` in a `Tween` slot** so the parent scope animates split nodes via **`seamless`** / **`target`**. See [Split text](../guide/split-text.md).
+GSAP SplitText integration. Place inside a **`Tween` slot**. See [Split text](../guide/split-text.md).
 
 ### SplitText props
 
-[`SplitTextOptions`](./composables.md#usesplittext) — `type` defaults to `'lines,words,chars'` if omitted.
+[`SplitTextOptions`](./composables.md#usesplittext) — `type` defaults to `'lines,words,chars'`.
 
-Root attributes: **`is`**, **`tweenTarget`** (`'lines' \| 'words' \| 'chars'`).
+| Prop | Type | Description |
+|------|------|-------------|
+| `tweenTarget` | `'lines' \| 'words' \| 'chars'` | Split level for parent scope (defaults to last segment of **`type`**) |
 
-### SplitText exposed
+Root attribute: **`is`**.
 
-| Property | Description |
-|----------|-------------|
-| `$el` | Root element |
-| `target` | Elements for parent tween scope |
-| `seamless` | `true` |
-| `lines`, `words`, `chars` | Reactive element arrays |
+Slot: **`chars`**, **`lines`**, **`words`**.
 
 ## Marker
 
-Adds a **timeline label** (optional) and a **callback** when playback crosses that position. Emits **`cross`** with playback **`direction`** (`1` forward, `-1` reverse). Exposes a default slot: **`{ crossed, parent }`**.
+Timeline label (optional) and callback at **`position`**. Emits **`cross`** with **`direction`** (`1` forward, `-1` reverse). Slot: **`crossed`**, **`parent`**.
 
 ### Marker props
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `label` | `string` | Label name on parent timeline (optional) |
-| `parent` | `DejaVueInstance \| null` | Parent (attribute / inject) |
-| `position` | `gsap.Position` | Callback position (defaults with label when used) |
-
-### Marker events
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `cross` | `AnimationDirection` | Playhead crossed this marker (`1` or `-1`) |
+| `label` | `string` | Label name (optional) |
+| `parent` | `DejaVueAnimationPublicInstance \| null` | Parent |
+| `position` | `gsap.Position` | Callback position |
 
 ### Marker usage
 
@@ -124,17 +97,9 @@ function onCross (direction) {
 
 <template>
   <Timeline>
-    <Marker
-      label="intro"
-      @cross="onCross"
-    />
-    <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    >
-      <div class="target">
-        Target
-      </div>
+    <Marker label="intro" @cross="onCross" />
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
     </Tween>
   </Timeline>
 </template>
@@ -152,19 +117,13 @@ function onCross (direction) {
 </script>
 
 <template>
-  <Marker
-    @cross="onCross"
-    v-slot="{ crossed }"
-  >
+  <Marker @cross="onCross" v-slot="{ crossed }">
     <Tween
-      method="from"
+      :from="{ opacity: 0 }"
       :trigger="crossed"
-      :trigger-actions="['play', 'restart']"
-      :vars="{ opacity: 0 }"
+      :trigger-action="crossed ? 'play' : 'restart'"
     >
-      <div class="target">
-        Target
-      </div>
+      <div class="target" />
     </Tween>
   </Marker>
 </template>

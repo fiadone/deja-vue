@@ -1,34 +1,61 @@
 <script setup lang="ts">
-import type { Component, PropType } from 'vue'
-import { computed, toRefs, useAttrs } from 'vue'
+import type { PropType, Ref } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { getNodeElement, useUnwrap } from 'vue-unwrap'
 
 import type { SplitTextOptions } from '../composables/useSplitText'
 import { useSplitText } from '../composables/useSplitText'
-import type { DejaVueNode } from '../types'
+import type { DejaVueComponent, DejaVueNode, WrappableComponent } from '../types'
 import { toNonEmptyArray } from '../utils'
 
-const attrs = useAttrs() as { is?: string | Component, tweenTarget?: 'lines' | 'words' | 'chars' }
+export interface DejaVueSplitTextScopeProps {
+  chars: Element[]
+  words: Element[]
+  lines: Element[]
+}
 
-const props = defineProps<SplitTextOptions>()
+export type DejaVueSplitTextPublicInstance = DejaVueComponent & {
+  [K in keyof DejaVueSplitTextScopeProps]: Ref<DejaVueSplitTextScopeProps[K]>
+}
 
-const { $el, children, Unwrap } = useUnwrap<DejaVueNode, SplitTextOptions>({ target: [String, Object] as PropType<gsap.TweenTarget> })
-const splitTextTarget = computed(() => attrs.is ? $el.value : toNonEmptyArray(children.map(child => getNodeElement(child)).filter(Boolean)))
-const { state } = useSplitText(splitTextTarget, props)
-const target = computed(() => {
-  const key = attrs.tweenTarget || (props.type?.split(',').pop()?.trim() as 'lines' | 'words' | 'chars') || 'chars'
+const SplitTextPropTypes = {
+  chars: Object as PropType<Element[]>,
+  lines: Object as PropType<Element[]>,
+  words: Object as PropType<Element[]>
+}
+
+const props = defineProps<SplitTextOptions & { tweenTarget?: 'lines' | 'words' | 'chars' }>()
+
+const attrs = useAttrs() as WrappableComponent
+
+const { children, root, Unwrap } = useUnwrap<DejaVueNode, SplitTextOptions>(SplitTextPropTypes)
+const target = computed(() => attrs.is ? root.value : toNonEmptyArray(children.map(child => getNodeElement(child)).filter(Boolean)))
+const { chars, lines, state, words } = useSplitText(target, props)
+const tweenTarget = computed(() => {
+  const key = props.tweenTarget || (props.type?.split(',').pop()?.trim() as 'lines' | 'words' | 'chars') || 'chars'
   if (!(key in state)) return null
   return toNonEmptyArray(state[key])
 })
 
-defineExpose({
-  $el,
-  seamless: true,
-  target,
-  ...toRefs(state)
-})
+const seamless = true
+const instance: DejaVueSplitTextPublicInstance = {
+  $el: root,
+  chars,
+  lines,
+  seamless,
+  tweenTarget,
+  words
+}
+
+defineExpose(instance)
+
+defineSlots<{ default(props: DejaVueSplitTextScopeProps): any }>()
 </script>
 
 <template>
-  <Unwrap :target />
+  <Unwrap
+    :chars
+    :lines
+    :words
+  />
 </template>

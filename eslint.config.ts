@@ -46,6 +46,7 @@ export default [
         fixStyle: 'separate-type-imports',
         prefer: 'type-imports'
       }],
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['error', {
         args: 'after-used',
         argsIgnorePattern: '^_',

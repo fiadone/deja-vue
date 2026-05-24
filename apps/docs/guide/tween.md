@@ -1,9 +1,6 @@
 # Tween Component
 
-> [!TIP]
-> Read **[Core concepts](./concepts.md)** and **[Animation targets](./targeting.md)** first.
-
-The `Tween` component maps GSAP tween methods through **`method`** and **`vars`**. Each instance owns one composed tween on an internal timeline.
+The `Tween` component composes one GSAP tween from **`from`**, **`to`**, or **`effect`** props.
 
 ## Basic Tween
 
@@ -17,70 +14,59 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
-  >
-    <div class="target">
-      Target
-    </div>
+  <Tween :to="{ x: 100, duration: 1 }">
+    <div class="target" />
   </Tween>
 </template>
 ```
 
 ## Animation target
 
-Slotted elements are the default target. Use **`is`** / **`target`** on `Tween` for other resolution rules — see **[Animation targets](./targeting.md)**.
+Slotted elements are the default target. See **[Animation targets](./targeting.md)** for **`is`**, **`tween-target`**, and **`seamless`**.
 
-## Tween methods
+## Tween kinds
 
-### `to` / `from` / `fromTo` / `effect:%NAME%`
-
-Same as GSAP. For **`fromTo`**, pass **`vars`** as a two-element array.
-
-`vars` may update reactively, but its shape must stay compatible with **`method`**. If you switch between a single vars object (`from`, `to`, `effect:%NAME%`) and a **`fromTo`** tuple, key the component so Vue recreates it:
+Use **`:to`**, **`:from`**, both for **`fromTo`**, or **`effect`** + **`effect-options`**. One kind per **`Tween`**. Key the component when switching kind at runtime — see **[Troubleshooting](./troubleshooting.md#tween-kind-prop-mismatch)**:
 
 ```html
 <script setup>
+import { ref } from 'vue'
+
 import { Tween } from 'deja-vue'
+
+const mode = ref<'to' | 'fromTo'>('to')
 </script>
 
 <template>
   <Tween
-    :key="method"
-    :method="method"
-    :vars="method === 'fromTo'
-      ? [{ opacity: 0 }, { opacity: 1 }]
-      : { opacity: 1 }"
+    :key="mode"
+    v-bind="mode === 'fromTo'
+      ? { from: { opacity: 0 }, to: { opacity: 1 } }
+      : { to: { opacity: 1 } }"
   />
 </template>
 ```
 
-## Props reference
-
-### Tween definition
+## Props
 
 | Prop | Type | Description |
 |------|------|-------------|
-| `method` | `'from' \| 'to' \| 'fromTo' \| 'effect:%NAME%'` | **Required** |
-| `vars` | `gsap.TweenVars \| [...]` | **Required**; kept stable across updates |
-| `seamless` | `boolean` | Parent scope uses this tween’s **`target`** (nested chains) |
-
-### Controls and nesting
-
-| Prop | Type | Description |
-|------|------|-------------|
+| `from` | `gsap.TweenVars` | **`from`** vars |
+| `to` | `gsap.TweenVars` | **`to`** vars |
+| `effect` | `string` | GSAP effect name |
+| `effectOptions` | `Record<string, unknown>` | Effect options |
+| `seamless` | `boolean` | Parent scope uses this tween’s **`tweenTarget`** |
+| `tweenTarget` | [`AnimationTarget`](../api/types.md#animationtarget) | DOM resolution |
 | `progress` | `number` | `v-model:progress` |
-| `trigger` | `boolean` | `v-model:trigger` |
-| `triggerActions` | `TweenAction \| [TweenAction, TweenAction]` | Default `play` / `reverse`; e.g. `['play', 'restart']` |
-| `parent` | `DejaVueInstance \| null` | Parent timeline |
+| `trigger` | `unknown` | Watched value |
+| `triggerAction` | `TweenAction` | Action on each **`trigger`** change (default **`play`**) |
+| `triggerOptions` | `WatchOptions` | Trigger watcher options |
+| `parent` | `DejaVueAnimationPublicInstance \| null` | Parent timeline |
 | `position` | `gsap.Position` | Insertion on parent |
-
-Use **`v-model:trigger.once`** to run the trigger watcher once.
 
 ## Default slot
 
-Scope props: **`animation`**, **`controlled`**, **`direction`**, **`parent`**, **`progress`**, **`target`**.
+**`animation`**, **`direction`**, **`parent`**, **`progress`**.
 
 <ClientOnly>
   <TweenProgressSlotDemo />
@@ -93,14 +79,10 @@ import { Tween } from 'deja-vue'
 
 <template>
   <Tween
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
+    :to="{ x: 100, duration: 1 }"
     v-slot="{ progress }"
   >
-    <div
-      class="target"
-    >
-      Progress:
+    <div class="target">
       {{ progress }}
     </div>
   </Tween>
@@ -109,9 +91,7 @@ import { Tween } from 'deja-vue'
 
 ## Events
 
-**`(animation, parent)`** — `animation` is the library wrapper; `parent` is the parent component instance or `null`.
-
-`start`, `update`, `complete`, `repeat`, `reverseComplete`, `interrupt`.
+**`(animation, parent)`** — `start`, `update`, `complete`, `repeat`, `reverseComplete`, `interrupt`.
 
 ## Template ref
 
@@ -127,12 +107,9 @@ const tweenRef = ref()
 <template>
   <Tween
     ref="tweenRef"
-    method="to"
-    :vars="{ x: 100, duration: 1 }"
+    :to="{ x: 100, duration: 1 }"
   >
-    <div class="target">
-      Target
-    </div>
+    <div class="target" />
   </Tween>
 
   <!-- tweenRef.animation.timeline.play() -->
@@ -151,13 +128,8 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween
-    method="from"
-    :vars="{ opacity: 0, duration: 0.5 }"
-  >
-    <div class="target">
-      Target
-    </div>
+  <Tween :from="{ opacity: 0, duration: 0.5 }">
+    <div class="target" />
   </Tween>
 </template>
 ```
@@ -168,18 +140,8 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween
-    method="from"
-    :vars="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }"
-  >
-    <div
-      v-for="item in 5"
-      :key="item"
-      class="box"
-    >
-      Box
-      {{ item }}
-    </div>
+  <Tween :from="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }">
+    <div v-for="item in 5" :key="item" class="target" />
   </Tween>
 </template>
 ```

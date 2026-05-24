@@ -1,7 +1,7 @@
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import type { MaybeRefOrGetter } from 'vue'
-import { computed, onUnmounted, shallowReactive, shallowRef, toValue, watchEffect } from 'vue'
+import { computed, onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watchEffect } from 'vue'
 
 gsap.registerPlugin(SplitText)
 
@@ -38,20 +38,9 @@ export function useSplitText (domTarget: MaybeRefOrGetter<gsap.DOMTarget>, optio
     lines: [] as Element[],
     words: [] as Element[]
   })
-
-  function destroy () {
-    if (!instance.value) return
-    try {
-      instance.value.revert()
-    } catch {
-      // do nothing
-    } finally {
-      instance.value.kill()
-    }
-  }
   
   watchEffect(() => {
-    destroy()
+    instance.value?.kill()
     if (!target.value) return
     instance.value = new SplitText(target.value, {
       ...options,
@@ -65,10 +54,11 @@ export function useSplitText (domTarget: MaybeRefOrGetter<gsap.DOMTarget>, optio
     })
   })
 
-  onUnmounted(destroy)
+  onUnmounted(() => instance.value?.kill())
 
   return {
     instance,
-    state
+    state,
+    ...toRefs(state)
   }
 }

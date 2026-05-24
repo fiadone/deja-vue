@@ -1,37 +1,20 @@
 # Split text
 
-> [!TIP]
-> Put **`SplitText` inside a `Tween` slot** so the parent tween animates split nodes. See **[Animation targets](./targeting.md)**.
+Place **`SplitText` inside a `Tween` slot** so the parent tween animates split nodes.
 
-**`SplitText`** and **`useSplitText`** integrate GSAP SplitText. Register the GSAP plugin in your app setup before using them:
+**`SplitText`** is registered automatically when imported from **`deja-vue`**. [SplitText plugin docs](https://gsap.com/docs/v3/Plugins/SplitText/)
 
-```typescript
-import { gsap } from 'gsap'
-import { SplitText } from 'gsap/SplitText'
-
-gsap.registerPlugin(SplitText)
-```
-
-The library does not register GSAP plugins for you; the same applies to plugins such as **`ScrollTrigger`**.
-
-[SplitText plugin docs](https://gsap.com/docs/v3/Plugins/SplitText/)
-
-## SplitText component
-
-### Props (`SplitTextOptions`)
+## Props
 
 | Prop | Type | Notes |
 |------|------|--------|
-| **`type`** | `string` | Optional; defaults to **`'lines,words,chars'`** |
+| **`type`** | `string` | Defaults to **`'lines,words,chars'`** |
+| **`tweenTarget`** | `'lines' \| 'words' \| 'chars'` | Split level for parent scope (defaults to last segment of **`type`**) |
 | `mask`, `linesClass`, `wordsClass`, `charsClass`, … | | See [composables API](../api/composables.md#usesplittext) |
 
-Slot content is split unless **`is`** targets the root element.
+Root attribute: **`is`**.
 
-### `tweenTarget` attribute
-
-**`lines`**, **`words`**, or **`chars`** — which split level the **parent `Tween`** receives as **`target`**. Defaults to the last segment of **`type`**.
-
-### Example
+## Example
 
 <ClientOnly>
   <SplitTextDemo />
@@ -45,8 +28,7 @@ import { SplitText, Timeline, Tween } from 'deja-vue'
 <template>
   <Timeline>
     <Tween
-      method="from"
-      :vars="{
+      :from="{
         y: 40,
         opacity: 0,
         duration: 0.8,
@@ -54,28 +36,15 @@ import { SplitText, Timeline, Tween } from 'deja-vue'
         ease: 'power2.out'
       }"
     >
-      <SplitText
-        type="chars"
-        :reduce-white-space="true"
-      >
-        <p
-          class="target"
-        >
-          Split
-          text
-          target
-        </p>
+      <SplitText type="chars">
+        <p>Split text</p>
       </SplitText>
     </Tween>
   </Timeline>
 </template>
 ```
 
-A single **`Tween`** without **`Timeline`** works the same way.
-
-### Marker + trigger pattern
-
-Wrap the tween in **`Marker`** and drive **`trigger`** from the slot:
+## Marker + trigger
 
 ```html
 <script setup>
@@ -87,27 +56,15 @@ function onCross (direction) {
 </script>
 
 <template>
-  <Marker
-    @cross="onCross"
-    v-slot="{ crossed }"
-  >
+  <Marker @cross="onCross" v-slot="{ crossed }">
     <Tween
-      method="from"
+      :from="{ rotate: 360, scale: 0, stagger: 0.1 }"
       :parent="null"
       :trigger="crossed"
-      :trigger-actions="['play', 'restart']"
-      :vars="{ rotate: 360, scale: 0, stagger: 0.1 }"
+      :trigger-action="crossed ? 'restart' : 'play'"
     >
-      <SplitText
-        type="chars"
-      >
-        <p
-          class="target"
-        >
-          Split
-          text
-          target
-        </p>
+      <SplitText type="chars">
+        <p>Split text</p>
       </SplitText>
     </Tween>
   </Marker>
@@ -116,29 +73,18 @@ function onCross (direction) {
 
 ## useSplitText
 
-For custom components when you already hold a DOM ref:
-
 ```html
 <script setup>
 import { ref } from 'vue'
 import { useSplitText } from 'deja-vue'
 
 const root = ref(null)
-const { state } = useSplitText(root, { type: 'words,chars' })
+const { chars, words } = useSplitText(root, { type: 'words,chars' })
 </script>
 
 <template>
-  <p
-    ref="root"
-    class="target">Split
-    text
-    target</p
-  >
+  <p ref="root" class="target">
+    Split text
+  </p>
 </template>
 ```
-
-## See also
-
-- [Animation targets](./targeting.md) — **`seamless`**
-- [Components API: SplitText](../api/components.md#splittext)
-- [Composables API: useSplitText](../api/composables.md#usesplittext)

@@ -26,10 +26,7 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween
-    method="from"
-    :vars="{ opacity: 0, y: 24, duration: 0.6, ease: 'power3.out' }"
-  >
+  <Tween :from="{ opacity: 0, y: 24, duration: 0.6, ease: 'power3.out' }">
     <h1>Animated with Déjà Vue</h1>
   </Tween>
 </template>

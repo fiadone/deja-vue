@@ -1,51 +1,59 @@
 import { gsap } from 'gsap'
-import type { PropType } from 'vue'
-import { computed, useAttrs, watch } from 'vue'
+import type { MaybeRefOrGetter, PropType } from 'vue'
+import { computed, toValue, useAttrs, watch } from 'vue'
 import { getNodeElement, useUnwrap } from 'vue-unwrap'
 
-import type { DejaVueInstanceExposed, DejaVueNode, WrappableAnimation } from '../types'
+import type { AnimationTarget, DejaVueAnimationScopeProps, DejaVueNode, WrappableComponent } from '../types'
 import { toNonEmptyArray } from '../utils'
 
-export type AnimationScopeProps = Omit<DejaVueInstanceExposed, '$el'>
+interface UseAnimationScopeOptions {
+  resolveChildrenTweenTarget?: (children: DejaVueNode[]) => gsap.TweenTarget[]
+  tweenTarget?: MaybeRefOrGetter<AnimationTarget>
+}
 
 const AnimationScopePropTypes = {
-  animation: Object as PropType<DejaVueInstanceExposed['animation']>,
-  controlled: Boolean as PropType<DejaVueInstanceExposed['controlled']>,
-  direction: Number as PropType<DejaVueInstanceExposed['direction']>,
-  parent: Object as PropType<DejaVueInstanceExposed['parent']>,
-  progress: Number as PropType<DejaVueInstanceExposed['progress']>,
-  seamless: Boolean as PropType<DejaVueInstanceExposed['seamless']>,
-  target: [String, Object] as PropType<gsap.TweenTarget>
+  animation: Object as PropType<DejaVueAnimationScopeProps['animation']>,
+  direction: Number as PropType<DejaVueAnimationScopeProps['direction']>,
+  parent: Object as PropType<DejaVueAnimationScopeProps['parent']>,
+  progress: Number as PropType<DejaVueAnimationScopeProps['progress']>
 }
 
-export function resolveChildrenTarget (children: DejaVueNode[]) {
+export function resolveChildrenTweenTarget (children: DejaVueNode[]) {
   return (
     children
-      .map(child => (child && 'seamless' in child && child.seamless) ? child.target : getNodeElement(child))
+      .map(child => (
+        (child && 'seamless' in child && child.seamless)
+          ? child.tweenTarget
+          : getNodeElement(child)
+      ))
       .flat()
       .filter(Boolean)
-  )
+  ) as Element[]
 }
 
-export function useAnimationScope (childrenTargetResolver = resolveChildrenTarget) {
-  const attrs = useAttrs() as WrappableAnimation
-  const { $el, children, Unwrap: AnimationScope } = useUnwrap<DejaVueNode, AnimationScopeProps>(AnimationScopePropTypes)
-  const target = computed<gsap.TweenTarget>(() => {
-    if (!attrs.is || !attrs.target || attrs.target === 'children') return toNonEmptyArray(childrenTargetResolver(children))
-    if (typeof attrs.target !== 'string') return attrs.target
-    if (attrs.is && attrs.target === 'self') return $el.value
-    return toNonEmptyArray(gsap.utils.toArray<Element>(attrs.target, $el.value)) // try scoped DOM query selection
+export function useAnimationScope (options?: UseAnimationScopeOptions) {
+  const attrs = useAttrs() as WrappableComponent
+  const { children, root, Unwrap: AnimationScope } = useUnwrap<DejaVueNode, DejaVueAnimationScopeProps>(AnimationScopePropTypes)
+  const tweenTarget = computed<gsap.TweenTarget>(() => {
+    const target = toValue(options?.tweenTarget)
+    if (!attrs.is || !target || target === 'children') {
+      const resolveTweenTarget = options?.resolveChildrenTweenTarget || resolveChildrenTweenTarget
+      return toNonEmptyArray(resolveTweenTarget(children))
+    }
+    if (typeof target !== 'string') return target
+    if (attrs.is && target === 'self') return root.value
+    return toNonEmptyArray(gsap.utils.toArray<Element>(target, root.value)) // try scoped DOM query selection
   })
 
-  watch(target, (_, previousTarget) => {
+  watch(tweenTarget, (_, previousTarget) => {
     if (!previousTarget) return
     gsap.killTweensOf(previousTarget)
     gsap.set(previousTarget, { clearProps: true })
   })
 
   return {
-    $el,
     AnimationScope,
-    target
+    root,
+    tweenTarget
   }
 }

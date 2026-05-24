@@ -1,19 +1,16 @@
 # Types API
 
-> [!TIP]
-> Start with **[Core concepts](../guide/concepts.md)** if **`Animation`** vs **`animation.timeline`** is unclear.
-
 ## Core types
 
 ### Animation
 
-**`Animation`** (`src/core/Animation.ts`) wraps **`gsap.core.Timeline`** (use **`animation.timeline`** for imperative GSAP) and extends **[`EventBus`](#eventbus)**.
+Wraps **`gsap.core.Timeline`**. Use **`animation.timeline`** for imperative GSAP.
 
 ```typescript
 class Animation extends EventBus<AnimationEvent> {
   public timeline: gsap.core.Timeline
   constructor(options?: gsap.TimelineVars)
-  add(child: AnimationChild, position?: gsap.Position, timeShift?: boolean): void // timeShift defaults to true
+  add(child: AnimationChild, position?: gsap.Position, timeShift?: boolean): void
   remove(child: AnimationChild): void
   compose(definition: AnimationComposeDefinition, withContext?: boolean): void
   run(action?: TweenAction): void
@@ -22,27 +19,45 @@ class Animation extends EventBus<AnimationEvent> {
 }
 ```
 
-**`add`** behavior depends on **`child`** type:
+**`add`** — labels and callbacks use raw GSAP placement. Nested **`Animation`** children use raw **`timeline.add`** by default; pass **`timeShift: true`** to shift later siblings on insert. Defers while the parent timeline is active.
 
-- **`string`** (label) — **`timeline.addLabel`**, no **`timeShift`**
-- **`function`** (callback) — raw **`timeline.add`**, no **`timeShift`**
-- **`Animation`** (`Tween` / nested **`Timeline`**) — if the parent timeline **`isActive()`**, the add is deferred until **`complete`** or **`reverseComplete`**. Otherwise, with **`timeShift: true`** (default): resolve **`position`** via **`resolveTimelinePosition`** (**`undefined`** → parent timeline end), call GSAP **`shiftChildren(duration, false, targetTime + ε)`** so siblings starting **strictly after** the insert time move forward (co-located parallel siblings at the same start time are not shifted), then **`add`** at **`targetTime`**. With **`timeShift: false`**, use raw **`timeline.add(child.timeline, position)`** without shifting.
+**`remove`** — collapses trailing siblings for nested **`Animation`** children.
 
-**`remove`** mirrors the same deferral when the parent is active. For **`Animation`** children: remove from the timeline, then **`shiftChildren(-duration, false, endTime)`** to collapse siblings that start at or after the removed block’s end. Labels and callbacks use raw GSAP **`remove`** / **`removeLabel`** without shifting.
-
-Pass **`timeShift: false`** on **`add`** to skip **`shiftChildren`** for nested **`Animation`** instances.
-
-### DejaVueInstance
-
-What **`Tween`** / **`Timeline`** expose and **`provide`** via **`dejaVueParentInstance`**:
+### DejaVueComponent
 
 ```typescript
-interface DejaVueInstance extends DejaVueComponent {
+interface DejaVueComponent {
+  $el: ShallowRef<Element | null>
+  seamless?: MaybeRefOrGetter<boolean>
+  tweenTarget: ComputedRef<gsap.TweenTarget>
+}
+```
+
+### DejaVueAnimationPublicInstance
+
+Exposed by **`Tween`** / **`Timeline`** and provided via **`dejaVueParentInstance`**:
+
+```typescript
+interface DejaVueAnimationPublicInstance extends DejaVueComponent {
   animation: Animation
   controlled: boolean
-  direction: Ref<AnimationDirection> // 1 | -1 | 0
-  parent: DejaVueInstance | null
+  direction: Ref<AnimationDirection>
+  parent: DejaVueAnimationPublicInstance | null
   progress: ModelRef<number | undefined>
+}
+```
+
+### DejaVueAnimationScopeProps
+
+Default slot props on **`Tween`** / **`Timeline`**:
+
+```typescript
+type DejaVueAnimationScopeProps = {
+  animation: Animation
+  direction: AnimationDirection
+  progress: number | undefined
+} & {
+  parent: DejaVueAnimationPublicInstance | null
 }
 ```
 
@@ -55,7 +70,7 @@ type AnimationEvent =
 type AnimationEventEmitter = (
   e: AnimationEvent,
   animation: Animation,
-  parent: DejaVueInstance | null
+  parent: DejaVueAnimationPublicInstance | null
 ) => void
 ```
 
@@ -70,8 +85,6 @@ type ControllableAnimation = {
 )
 ```
 
-**`trigger`**, **`trigger-action`**, and **`trigger-options`** are declared on **`Tween`** / **`Timeline`** via **`ControllableAnimation`**. **`progress`** uses **`defineModel`**.
-
 ### TweenAction
 
 ```typescript
@@ -79,8 +92,6 @@ type TweenAction = 'play' | 'pause' | 'restart' | 'resume' | 'reverse'
 ```
 
 ### TweenDefinition
-
-Component props (strict union — only one tween kind):
 
 ```typescript
 type TweenDefinition = (
@@ -93,19 +104,28 @@ type TweenDefinition = (
 
 ### AnimationComposeDefinition
 
-Internal payload passed to **`Animation.compose`** (built by **`Tween`**):
-
 ```typescript
-type AnimationComposeDefinition = { target: gsap.TweenTarget } & (
+type AnimationComposeDefinition = {
+  scope?: Element
+  target: gsap.TweenTarget
+} & (
   | { method: 'fromTo'; vars: [gsap.TweenVars, gsap.TweenVars] }
   | { method: 'from' | 'to'; vars: gsap.TweenVars }
   | { method: string; vars: Record<string, unknown> }
 )
 ```
 
-### AnimationNestingTarget
+Omit **`scrollTrigger.trigger`** in tween vars to default it to **`scope`**.
 
-Used by **`useAnimationNesting`**:
+### AnimationTarget
+
+```typescript
+type AnimationTarget = gsap.TweenTarget | 'self' | 'children'
+```
+
+**`'self'`** and selector strings require root attribute **`is`**.
+
+### AnimationNestingTarget
 
 ```typescript
 type AnimationNestingTarget =
@@ -118,7 +138,7 @@ type AnimationNestingTarget =
 
 ```typescript
 type AnimationNestableChild = {
-  parent?: DejaVueInstance | null
+  parent?: DejaVueAnimationPublicInstance | null
   position?: gsap.Position
 }
 ```
@@ -129,11 +149,13 @@ type AnimationNestableChild = {
 type AnimationDirection = 1 | -1 | 0
 ```
 
-Used by **`useAnimationControls`** (scrub direction) and **`Marker`** **`@cross`**.
+### WrappableComponent
 
-### WrappableAnimation
-
-Scope attributes: **`is`**, **`target`** (`'self'`, `'children'`, selector string, or `gsap.TweenTarget`).
+```typescript
+interface WrappableComponent {
+  is?: string | Component
+}
+```
 
 ### AnimationChild
 
@@ -145,24 +167,16 @@ type AnimationChild = Animation | gsap.Callback | string
 
 ```typescript
 const ANIMATION_EVENTS: AnimationEvent[]
-const dejaVueParentInstance: InjectionKey<DejaVueInstance>
+const dejaVueParentInstance: InjectionKey<DejaVueAnimationPublicInstance>
 ```
 
 ## Exported utilities
 
-Also exported from **`deja-vue`** for advanced use:
-
 ```typescript
 function cloneObject<T extends object>(target: T): T
 function isObject(value: unknown): value is Record<string, unknown>
-function patch(target: unknown, change: unknown): boolean
+function syncData(target: unknown, changes: unknown): boolean
 function patchArray(target: unknown[], changes: unknown[]): void
 function patchObject<T extends object>(target: T, changes: T): void
 function toNonEmptyArray<T>(data: T[]): NonEmptyArray<T> | null
 ```
-
-Timeline helpers in **`utils/timeline`** (**`applyTimelineTotalDuration`**, **`resolveTimelinePosition`**) support **`Animation.add`** / **`remove`**. Nested **`Animation`** children use GSAP **`shiftChildren`** to keep sibling timing aligned on add/remove; labels and callbacks do not.
-
-## Event system
-
-**`Animation`** also uses an internal event bus (not exported) so multiple listeners can subscribe with **`animation.on(...)`**. Component **`@complete`** handlers mirror that API with **`(animation, parent)`**.

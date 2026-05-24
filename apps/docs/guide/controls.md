@@ -1,13 +1,10 @@
 # Animation Controls
 
-> [!TIP]
-> See **[Core concepts](./concepts.md)** for **`direction`** and when to scrub vs rebuild tweens.
-
-`Tween` and `Timeline` support **`v-model:progress`** and **`v-model:trigger`**, wired by [`useAnimationControls`](../api/composables.md#useanimationcontrols).
+`Tween` and `Timeline` support **`v-model:progress`** and **`v-model:trigger`**.
 
 ## Progress
 
-Scrub between **0** and **1**. While scrubbing, **`direction`** becomes **`1`** or **`-1`** depending on whether progress increased or decreased (useful for **`Marker`** **`@cross`** logic).
+Scrub between **0** and **1**. **`direction`** is **`1`** or **`-1`** while scrubbing.
 
 <ClientOnly>
   <ControlsProgressDemo />
@@ -40,33 +37,20 @@ function pauseForScrub () {
   <Tween
     ref="tweenRef"
     v-model:progress="progress"
-    method="to"
-    :vars="{ x: 200, duration: 2 }"
+    :to="{ x: 200, duration: 2 }"
   >
-    <div class="target">
-      Target
-    </div>
+    <div class="target" />
   </Tween>
 </template>
 ```
 
 ## Trigger
 
-Default: **`true`** → **`play`**, **`false`** → **`reverse`**.
+Each **`trigger`** change runs **`trigger-action`** (default **`play`**). Bind **`trigger-action`** in the same template as **`trigger`**.
 
 <ClientOnly>
   <ControlsTriggerDemo />
 </ClientOnly>
-
-Override with **`triggerActions`**:
-
-| `triggerActions` | `trigger === true` | `trigger === false` |
-|----------------|-------------------|---------------------|
-| (default) | `play` | `reverse` |
-| `['play', 'restart']` | `play` | `restart` |
-| `'pause'` | `pause` | `pause` |
-
-A single action string applies to both **`true`** and **`false`**.
 
 ```html
 <script setup>
@@ -82,71 +66,33 @@ const isPlaying = ref(false)
     {{ isPlaying ? 'Reverse' : 'Play' }}
   </button>
   <Tween
-    v-model:trigger="isPlaying"
-    method="to"
-    :vars="{ rotation: 360, duration: 3, repeat: -1 }"
+    :trigger="isPlaying"
+    :trigger-action="isPlaying ? 'play' : 'reverse'"
+    :to="{ rotation: 360, duration: 3, repeat: -1 }"
   >
     <div class="box" />
   </Tween>
 </template>
 ```
 
-Custom actions:
+One-shot trigger:
 
 ```html
-<script setup>
-import { ref } from 'vue'
-
-import { Tween } from 'deja-vue'
-
-const crossed = ref(false)
-</script>
-
-<template>
-  <Tween
-    v-model:trigger="crossed"
-    method="from"
-    :trigger-actions="['play', 'restart']"
-    :vars="{ opacity: 0 }"
-  />
-</template>
+<Tween
+  :from="{ opacity: 0 }"
+  :trigger="crossed"
+  :trigger-action="'restart'"
+  :trigger-options="{ once: true }"
+/>
 ```
 
-Listen only once by adding the **`.once`** modifier to the trigger model:
+## Progress and trigger together
+
+Pause the timeline when the user scrubs so playback and **`v-model:progress`** do not conflict.
+
+## Template ref
 
 ```html
-<script setup>
-import { ref } from 'vue'
-
-import { Tween } from 'deja-vue'
-
-const crossed = ref(false)
-</script>
-
-<template>
-  <Tween
-    v-model:trigger.once="crossed"
-    method="from"
-    :trigger-actions="['play', 'restart']"
-    :vars="{ opacity: 0 }"
-  />
-</template>
-```
-
-## Combining progress and trigger
-
-Both models can be bound on the same component. **Pause the timeline when the user scrubs** (e.g. on `pointerdown` / `keydown` of the range input) so timeline playback and `v-model:progress` do not fight each other.
-
-## Programmatic control
-
-```html
-const tweenRef = ref()
 // tweenRef.value.animation.timeline.play()
-// tweenRef.value.direction // Ref<1 | -1 | 0>
-
-
+// tweenRef.value.direction
 ```
-
-## Scroll / hover patterns
-
-Map external state to **`progress`** or **`trigger`** — no special APIs required.

@@ -1,15 +1,10 @@
 # Nesting Animations
 
-> [!NOTE]
-> Overview: **[Nesting at a glance](./concepts.md#nesting-at-a-glance)** in *Core concepts*.
-
-Child animations attach to a parent timeline via Vue **provide / inject**. The parent **`Timeline`** provides a **`DejaVueInstance`**; children register through **`useAnimationNesting`**, which calls **`parent.animation.add(...)`** / **`remove(...)`**.
-
-For nested **`Animation`** instances (**`Tween`**, nested **`Timeline`**), **`Animation.add`** (default **`timeShift: true`**) resolves **`position`**, calls GSAP **`shiftChildren`** to move later siblings out of the way, then inserts the child. **`Animation.remove`** collapses siblings that start at or after the removed block’s end. **Labels** and **callbacks** (**`Marker`**) use raw GSAP placement and are not shifted.
+Nest **`Tween`**, **`Timeline`**, **`Marker`**, and **`SplitText`** inside a parent **`Timeline`**. Use **`position`** to control placement on the parent timeline.
 
 ## Dynamic children (`v-if`, lists)
 
-Each nestable registers on its own when it mounts or updates. Without **`position`**, the resolved time is the parent timeline **end** — the initial mount pass builds a sequence in template order, and **remove** collapses trailing siblings. **Re-adding** a child (for example after **`v-if`**) **appends at the end** unless you set **`position`** explicitly; middle conditional toggles do not automatically restore the original template slot. Use explicit **`position`** (absolute times, labels, **`+=`**, **`<`**, etc.) when conditional composition must land at a specific time.
+Without **`position`**, re-added children append at the timeline end. Set explicit **`position`** when conditional composition must land at a specific time.
 
 ## Automatic nesting
 
@@ -24,28 +19,11 @@ import { Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
-    <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    >
-      <div
-        class="target"
-      >
-        First
-        target
-      </div>
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
     </Tween>
-    <Tween
-      method="to"
-      position="+=0.5"
-      :vars="{ y: 100, duration: 1 }"
-    >
-      <div
-        class="target"
-      >
-        Second
-        target
-      </div>
+    <Tween position="+=0.5" :to="{ y: 100, duration: 1 }">
+      <div class="target" />
     </Tween>
   </Timeline>
 </template>
@@ -64,30 +42,22 @@ import { Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
-    <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    />
-    <Timeline
-      position="+=0.5"
-    >
-      <Tween
-        method="to"
-        :vars="{ y: 50, duration: 0.5 }"
-      />
-      <Tween
-        method="to"
-        position="<"
-        :vars="{ rotation: 90, duration: 0.5 }"
-      />
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
+    </Tween>
+    <Timeline position="+=0.5">
+      <Tween :to="{ y: 50, duration: 0.5 }">
+        <div class="target" />
+      </Tween>
+      <Tween position="<" :to="{ rotation: 90, duration: 0.5 }">
+        <div class="target" />
+      </Tween>
     </Timeline>
   </Timeline>
 </template>
 ```
 
-## Marker (labels + cross events)
-
-**`Marker`** registers an optional **label** and a **callback** when the playhead crosses **`position`**. It emits **`cross`** with **`direction`** (`1` forward, `-1` reverse).
+## Marker
 
 ```html
 <script setup>
@@ -100,26 +70,19 @@ function onMain (direction) {
 
 <template>
   <Timeline>
-    <Marker
-      label="intro"
-    />
-    <Tween
-      method="from"
-      :vars="{ opacity: 0, duration: 1 }"
-    />
-    <Marker
-      label="main"
-      @cross="onMain"
-    />
-    <Tween
-      method="to"
-      :vars="{ x: 200, duration: 2 }"
-    />
+    <Marker label="intro" />
+    <Tween :from="{ opacity: 0, duration: 1 }">
+      <div class="target" />
+    </Tween>
+    <Marker label="main" @cross="onMain" />
+    <Tween :to="{ x: 200, duration: 2 }">
+      <div class="target" />
+    </Tween>
   </Timeline>
 </template>
 ```
 
-Slot pattern (drive a child tween from marker state):
+Slot pattern:
 
 ```html
 <script setup>
@@ -137,17 +100,12 @@ function onCross (direction) {
     v-slot="{ crossed }"
   >
     <Tween
-      method="from"
+      :from="{ opacity: 0 }"
       :trigger="crossed"
-      :trigger-actions="['play', 'restart']"
-      :vars="{ opacity: 0 }"
+      :trigger-action="crossed ? 'play' : 'restart'"
     >
-      <SplitText
-        type="chars"
-      >
-        <p class="target">
-          Split text
-        </p>
+      <SplitText type="chars">
+        <p>Split text</p>
       </SplitText>
     </Tween>
   </Marker>
@@ -166,25 +124,21 @@ const mainTimeline = ref()
 </script>
 
 <template>
-  <Timeline
-    ref="mainTimeline"
-  >
-    <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    />
+  <Timeline ref="mainTimeline">
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
+    </Tween>
   </Timeline>
 
   <Tween
-    method="to"
-    position="+=0.5"
     :parent="mainTimeline"
-    :vars="{ y: 100, duration: 1 }"
-  />
+    :position="'+=0.5'"
+    :to="{ y: 100, duration: 1 }"
+  >
+    <div class="target" />
+  </Tween>
 </template>
 ```
-
-Use the template ref’s exposed component instance (the ref value **is** the **`DejaVueInstance`**).
 
 ## Preventing automatic nesting
 
@@ -195,15 +149,15 @@ import { Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
+    <Tween :to="{ x: 100, duration: 1 }">
+      <div class="target" />
+    </Tween>
     <Tween
-      method="to"
-      :vars="{ x: 100, duration: 1 }"
-    />
-    <Tween
-      method="to"
       :parent="null"
-      :vars="{ y: 100, duration: 1 }"
-    />
+      :to="{ y: 100, duration: 1 }"
+    >
+      <div class="target" />
+    </Tween>
   </Timeline>
 </template>
 ```
@@ -217,19 +171,19 @@ import { Marker, Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
-    <Marker
-      label="parallel"
-    />
+    <Marker label="parallel" />
     <Tween
-      method="to"
       position="parallel"
-      :vars="{ x: 100, duration: 1 }"
-    />
+      :to="{ x: 100, duration: 1 }"
+    >
+      <div class="target" />
+    </Tween>
     <Tween
-      method="to"
       position="parallel"
-      :vars="{ y: 100, duration: 1 }"
-    />
+      :to="{ y: 100, duration: 1 }"
+    >
+      <div class="target" />
+    </Tween>
   </Timeline>
 </template>
 ```
@@ -243,18 +197,8 @@ import { Timeline, Tween } from 'deja-vue'
 
 <template>
   <Timeline>
-    <Tween
-      method="from"
-      :vars="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }"
-    >
-      <div
-        v-for="item in items"
-        :key="item"
-        class="box"
-      >
-        Box
-        {{ item }}
-      </div>
+    <Tween :from="{ opacity: 0, y: 20, duration: 0.5, stagger: 0.1 }">
+      <div v-for="n in 3" :key="n" class="target" />
     </Tween>
   </Timeline>
 </template>

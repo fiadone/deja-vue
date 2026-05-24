@@ -7,7 +7,7 @@
       <Tween :from="{ opacity: 0, y: 10, stagger: 0.05 }">
         <SplitText type="chars">
           <p class="demo-split">
-            Animated text
+            Lorem ipsum
           </p>
         </SplitText>
       </Tween>

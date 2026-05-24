@@ -30,7 +30,7 @@ export class Animation extends EventBus<AnimationEvent> {
     }
   }
 
-  add (child: AnimationChild, position?: gsap.Position, timeShift = true) {
+  add (child: AnimationChild, position?: gsap.Position, timeShift = false) {
     if (!this.timeline) return
     if (typeof child === 'string') {
       this.timeline.addLabel(child, position)
@@ -77,10 +77,14 @@ export class Animation extends EventBus<AnimationEvent> {
       return
     }
 
+    const target = definition.target
+
     if (definition.method === 'fromTo') {
-      this.timeline.fromTo(definition.target, ...definition.vars as [gsap.TweenVars, gsap.TweenVars])
+      const [from, to] = definition.vars as [gsap.TweenVars, gsap.TweenVars]
+      this.timeline.fromTo(target, from, to)
     } else if (definition.method in this.timeline) {
-      this.timeline[definition.method](definition.target, definition.vars)
+      const vars = definition.vars as gsap.TweenVars
+      this.timeline[definition.method](target, vars)
     } else {
       console.warn('[deja-vue] Missing or unknown gsap effect.')
     }

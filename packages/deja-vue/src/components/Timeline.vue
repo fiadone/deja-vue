@@ -8,15 +8,27 @@ import { useAnimationScope } from '../composables/useAnimationScope'
 import { useStableObjectProp } from '../composables/useStableObjectProp'
 import { ANIMATION_EVENTS, dejaVueParentInstance } from '../constants'
 import { Animation } from '../core/Animation'
-import type { AnimationEventEmitter, ControllableAnimation, DejaVueInstance } from '../types'
+import type {
+  AnimationEventEmitter,
+  AnimationNestableChild,
+  AnimationTarget,
+  ControllableAnimation,
+  DejaVueAnimationPublicInstance,
+  DejaVueAnimationScopeProps
+} from '../types'
+
+const props = defineProps<(
+  & ControllableAnimation
+  & Pick<AnimationNestableChild, 'position'>
+  & {
+    duration?: number
+    options?: gsap.TimelineVars
+    seamless?: boolean
+    tweenTarget?: AnimationTarget
+  }
+)>()
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
-
-const props = defineProps<ControllableAnimation & {
-  duration?: number
-  options?: gsap.TimelineVars
-  seamless?: boolean
-}>()
 
 const options = useStableObjectProp<gsap.TimelineVars>(() => props.options)
 
@@ -28,7 +40,6 @@ const animation = new Animation({
 })
 
 const progress = defineModel<number>('progress', { default: undefined })
-
 const controls: AnimationControls = {
   progress,
   trigger: computed(() => props.trigger),
@@ -37,19 +48,19 @@ const controls: AnimationControls = {
 }
 
 const { controlled, direction } = useAnimationControls(animation, controls)
-const { parent } = useAnimationNesting({ animation })
-const { $el, AnimationScope, target } = useAnimationScope()
+const { parent } = useAnimationNesting({ animation }, () => props.position)
+const { AnimationScope, root, tweenTarget } = useAnimationScope({ tweenTarget: () => props.tweenTarget })
 const seamless = computed(() => props.seamless)
 
-const instance: DejaVueInstance = {
-  $el,
+const instance: DejaVueAnimationPublicInstance = {
+  $el: root,
   animation,
   controlled,
   direction,
   parent,
   progress,
   seamless,
-  target
+  tweenTarget
 }
 
 for (const event of ANIMATION_EVENTS) {
@@ -77,15 +88,15 @@ onUnmounted(() => animation.dispose())
 provide(dejaVueParentInstance, instance)
 
 defineExpose(instance)
+
+defineSlots<{ default(props: DejaVueAnimationScopeProps): any }>()
 </script>
 
 <template>
   <AnimationScope
     :animation
-    :controlled
     :direction
     :parent
     :progress
-    :target
   />
 </template>
