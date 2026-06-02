@@ -3,12 +3,12 @@ import type { MaybeRefOrGetter, PropType } from 'vue'
 import { computed, toValue, useAttrs, watch } from 'vue'
 import { getNodeElement, useUnwrap } from 'vue-unwrap'
 
-import type { AnimationTarget, DejaVueAnimationScopeProps, DejaVueNode, WrappableComponent } from '../types'
+import type { DejaVueAnimationScopeProps, DejaVueNode, WrappableComponent } from '../types'
 import { toNonEmptyArray } from '../utils'
 
-interface UseAnimationScopeOptions {
-  resolveChildrenTweenTarget?: (children: DejaVueNode[]) => gsap.TweenTarget[]
-  tweenTarget?: MaybeRefOrGetter<AnimationTarget>
+export interface AnimationScopeOptions {
+  resolveChildrenTweenTarget?: (children: DejaVueNode[]) => Element[]
+  tweenTarget?: MaybeRefOrGetter<gsap.DOMTarget | undefined>
 }
 
 const AnimationScopePropTypes = {
@@ -31,18 +31,18 @@ export function resolveChildrenTweenTarget (children: DejaVueNode[]) {
   ) as Element[]
 }
 
-export function useAnimationScope (options?: UseAnimationScopeOptions) {
+export function useAnimationScope (options?: AnimationScopeOptions) {
   const attrs = useAttrs() as WrappableComponent
   const { children, root, Unwrap: AnimationScope } = useUnwrap<DejaVueNode, DejaVueAnimationScopeProps>(AnimationScopePropTypes)
-  const tweenTarget = computed<gsap.TweenTarget>(() => {
+  const tweenTarget = computed(() => {
     const target = toValue(options?.tweenTarget)
     if (!attrs.is || !target || target === 'children') {
       const resolveTweenTarget = options?.resolveChildrenTweenTarget || resolveChildrenTweenTarget
-      return toNonEmptyArray(resolveTweenTarget(children))
+      return toNonEmptyArray<Element>(resolveTweenTarget(children))
     }
     if (typeof target !== 'string') return target
     if (attrs.is && target === 'self') return root.value
-    return toNonEmptyArray(gsap.utils.toArray<Element>(target, root.value)) // try scoped DOM query selection
+    return toNonEmptyArray<Element>(gsap.utils.toArray<Element>(target, root.value)) // try scoped DOM query selection
   })
 
   watch(tweenTarget, (_, previousTarget) => {

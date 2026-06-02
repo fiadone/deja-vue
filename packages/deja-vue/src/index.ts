@@ -1,27 +1,19 @@
 export type * from './types'
+export type * from './components/Marker.types'
+export type * from './components/SplitText.types'
 
 export * from './constants'
 export * from './utils'
+export * from './utils/gsap'
+export * from './core/Animation'
+export * from './composables/useAnimationControls'
+export * from './composables/useAnimationNesting'
+export * from './composables/useAnimationScope'
+export * from './composables/useSplitText'
+export * from './composables/useStableObjectProp'
+export * from './composables/useTweenVars'
 
-export { Animation } from './core/Animation'
-export { useAnimationControls, type AnimationControls } from './composables/useAnimationControls'
-export { useAnimationNesting, type AnimationNestingTarget } from './composables/useAnimationNesting'
-export { useAnimationScope } from './composables/useAnimationScope'
-export { useSplitText, type SplitTextOptions } from './composables/useSplitText'
-export { useStableObjectProp } from './composables/useStableObjectProp'
-export { useTweenVars } from './composables/useTweenVars'
-
+export { default as Marker } from './components/Marker.vue'
+export { default as SplitText } from './components/SplitText.vue'
 export { default as Timeline } from './components/Timeline.vue'
 export { default as Tween } from './components/Tween.vue'
-
-export {
-  default as Marker,
-  type DejaVueMarkerPublicInstance,
-  type DejaVueMarkerScopeProps
-} from './components/Marker.vue'
-
-export {
-  default as SplitText,
-  type DejaVueSplitTextPublicInstance,
-  type DejaVueSplitTextScopeProps
-} from './components/SplitText.vue'

@@ -1,7 +1,9 @@
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import type { MaybeRefOrGetter } from 'vue'
-import { computed, onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watchEffect } from 'vue'
+import { onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watch } from 'vue'
+
+import { cloneObject } from '../utils'
 
 gsap.registerPlugin(SplitText)
 
@@ -30,29 +32,28 @@ export interface SplitTextOptions {
   overwrite?: boolean
 }
 
-export function useSplitText (domTarget: MaybeRefOrGetter<gsap.DOMTarget>, options?: SplitTextOptions) {
-  const target = computed(() => toValue(domTarget))
+export function useSplitText (domTarget: MaybeRefOrGetter<gsap.DOMTarget>, options: MaybeRefOrGetter<SplitTextOptions>) {
   const instance = shallowRef<SplitText>()
   const state = shallowReactive({
     chars: [] as Element[],
     lines: [] as Element[],
     words: [] as Element[]
   })
-  
-  watchEffect(() => {
+
+  watch([() => toValue(domTarget), () => toValue(options)], ([target, vars]) => {
     instance.value?.kill()
-    if (!target.value) return
-    instance.value = new SplitText(target.value, {
-      ...options,
-      type: options?.type || 'lines,words,chars',
+    if (!target || !vars) return
+    instance.value = new SplitText(target, {
+      ...cloneObject(vars),
+      type: vars.type || 'lines,words,chars',
       onSplit (self) {
-        options?.onSplit?.(self)
+        vars.onSplit?.(self)
         state.lines = self.lines
         state.words = self.words
         state.chars = self.chars
       }
     })
-  })
+  }, { immediate: true })
 
   onUnmounted(() => instance.value?.kill())
 

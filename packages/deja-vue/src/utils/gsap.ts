@@ -19,3 +19,17 @@ export function resolveTimelinePosition (
   timeline.remove(probe)
   return time ?? null
 }
+
+export function stripScrollTriggerVars (vars: gsap.AnimationVars, defaultTrigger?: gsap.DOMTarget): ScrollTrigger.Vars | null {
+  if (!vars?.scrollTrigger) return null
+
+  const scrollTriggerVars = (typeof vars.scrollTrigger === 'string' || typeof vars.scrollTrigger === 'number' || 'nodeType' in vars.scrollTrigger)
+    ? { trigger: vars.scrollTrigger }
+    : vars.scrollTrigger as ScrollTrigger.Vars
+
+  delete vars.scrollTrigger
+
+  if (!scrollTriggerVars.trigger && defaultTrigger) scrollTriggerVars.trigger = defaultTrigger
+
+  return scrollTriggerVars
+}

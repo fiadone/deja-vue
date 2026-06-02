@@ -42,11 +42,11 @@ export default [
     },
     rules: {
       '@typescript-eslint/consistent-type-imports': ['error', {
-        disallowTypeAnnotations: false,
         fixStyle: 'separate-type-imports',
         prefer: 'type-imports'
       }],
       '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
         args: 'after-used',
         argsIgnorePattern: '^_',
@@ -54,19 +54,34 @@ export default [
         caughtErrorsIgnorePattern: '^_',
         destructuredArrayIgnorePattern: '^_',
         ignoreRestSiblings: true,
-        varsIgnorePattern: '^_'
+        varsIgnorePattern: '^_|emit|props'
       }],
+      'no-undef': 'off',
       'perfectionist/sort-imports': ['error', {
+        fallbackSort: { order: 'asc', type: 'type-import-first' },
         groups: [
-          'builtin',
-          'external',
-          'internal',
-          ['parent', 'sibling', 'index']
+          ['type-builtin', 'value-builtin'],
+          ['type-external', 'value-external'],
+          ['type-internal', 'value-internal'],
+          [
+            'type-parent',
+            'type-sibling',
+            'type-index',
+            'value-parent',
+            'value-sibling',
+            'value-index'
+          ],
+          'side-effect',
+          'side-effect-style',
+          'style',
+          'unknown'
         ],
         internalPattern: [
-          '^@deja-vue/.+',
-          '^deja-vue$'
-        ]
+          '^@/.+'
+        ],
+        newlinesBetween: 1,
+        order: 'asc',
+        type: 'alphabetical'
       }],
       'perfectionist/sort-named-imports': 'error',
       'perfectionist/sort-objects': ['error', {

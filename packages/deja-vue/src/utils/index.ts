@@ -1,7 +1,5 @@
 import type { NonEmptyArray } from '../types'
 
-export * from './timeline'
-
 export function cloneObject<T extends object> (target: T): T {
   return (
     Array.isArray(target)

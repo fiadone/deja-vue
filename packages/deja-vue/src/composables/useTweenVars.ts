@@ -4,9 +4,9 @@ import type { TweenDefinition } from '../types'
 import { useStableObjectProp } from './useStableObjectProp'
 
 export function useTweenVars (definition: TweenDefinition) {
-  const to = useStableObjectProp<gsap.TweenVars>(() => definition.to)
-  const from = useStableObjectProp<gsap.TweenVars>(() => definition.from)
-  const effectOptions = useStableObjectProp<Record<string, unknown>>(() => definition.effectOptions)
+  const to = useStableObjectProp(() => definition.to)
+  const from = useStableObjectProp(() => definition.from)
+  const effectOptions = useStableObjectProp(() => definition.effectOptions)
 
   const method = computed(() => {
     if (definition.effect) return definition.effect
@@ -14,7 +14,7 @@ export function useTweenVars (definition: TweenDefinition) {
     return definition.from ? 'from' : 'to'
   })
 
-  const vars = computed(() => {
+  const vars = computed<gsap.TweenVars | [gsap.TweenVars, gsap.TweenVars]>(() => {
     switch (method.value) {
       case 'fromTo':
         return [from, to]

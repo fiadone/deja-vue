@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { WatchOptions } from 'vue'
-import { computed, onUnmounted, watch } from 'vue'
+import { computed, watch } from 'vue'
 
-import { type AnimationControls, useAnimationControls } from '../composables/useAnimationControls'
+import type { AnimationControls } from '../composables/useAnimationControls'
+import { useAnimationControls } from '../composables/useAnimationControls'
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import { useAnimationScope } from '../composables/useAnimationScope'
-import { useStableObjectProp } from '../composables/useStableObjectProp'
 import { useTweenVars } from '../composables/useTweenVars'
 import { ANIMATION_EVENTS } from '../constants'
 import { Animation } from '../core/Animation'
@@ -13,42 +12,46 @@ import type {
   AnimationComposeDefinition,
   AnimationEventEmitter,
   AnimationNestableChild,
-  AnimationTarget,
   ControllableAnimation,
-  DejaVueAnimationPublicInstance,
+  DejaVueAnimationInstance,
   DejaVueAnimationScopeProps,
   TweenDefinition
 } from '../types'
 import { cloneObject } from '../utils'
 
 const props = defineProps<(
-  & TweenDefinition
+  & AnimationNestableChild
   & ControllableAnimation
-  & Pick<AnimationNestableChild, 'position'>
+  & TweenDefinition
   & {
     seamless?: boolean
-    tweenTarget?: AnimationTarget
+    tweenTarget?: gsap.DOMTarget
   }
 )>()
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
+const { AnimationScope, root, tweenTarget } = useAnimationScope({ tweenTarget: () => props.tweenTarget })
+
 const animation = new Animation()
 const progress = defineModel<number>('progress', { default: undefined })
 const controls: AnimationControls = {
   progress,
-  trigger: computed(() => props.trigger),
-  triggerAction: computed(() => props.triggerAction),
-  triggerOptions: useStableObjectProp<WatchOptions>(() => props.triggerOptions)
+  trigger: () => props.trigger,
+  triggerAction: () => props.triggerAction,
+  triggerOptions: () => props.triggerOptions
 }
 
 const { controlled, direction } = useAnimationControls(animation, controls)
-const { parent } = useAnimationNesting({ animation }, () => props.position)
-const { AnimationScope, root, tweenTarget } = useAnimationScope({ tweenTarget: () => props.tweenTarget })
-const { method, vars } = useTweenVars(props)
+const { parent } = useAnimationNesting({ animation }, {
+  parent: props.parent,
+  position: () => props.position
+})
+
+const { method: tweenMethod, vars: tweenVars } = useTweenVars(props)
 const seamless = computed(() => props.seamless)
 
-const instance: DejaVueAnimationPublicInstance = {
+const instance: DejaVueAnimationInstance = {
   $el: root,
   animation,
   controlled,
@@ -63,20 +66,14 @@ for (const event of ANIMATION_EVENTS) {
   animation.on(event, () => emit(event, animation, parent))
 }
 
-watch([tweenTarget, method, vars], async ([tweenTarget, tweenMethod, tweenVars]) => {
+watch([tweenMethod, tweenTarget, tweenVars], ([method, target, vars]) => {
   animation.clear(true)
-  if (!tweenTarget || !tweenMethod) return
-  animation.compose({
-    method: tweenMethod,
-    target: tweenTarget,
-    vars: cloneObject(tweenVars)
-  } as AnimationComposeDefinition)
+  if (!target || !method) return
+  const definition = { method, target, vars: cloneObject(vars) } as AnimationComposeDefinition
+  animation.compose(definition)
 }, { deep: true })
 
-onUnmounted(() => animation.dispose())
-
-defineExpose<DejaVueAnimationPublicInstance>(instance)
-
+defineExpose<DejaVueAnimationInstance>(instance)
 defineSlots<{ default(props: DejaVueAnimationScopeProps): any }>()
 </script>
 

@@ -1,14 +1,12 @@
-type EventCallback = (...args: unknown[]) => void
-
-export class EventBus <E extends string> {
-  private bus: Map<E, Set<EventCallback>>
+export class EventBus<E extends string, A extends unknown[] = []> {
+  private bus: Map<E, Set<(...args: A) => void>>
 
   constructor (events?: E[]) {
     this.bus = new Map()
     events?.forEach(event => this.bus.set(event, new Set()))
   }
 
-  on (event: E | E[], callback: EventCallback) {
+  on (event: E | E[], callback: (...args: A) => void) {
     if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.on(e, callback))
@@ -18,8 +16,8 @@ export class EventBus <E extends string> {
     }
   }
 
-  once (event: E | E[], callback: EventCallback) {
-    const fn = (...args: unknown[]) => {
+  once (event: E | E[], callback: (...args: A) => void) {
+    const fn = (...args: A) => {
       this.off(event, fn)
       callback(...args)
     }
@@ -27,7 +25,7 @@ export class EventBus <E extends string> {
     this.on(event, fn)
   }
 
-  off (event: E | E[], callback: EventCallback) {
+  off (event: E | E[], callback: (...args: A) => void) {
     if (!this.bus) return
     if (Array.isArray(event)) {
       event.forEach(e => this.off(e, callback))
@@ -36,13 +34,13 @@ export class EventBus <E extends string> {
     }
   }
 
-  dispatch (event: E, ...args: unknown[]) {
+  dispatch (event: E, ...args: A) {
     if (!this.bus?.has(event)) return
     this.bus.get(event)!.forEach(callback => callback(...args))
   }
 
   dispose () {
     this.bus?.clear()
-    this.bus = null as unknown as Map<E, Set<EventCallback>>
+    this.bus = null as unknown as Map<E, Set<(...args: A) => void>>
   }
 }
