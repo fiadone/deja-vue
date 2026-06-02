@@ -8,7 +8,7 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween :to="{ x: 80, duration: 0.6 }">
+  <Tween :to="{ x: 56 }">
     <div class="target" />
   </Tween>
 </template>
@@ -55,9 +55,25 @@ import { Tween } from 'deja-vue'
 
 Several slot roots → array target. Use **`stagger`** in the tween definition.
 
-## `seamless`
+```html
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
 
-Chain tweens on the same elements:
+<template>
+  <Tween :to="{ opacity: 1, y: 0, duration: 0.5, stagger: 0.08 }">
+    <div
+      v-for="n in 4"
+      :key="n"
+      class="target"
+    />
+  </Tween>
+</template>
+```
+
+## `tween-target="children"`
+
+With a custom root (**`is`**), set **`tween-target="children"`** (or omit **`tween-target`**) to animate **slotted children** instead of the wrapper element. This is the default when **`is`** is not set: slot roots resolve directly.
 
 ```html
 <script setup>
@@ -66,27 +82,89 @@ import { Tween } from 'deja-vue'
 
 <template>
   <Tween
-    :from="{ scale: 0, stagger: 0.1 }"
-    v-slot="parent"
+    is="section"
+    tween-target="children"
+    :to="{ opacity: 1, stagger: 0.05 }"
   >
-    <Tween
-      seamless
-      :parent
-      :to="{ x: 200, stagger: 0.1 }"
-    >
-      <div class="target" />
-    </Tween>
+    <p v-for="n in 3" :key="n" class="line">
+      Line {{ n }}
+    </p>
   </Tween>
 </template>
 ```
 
-## `SplitText`
+When the resolved target list changes, running tweens on the previous target are killed and inline styles cleared before recomposing.
 
-Place **`SplitText`** inside a **`Tween` slot** — see [Split text](./split-text.md).
+## `seamless` {#seamless}
 
-## ScrollTrigger
+**`seamless`** lets a nested **`Tween`** or **`SplitText`** contribute its **`tweenTarget`** to the **parent tween’s** animated nodes. Use it to chain multiple tweens on the **same elements** inside one wrapper.
 
-Omit **`scrollTrigger.trigger`** in tween vars to default it to the scope root element.
+**`seamless`** shares DOM targets between nested tweens. On a **`Timeline`**, seamless siblings still register as separate **`Animation`** children on that timeline. See **[How nesting works](./concepts.md#nesting-at-a-glance)**.
+
+<ClientOnly>
+  <TimelineSeamlessDemo />
+</ClientOnly>
+
+```html
+<script setup>
+import { Timeline, Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Timeline>
+    <Tween :from="{ scale: 0, stagger: 0.1 }">
+      <Tween
+        seamless
+        :to="{ rotate: 180, stagger: 0.1 }"
+      >
+        <Tween
+          seamless
+          :to="{ x: 56, stagger: 0.1 }"
+        >
+          <div v-for="n in 3" :key="n" class="target" />
+        </Tween>
+      </Tween>
+    </Tween>
+  </Timeline>
+</template>
+```
+
+**`SplitText`** is always seamless: place it inside a **`Tween`** so split chars, words, or lines become that tween’s target. See **[Split text](./split-text.md)**.
+
+## ScrollTrigger {#scrolltrigger}
+
+Use **`scrollTrigger`** in **`Tween`** **`from`** / **`to`** vars, or in **`Timeline`** **`options`**. Déjà Vue extracts it from GSAP vars and attaches a **`ScrollTrigger`** to the component timeline. No **`gsap.registerPlugin(ScrollTrigger)`** is required — see **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**.
+
+```html
+<script setup>
+import { Tween } from 'deja-vue'
+</script>
+
+<template>
+  <Tween
+    :to="{
+      y: 100,
+      scrollTrigger: {
+        start: 'top center',
+        end: 'bottom center',
+        scrub: true
+      }
+    }"
+  >
+    <div class="target" />
+  </Tween>
+</template>
+```
+
+Omit **`scrollTrigger.trigger`** to default it to the **tween target** (the resolved animated elements). Set **`trigger`** when the scroll sensor should differ from the animated nodes.
+
+For **`fromTo`**, put **`scrollTrigger`** on the **`to`** vars.
+
+When **`scrollTrigger`** is removed or cleared from props, the linked instance is destroyed. Config changes re-attach after the DOM updates.
+
+### Smooth scroll {#smooth-scroll}
+
+With smooth-scroll libraries (Lenis, etc.), call **`ScrollTrigger.update()`** on their scroll event so scrub positions stay in sync.
 
 ## See also
 

@@ -11,7 +11,18 @@ npm install deja-vue gsap vue
 - **vue**: ^3.5.0
 - **gsap**: ^3.0.0
 
-Register GSAP plugins (e.g. **`ScrollTrigger`**) in your app setup. **`SplitText`** is registered automatically when imported from **`deja-vue`**.
+## GSAP plugins {#gsap-plugins}
+
+Déjà Vue registers the plugins its components use. You do **not** need **`gsap.registerPlugin()`** in app setup for:
+
+| Plugin | Registered when you import |
+|--------|---------------------------|
+| **ScrollTrigger** | **`Tween`**, **`Timeline`**, or **`Animation`** |
+| **SplitText** | **`SplitText`** or **`useSplitText`** |
+
+Register other GSAP plugins yourself (e.g. **MorphSVG**) if you use them in tween vars or imperative code.
+
+If you call **ScrollTrigger** or **SplitText** APIs directly — outside deja-vue components — import the matching export from **`deja-vue`** first, or call **`gsap.registerPlugin()`** yourself.
 
 ## Basic usage
 
@@ -21,7 +32,7 @@ import { Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Tween :to="{ x: 100, duration: 1 }">
+  <Tween :to="{ x: 56 }">
     <div class="target" />
   </Tween>
 </template>
@@ -39,11 +50,18 @@ import { ref } from 'vue'
 
 import { Tween } from 'deja-vue'
 
-const trigger = ref(false)
+const isPlaying = ref(false)
 </script>
 
 <template>
-  <Tween :to="{ x: 100, duration: 1 }" :trigger>
+  <button @click="isPlaying = !isPlaying">
+    {{ isPlaying ? 'Reverse' : 'Play' }}
+  </button>
+  <Tween
+    :trigger="isPlaying"
+    :trigger-action="isPlaying ? 'play' : 'reverse'"
+    :to="{ x: 56 }"
+  >
     <div class="target" />
   </Tween>
 </template>
@@ -69,7 +87,7 @@ const progress = ref(0)
 <template>
   <Tween
     v-model:progress="progress"
-    :to="{ x: 100, duration: 1 }"
+    :to="{ x: 56 }"
   >
     <div class="target" />
   </Tween>
@@ -82,22 +100,7 @@ const progress = ref(0)
   <TimelineSequenceDemo />
 </ClientOnly>
 
-```html
-<script setup>
-import { Timeline, Tween } from 'deja-vue'
-</script>
-
-<template>
-  <Timeline>
-    <Tween :to="{ x: 100, duration: 1 }">
-      <div class="target" />
-    </Tween>
-    <Tween :to="{ y: 50, duration: 0.5 }">
-      <div class="target" />
-    </Tween>
-  </Timeline>
-</template>
-```
+See **[Timeline — Basic timeline sequence](./timeline.md#basic-timeline-sequence)** and **[Nesting](./nesting.md)**.
 
 ## Next
 

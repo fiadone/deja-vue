@@ -43,6 +43,8 @@ This repository is an npm workspace monorepo:
 - `apps/landing` contains the public landing page.
 - `apps/docs` contains the VitePress documentation, deployed under `/docs`.
 
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for development workflow and documentation conventions.
+
 ## Development
 
 Install dependencies:

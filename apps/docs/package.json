@@ -11,6 +11,7 @@
     "typecheck": "npm run lint && vue-tsc --noEmit"
   },
   "dependencies": {
+    "@vueuse/core": "^12.8.2",
     "deja-vue": "*",
     "gsap": "^3.15.0",
     "vue": "^3.5.34"

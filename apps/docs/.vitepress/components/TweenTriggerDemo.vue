@@ -1,7 +1,7 @@
 <template>
   <Demo v-slot="scope">
     <Tween
-      :to="{ x: 100 }"
+      :to="{ x: 56 }"
       :trigger="scope.trigger"
       :trigger-action="scope.triggerAction"
     >

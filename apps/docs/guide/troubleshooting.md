@@ -17,39 +17,28 @@ Use **`v-model:progress`** with a defined number. Pause manually if **`trigger`*
 
 ## `trigger` does unexpected action
 
-Bind **`trigger-action`** in the same template as **`trigger`**, e.g. **`:trigger-action="trigger ? 'reverse' : 'play'"`**. See **[Controls](./controls.md)**.
+Bind **`trigger-action`** in the same template as **`trigger`**, e.g. **`:trigger-action="trigger ? 'reverse' : 'play'"`**. See **[Controls](./controls.md)** and **[Controls — Trigger](./controls.md#trigger)**.
 
 ## Tween kind / prop mismatch
 
-One kind per **`Tween`**: **`to`**, **`from`**, **`from`** + **`to`**, or **`effect`**. Use **`:key`** when switching kind at runtime:
+One kind per **`Tween`**: **`to`**, **`from`**, **`from`** + **`to`**, or **`effect`**. Use **`:key`** when switching kind at runtime — see **[Tween — Tween kinds](./tween.md#tween-kinds)**.
 
-```html
-<script setup>
-import { ref } from 'vue'
+## Nesting / parent not found {#nesting-parent-not-found}
 
-import { Tween } from 'deja-vue'
-
-const mode = ref<'to' | 'fromTo'>('to')
-</script>
-
-<template>
-  <Tween
-    :key="mode"
-    v-bind="mode === 'fromTo'
-      ? { from: { opacity: 0 }, to: { opacity: 1 } }
-      : { to: { opacity: 1 } }"
-  />
-</template>
-```
-
-## Nesting / parent not found
-
-- **`parent="null"`** opts out of inject.
-- **`parent`** must be a template ref on **`Timeline`** / **`Tween`**.
+- **`:parent="null"`** (boolean binding) opts out of inject — not the string **`"null"`**.
+- **`:parent="parent"`** from a nested **`Timeline`** slot — see **[Nesting — Manual parent assignment](./nesting.md#manual-parent-assignment)**.
+- **`:parent="timelineRef"`** — only when the nestable cannot live inside the target **`Timeline`** tree; use **`useTemplateRef<DejaVueAnimationExposed>`**. See **[Component instance types](../api/types.md#component-instance-types)**.
+- **`inject(dejaVueParentInstance)`** yields **`DejaVueAnimationInstance`** (raw refs).
+- **`parent`** is resolved at component setup. If an explicit **`parent`** is not ready when the child mounts, delay the child (**`v-if`**) or ensure the parent is mounted first.
+- Reading **`parent.direction`** in custom code when **`parent`** is **`DejaVueAnimationParent`**: use **`toValue(parent?.direction)`** from Vue.
 
 ## Conditional tweens land in the wrong order
 
 Set explicit **`position`** — see **[Dynamic children](./nesting.md#dynamic-children-v-if-lists)**.
+
+## Child removed with `v-if` but timeline still references it briefly
+
+While the parent **`Timeline`** is **playing**, **`useAnimationNesting`** defers **`remove`** until the parent finishes its current cycle (same as **[Types API — `remove`](../api/types.md#animation)**). Pause the parent or wait for **`complete`** / **`reverseComplete`** if you need the child off the GSAP timeline immediately. Unmounting the child component forces removal.
 
 ## Marker `cross` fires oddly
 
@@ -58,6 +47,15 @@ Set explicit **`position`** — see **[Dynamic children](./nesting.md#dynamic-ch
 ## SplitText flicker
 
 Avoid recreating **`SplitText`** option objects every render.
+
+## ScrollTrigger
+
+See **[Animation targets — ScrollTrigger](./targeting.md#scrolltrigger)** for setup, defaults, **`fromTo`**, and smooth-scroll libraries.
+
+Quick checks:
+
+1. Put **`scrollTrigger`** in tween **`from`** / **`to`** vars or timeline **`options`**.
+2. Import **`Tween`**, **`Timeline`**, or **`Animation`** from **`deja-vue`** once so the plugin registers — **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**.
 
 ## Still stuck
 

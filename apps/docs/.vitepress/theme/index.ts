@@ -1,7 +1,6 @@
+import { SplitText, Timeline, Tween } from 'deja-vue'
 import DefaultTheme from 'vitepress/theme'
 import type { App, Component } from 'vue'
-
-import { SplitText, Timeline, Tween } from 'deja-vue'
 
 import './demo.css'
 import './style.css'

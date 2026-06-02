@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineProps<{ showDirection?: boolean }>()
+
 function getRangeValue (event: Event) {
   return Number((event.target as HTMLInputElement).value)
 }
@@ -19,8 +21,14 @@ function getRangeValue (event: Event) {
       >
     </template>
     <template #default="{ progress }">
-      <Tween :progress :to="{ x: 100 }">
-        <div class="demo-box" />
+      <Tween
+        :progress
+        :to="{ x: 56 }"
+        v-slot="{ direction }"
+      >
+        <div class="demo-box">
+          {{ showDirection ? direction : '' }}
+        </div>
       </Tween>
     </template>
   </Demo>

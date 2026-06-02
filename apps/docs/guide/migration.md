@@ -8,14 +8,14 @@ This guide upgrades from **v1** (published **1.x**, [latest release: v1.0.1](htt
 
 | v1 | v2 |
 |--------|-----|
-| **`useAnimation`** composable (internal to components; also exported) | Logic built into **`Tween`** / **`Timeline`**; use template refs on components |
+| **`useAnimation`** composable (internal to components; also exported) | Logic built into **`Tween`** / **`Timeline`**; use **`trigger`** / slot props, or template refs when script access is required |
 | **`tag`** prop — renders a wrapper **`component :is="tag"`** as the default target | **`is`** attribute — scope root element when you need a wrapper; default targets are **slotted nodes** (no extra wrapper) |
 | **`group`** prop (animate wrapper children) | Multiple slot roots + **`stagger`**; **`is`** + **`tweenTarget`** prop for custom resolution |
 | **`Timeline` `tweens` prop** — sequence of definitions on the **same** wrapper target | Nested **`Tween`** chain with **`seamless`** on inner steps (same target, sequenced on the parent timeline) |
 | **`Callback`** + **`PositionMarker`** | Single **`Marker`** component |
-| Parent **`provide`** = raw **`Animation`** | **`provide(dejaVueParentInstance)`** → **`DejaVueAnimationPublicInstance`**; use **`parent.animation`** for GSAP |
-| Manual **`parent`** = **`Animation`** ref | Manual **`parent`** = **`DejaVueAnimationPublicInstance`** template ref |
-| **`defineExpose({ animation, … })`** | Exposes **`DejaVueAnimationPublicInstance`** (**`$el`**, **`direction`**, **`tweenTarget`**, **`seamless`**, …) |
+| Parent **`provide`** = raw **`Animation`** | **`provide(dejaVueParentInstance)`** → **`DejaVueAnimationInstance`**; use **`parent.animation`** for GSAP |
+| Manual **`parent`** = **`Animation`** ref | **`parent`** from nested slot, or **`DejaVueAnimationParent`** when override is required |
+| **`defineExpose({ animation, … })`** | Registers **`DejaVueAnimationInstance`**; template refs surface **`DejaVueAnimationExposed`** (unwrapped) |
 
 ```html
 <!-- v1 — tag="div" wraps slot; GSAP targets the wrapper (or its children with group) -->
@@ -74,7 +74,7 @@ This guide upgrades from **v1** (published **1.x**, [latest release: v1.0.1](htt
 </Timeline>
 ```
 
-For **different** targets per step (not the v1 **`tweens`** model), nest sibling **`Tween`** components without **`seamless`**. For labels, callbacks, nested timelines, and **`SplitText`**, use additional nestables in the template — see **[Timeline](./timeline.md)** and **[Nesting](./nesting.md)**.
+For **different** targets per step (not the v1 **`tweens`** model), nest sibling **`Tween`** components without **`seamless`**. For labels and callbacks use **`Marker`**; for nested timelines use child **`Timeline`** components; for split text place **`SplitText`** **inside a `Tween` slot** — see **[Timeline](./timeline.md)**, **[Nesting](./nesting.md)**, and **[Split text](./split-text.md)**.
 
 ## Tween definition
 
@@ -145,7 +145,7 @@ Only one tween kind per **`Tween`** — the types enforce mutually exclusive pro
 />
 ```
 
-Bind **`trigger-action`** in the **same template** as **`trigger`** — v2 uses a single **`triggerAction`** per change (default **`play`**), not a true/false action pair. Use **`trigger-options`** (e.g. **`{ once: true }`**) for one-shot triggers. See **[Animation controls](./controls.md)**.
+Bind **`trigger-action`** in the **same template** as **`trigger`** — v2 uses a single **`triggerAction`** per change (default **`play`**), not a true/false action pair. Use **`trigger-options`** for Vue watch flags (e.g. **`{ once: true }`**) and **`actionArgs`** for GSAP parameters forwarded to **`Animation.run`**. See **[Animation controls](./controls.md)**.
 
 ## Targeting
 
@@ -157,7 +157,7 @@ Bind **`trigger-action`** in the **same template** as **`trigger`** — v2 uses 
 | **`Timeline` `tweens`** on one wrapper target | Nested **`Tween`** + **`seamless`** chain on a shared target |
 | — | **`is`** + **`tween-target`** selector for scoped queries inside the slot |
 
-See **[Animation targets](./targeting.md)** and **[Timeline — seamless nesting](./timeline.md#timeline-with-seamless-tween-nesting)**.
+See **[Animation targets](./targeting.md)** and **[Animation targets — seamless](./targeting.md#seamless)**.
 
 ## `Marker`
 
@@ -184,9 +184,9 @@ See **[Animation targets](./targeting.md)** and **[Timeline — seamless nesting
 
 ## SplitText
 
-Place **`SplitText`** **inside a `Tween` slot**. The GSAP plugin is registered automatically when you import **`SplitText`** or **`useSplitText`** — no **`gsap.registerPlugin(SplitText)`** in app setup. Other plugins still need manual registration.
+Place **`SplitText`** **inside a `Tween` slot**. v2 registers **SplitText** and **ScrollTrigger** automatically — remove **`gsap.registerPlugin(SplitText)`** / **`gsap.registerPlugin(ScrollTrigger)`** from app setup when you only use them through deja-vue. Listen with **`@split`** / **`@revert`** on the component.
 
-See **[SplitText](./split-text.md)**.
+See **[SplitText](./split-text.md)** and **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**.
 
 ## Events and slot scope
 
@@ -222,7 +222,7 @@ animation.compose({ target: el, method: 'to', vars: { x: 100 } })
 | v1 | v2 |
 |--------|-----|
 | Nesting registered on **`onMounted`** only | **`useAnimationNesting`** watches children and **`position`**; re-registers on change |
-| **`add`** — raw **`timeline.add`**, no sibling shifting | **`add`** — raw **`timeline.add`** by default; pass **`timeShift: true`** to resolve **`position`** and **`shiftChildren`** before insert |
+| **`add`** — raw **`timeline.add`**, no sibling shifting | **`add`** — raw **`timeline.add`** by default; imperative **`timeShift: true`** on **`Animation.add`** (not exposed on **`Tween`** / **`Timeline`** / **`Marker`**) |
 | **`remove`** (nested **`Animation`**) — always deferred until **`complete`** / **`reverseComplete`**, then manual collapse | **`remove`** — immediate when paused; **`shiftChildren`** collapse; deferred while parent is **playing** |
 | No fixed-duration helper beyond setting **`data.totalDuration`** | **`applyTimelineTotalDuration`** after add/remove when parent **`duration`** prop is set |
 
@@ -230,23 +230,47 @@ Labels and callbacks (**`Marker`**) still use raw GSAP **`add`** / **`remove`** 
 
 Without an explicit **`position`**, each add resolves to the parent timeline **end**. That affects runtime changes such as **`v-if`**: removing a child collapses trailing siblings, but re-adding appends at the end rather than restoring a middle template slot. Use explicit **`position`** when conditional composition must land at a specific time. See **[Dynamic children](./nesting.md#dynamic-children-v-if-lists)**.
 
+## `useAnimationNesting` (breaking)
+
+| v1 | v2 |
+|--------|-----|
+| **`useAnimationNesting(target, position?)`** | **`useAnimationNesting(target?, options?)`** with **`AnimationNestingOptions`** |
+| **`parent`** read from **`useAttrs()`** (fallthrough from the **`parent`** prop) | **`parent`** passed as **`options.parent`** (built-in **`Tween`** / **`Timeline`** / **`Marker`** wire **`props.parent`**) |
+| **`target`** required | **`target`** optional (empty children allowed) |
+
+```typescript
+// v1 — second argument is position only; parent from attrs
+useAnimationNesting({ animation }, () => props.position)
+
+// v2 — options object; pass parent explicitly when wrapping the composable
+useAnimationNesting({ animation }, {
+  parent: props.parent,
+  position: () => props.position
+})
+```
+
+If you call **`useAnimationNesting`** in your own component, mirror the built-in components: accept **`parent`** / **`position`** as props and forward them in **`options`**. Relying on attrs inside the composable is no longer supported.
+
 ## Exports
 
 | v1 | v2 |
 |--------|-----|
-| **`useAnimation`** | — (built into **`Tween`** / **`Timeline`**; use template refs) |
+| **`useAnimation`** | — (built into **`Tween`** / **`Timeline`**; use **`trigger`** / slot props) |
 | **`Callback`**, **`PositionMarker`** | **`Marker`** |
 | — | **`SplitText`**, **`useSplitText`**, **`useAnimationScope`**, **`useStableObjectProp`**, **`useTweenVars`** |
 | — | **`syncData`**, **`patchObject`**, **`patchArray`**, **`isObject`**, **`cloneObject`** |
-| — | **`AnimationControls`**, **`AnimationNestingTarget`**, **`AnimationTarget`**, **`SplitTextOptions`** |
+| — | **`applyTimelineTotalDuration`**, **`resolveTimelinePosition`**, **`stripScrollTriggerVars`** |
+| — | **`AnimationControls`**, **`AnimationNestingTarget`**, **`AnimationNestingOptions`**, **`AnimationScopeOptions`**, **`SplitTextOptions`**, **`AnimationTriggerOptions`** |
+| — | **`DejaVueMarkerInstance`**, **`DejaVueMarkerExposed`**, **`DejaVueMarkerScopeProps`**, **`DejaVueSplitTextInstance`**, **`DejaVueSplitTextExposed`**, **`DejaVueSplitTextScopeProps`**, **`AnimationNestableChild`** |
 
-Unchanged: **`Tween`**, **`Timeline`**, **`Animation`**, **`useAnimationControls`**, **`useAnimationNesting`**, **`ANIMATION_EVENTS`**, **`dejaVueParentInstance`**.
+Unchanged: **`Tween`**, **`Timeline`**, **`Animation`**, **`useAnimationControls`**, **`ANIMATION_EVENTS`**, **`dejaVueParentInstance`**.
 
 ## Types reference
 
 - **`TweenDefinition`** — **`from` / `to` / `effect`** union (replaces component-level **`method` / `vars`**)
 - **`AnimationComposeDefinition`** — **`{ target, method, vars, scope? }`**
-- **`ControllableAnimation`** — **`trigger`**, **`triggerAction`**, **`triggerOptions`**, **`progress`**
-- **`DejaVueAnimationPublicInstance`**, **`DejaVueAnimationScopeProps`**, **`AnimationDirection`**, **`AnimationTarget`**, **`TweenAction`**
+- **`ControllableAnimation`** — **`trigger`**, **`triggerAction`**, **`triggerOptions`** (**`AnimationTriggerOptions`**: **`WatchOptions`** + **`actionArgs`**), **`progress`**
+- **`AnimationNestingTarget`**, **`AnimationNestingOptions`**, **`AnimationScopeOptions`**, **`AnimationControls`**, **`DejaVueNode`**, **`PlainObject`**, **`NonEmptyArray`**
+- **`DejaVueAnimationInstance`**, **`DejaVueAnimationExposed`**, **`DejaVueAnimationParent`**, **`DejaVueAnimationScopeProps`**, **`DejaVueMarkerInstance`**, **`DejaVueMarkerExposed`**, **`DejaVueMarkerScopeProps`**, **`DejaVueSplitTextInstance`**, **`DejaVueSplitTextExposed`**, **`DejaVueSplitTextScopeProps`**, **`AnimationNestableChild`**, **`AnimationDirection`**, **`TweenAction`** (prop and composable signatures also use GSAP types such as **`gsap.DOMTarget`** from the **`gsap`** package)
 
 Match your installed version with [Components](../api/components.md) and [Types](../api/types.md) API pages.

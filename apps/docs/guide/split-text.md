@@ -1,8 +1,8 @@
 # Split text
 
-Place **`SplitText` inside a `Tween` slot** so the parent tween animates split nodes.
+Place **`SplitText` inside a `Tween` slot** so the parent tween animates split nodes. See **[Nesting](./nesting.md)** and **[Core concepts](./concepts.md#nesting-at-a-glance)**.
 
-**`SplitText`** is registered automatically when imported from **`deja-vue`**. [SplitText plugin docs](https://gsap.com/docs/v3/Plugins/SplitText/)
+No manual plugin registration — see **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**. [SplitText plugin docs](https://gsap.com/docs/v3/Plugins/SplitText/)
 
 ## Props
 
@@ -13,6 +13,36 @@ Place **`SplitText` inside a `Tween` slot** so the parent tween animates split n
 | `mask`, `linesClass`, `wordsClass`, `charsClass`, … | | See [composables API](../api/composables.md#usesplittext) |
 
 Root attribute: **`is`**.
+
+## Events
+
+**`@split`** and **`@revert`** receive the GSAP **`SplitText`** instance:
+
+```html
+<script setup>
+import { SplitText, Tween } from 'deja-vue'
+
+function onSplit (splitText) {
+  console.log(splitText.chars)
+}
+
+function onRevert (splitText) {
+  console.log('reverted', splitText)
+}
+</script>
+
+<template>
+  <Tween :from="{ opacity: 0, stagger: 0.04 }">
+    <SplitText
+      type="chars"
+      @split="onSplit"
+      @revert="onRevert"
+    >
+      <p>Split text</p>
+    </SplitText>
+  </Tween>
+</template>
+```
 
 ## Example
 
@@ -29,7 +59,7 @@ import { SplitText, Timeline, Tween } from 'deja-vue'
   <Timeline>
     <Tween
       :from="{
-        y: 40,
+        y: 56,
         opacity: 0,
         duration: 0.8,
         stagger: 0.04,
@@ -44,34 +74,42 @@ import { SplitText, Timeline, Tween } from 'deja-vue'
 </template>
 ```
 
-## Marker + trigger
+## Marker + trigger {#marker-trigger}
+
+**`Marker`** must sit inside a **`Timeline`**. Use **`:parent="null"`** on the inner **`Tween`** so playback is driven only by **`crossed`**. Bookend the **`Marker`** with **`Tween`** steps on the timeline. See **[Nesting — Marker-driven trigger](./nesting.md#marker-driven-trigger)** for the full Play/Reverse pattern.
 
 ```html
 <script setup>
-import { Marker, SplitText, Tween } from 'deja-vue'
-
-function onCross (direction) {
-  console.log('Crossed', direction)
-}
+import { Marker, SplitText, Timeline, Tween } from 'deja-vue'
 </script>
 
 <template>
-  <Marker @cross="onCross" v-slot="{ crossed }">
-    <Tween
-      :from="{ rotate: 360, scale: 0, stagger: 0.1 }"
-      :parent="null"
-      :trigger="crossed"
-      :trigger-action="crossed ? 'restart' : 'play'"
-    >
-      <SplitText type="chars">
-        <p>Split text</p>
-      </SplitText>
+  <Timeline>
+    <Tween :to="{ x: 56 }">
+      <div class="target" />
     </Tween>
-  </Marker>
+    <Marker v-slot="{ crossed }">
+      <Tween
+        :from="{ opacity: 0 }"
+        :parent="null"
+        :trigger="crossed"
+        :trigger-action="crossed ? 'play' : 'reverse'"
+      >
+        <SplitText type="chars">
+          <p>Split text</p>
+        </SplitText>
+      </Tween>
+    </Marker>
+    <Tween :to="{ x: 56 }">
+      <div class="target" />
+    </Tween>
+  </Timeline>
 </template>
 ```
 
 ## useSplitText
+
+Headless usage — pass **`onSplit`** / **`onRevert`** in the options object (the **`SplitText`** component uses **`@split`** / **`@revert`** instead):
 
 ```html
 <script setup>

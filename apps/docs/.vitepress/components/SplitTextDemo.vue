@@ -1,13 +1,21 @@
 <template>
-  <Demo v-slot="scope">
+  <Demo observe-intersection v-slot="scope">
     <Timeline
       :trigger="scope.trigger"
       :trigger-action="scope.triggerAction"
     >
-      <Tween :from="{ opacity: 0, y: 10, stagger: 0.05 }">
+      <Tween
+        :from="{
+          y: 56,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.04,
+          ease: 'power2.out'
+        }"
+      >
         <SplitText type="chars">
           <p class="demo-split">
-            Lorem ipsum
+            Split text
           </p>
         </SplitText>
       </Tween>

@@ -1,17 +1,20 @@
 <template>
-  <Demo v-slot="scope">
+  <Demo observe-intersection v-slot="scope">
     <Timeline
       :trigger="scope.trigger"
       :trigger-action="scope.triggerAction"
     >
-      <Tween :to="{ x: 100 }">
+      <Tween :to="{ x: 56 }">
         <div class="demo-box" />
       </Tween>
-      <Timeline position="<">
+      <Timeline>
         <Tween :to="{ y: 56 }">
           <div class="demo-box" />
         </Tween>
-        <Tween position="<" :to="{ rotation: 90 }">
+        <Tween
+          position="<"
+          :to="{ rotation: 90 }"
+        >
           <div class="demo-box" />
         </Tween>
       </Timeline>

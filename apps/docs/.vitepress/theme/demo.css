@@ -52,6 +52,10 @@
   font-weight: 600;
 }
 
+.demo-box--muted {
+  opacity: 0.35;
+}
+
 .demo-boxes {
   display: flex;
   flex-wrap: wrap;
