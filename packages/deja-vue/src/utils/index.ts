@@ -44,7 +44,7 @@ export function syncData (target: unknown, changes: unknown): boolean {
     // try string-based comparison first (it will fail if circular references are met)
     if (JSON.stringify(target) === JSON.stringify(changes)) return true
   } catch {
-    if (target === changes) return true
+    // JSON.stringify failed (e.g. circular structures); fall through to structural patching
   }
 
   if (isObject(changes) && isObject(target)) {

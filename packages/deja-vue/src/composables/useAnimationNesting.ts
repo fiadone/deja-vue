@@ -19,6 +19,7 @@ export type AnimationNestingTarget = (
 
 export function useAnimationNesting (target?: AnimationNestingTarget | AnimationNestingTarget[], options?: AnimationNestingOptions) {
   const parent = options?.parent === null ? null : options?.parent || inject(dejaVueParentInstance, null)
+  const position = computed(() => toValue(options?.position))
   const children = computed(() => toNonEmptyArray<AnimationChild>(
     [target]
       .flat()
@@ -32,14 +33,27 @@ export function useAnimationNesting (target?: AnimationNestingTarget | Animation
   ))
 
   if (parent) {
-    watch([children, () => toValue(options?.position)], async ([currentChildren, currentPosition], [previousChildren, previousPosition], onCleanup) => {
+    watch([children, position], async ([currentChildren, currentPosition], [previousChildren, previousPosition], onCleanup) => {
       let skip = false
+
       onCleanup(() => (skip = true))
+
       if (!currentChildren && !previousChildren) return
-      previousChildren?.slice(currentChildren?.length || 0).forEach(child => parent.animation.remove(child))
-      if (!currentChildren) return
+
+      if (!currentChildren) {
+        previousChildren!.forEach(child => parent.animation.remove(child))
+        return
+      }
+
+      if (previousChildren && currentChildren.length < previousChildren.length) {
+        previousChildren.slice(currentChildren.length).forEach(child => parent.animation.remove(child))
+      }
+
       await nextTick()
-      if (skip) return // skip this execution because children/position have changed again in the meantime
+
+      /* v8 ignore next */
+      if (skip) return
+
       currentChildren.forEach((child, index) => {
         if (child === previousChildren?.[index] && currentPosition === previousPosition) return
         if (previousChildren?.[index]) parent.animation.remove(previousChildren[index])

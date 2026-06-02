@@ -34,6 +34,38 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
     }
   }
 
+  attachScrollTrigger (vars: ScrollTrigger.Vars | null | undefined) {
+    this.scrollTrigger?.kill()
+    if (!vars) return
+    this.scrollTrigger = ScrollTrigger.create({ ...vars, animation: this.timeline })
+  }
+
+  compose (definition: AnimationComposeDefinition, withContext = true) {
+    if (!this.timeline || !definition.target || (Array.isArray(definition.target) && !definition.target.length)) return
+
+    if (withContext) {
+      this.ctx = gsap.context(() => this.compose(definition, false))
+      return
+    }
+
+    const target = definition.target
+    let scrollTriggerVars: ScrollTrigger.Vars | null = null
+
+    if (definition.method === 'fromTo') {
+      const [from, to] = definition.vars as [gsap.TweenVars, gsap.TweenVars]
+      scrollTriggerVars = stripScrollTriggerVars(to, target)
+      this.timeline.fromTo(target, from, to)
+    } else if (definition.method in this.timeline) {
+      const vars = definition.vars as gsap.TweenVars
+      scrollTriggerVars = stripScrollTriggerVars(vars, target)
+      this.timeline[definition.method](target, vars)
+    } else {
+      console.warn('[deja-vue] Missing or unknown gsap effect.')
+    }
+
+    this.attachScrollTrigger(scrollTriggerVars)
+  }
+
   add (child: AnimationChild, position?: gsap.Position, timeShift = false) {
     if (!this.timeline) return
     if (typeof child === 'string') {
@@ -73,38 +105,6 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
       this.timeline.shiftChildren(-duration, false, endTime)
       applyTimelineTotalDuration(this.timeline)
     }
-  }
-
-  compose (definition: AnimationComposeDefinition, withContext = true) {
-    if (!this.timeline || !definition.target || (Array.isArray(definition.target) && !definition.target.length)) return
-
-    if (withContext) {
-      this.ctx = gsap.context(() => this.compose(definition, false))
-      return
-    }
-
-    const target = definition.target
-    let scrollTriggerVars: ScrollTrigger.Vars | null = null
-
-    if (definition.method === 'fromTo') {
-      const [from, to] = definition.vars as [gsap.TweenVars, gsap.TweenVars]
-      scrollTriggerVars = stripScrollTriggerVars(to, target)
-      this.timeline.fromTo(target, from, to)
-    } else if (definition.method in this.timeline) {
-      const vars = definition.vars as gsap.TweenVars
-      scrollTriggerVars = stripScrollTriggerVars(vars, target)
-      this.timeline[definition.method](target, vars)
-    } else {
-      console.warn('[deja-vue] Missing or unknown gsap effect.')
-    }
-
-    this.attachScrollTrigger(scrollTriggerVars)
-  }
-
-  attachScrollTrigger (vars: ScrollTrigger.Vars | null | undefined) {
-    this.scrollTrigger?.kill()
-    if (!vars) return
-    this.scrollTrigger = ScrollTrigger.create({ ...vars, animation: this.timeline })
   }
 
   run (action: TweenAction = 'play', ...args: any[]) {

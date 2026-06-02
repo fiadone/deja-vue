@@ -150,5 +150,11 @@ export default [
         sourceType: 'module'
       }
     }
+  },
+  {
+    files: ['**/tests/**/*.ts'],
+    rules: {
+      'vue/one-component-per-file': 'off'
+    }
   }
 ]

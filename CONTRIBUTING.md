@@ -8,7 +8,7 @@ See the [README](./README.md) for install, workspace layout, and common scripts 
 
 Before opening a PR:
 
-1. Run `npm run typecheck` and `npm run lint`.
+1. Run `npm run typecheck`, `npm run lint`, and `npm run test` (library).
 2. If you changed docs, run `npm run build:docs`.
 3. If you changed the library, run `npm run build:lib`.
 
@@ -76,6 +76,13 @@ When behavior changes, update the canonical section first, then grep for outdate
 - **`perfectionist/sort-imports`** keeps import tiers in order (builtin → external → internal → relative), with a blank line between tiers. Within a tier, imports are sorted by module path; for the same path, the **`import type`** line comes immediately before the value import (e.g. both `vue` lines stay together, not split by other packages).
 
 Export public types and composable option interfaces from `src/index.ts` when they are part of the package API. Update **migration.md** and **api/types.md** when exports or breaking types change.
+
+### Tests (`packages/deja-vue/tests`)
+
+- All tests live under **`tests/`**, mirroring **`src/`** (e.g. `tests/core/Animation.test.ts`, `tests/components/Tween.test.ts`, `tests/composables/useTweenVars.test.ts`). Shared utilities sit in **`tests/shared/`** (not a mirror of `src`).
+- Shared utilities: **`tests/shared/helpers.ts`**, GSAP cleanup: **`tests/shared/setup.ts`**.
+- Run: `npm run test` (from repo root or the `deja-vue` workspace).
+- Coverage: `npm run test:coverage` (Vitest + `@vitest/coverage-v8`, reports under `packages/deja-vue/coverage/`). The package enforces **100%** statements, branches, functions, and lines on `src/**` (see `vitest.config.ts`).
 
 Key animation types in `src/types.ts`:
 

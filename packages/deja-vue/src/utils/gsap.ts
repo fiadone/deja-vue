@@ -13,10 +13,9 @@ export function resolveTimelinePosition (
   if (position === undefined) return timeline.duration()
   if (typeof position === 'number') return position
   if (typeof position === 'string' && position in timeline.labels) return timeline.labels[position]
-  const probe: gsap.Callback = () => void
-  timeline.add(probe, position)
-  const time = timeline.getTweensOf(probe)[0]?.startTime()
-  timeline.remove(probe)
+  timeline.add(timelinePositionProbe, position)
+  const time = timeline.getTweensOf(timelinePositionProbe)[0]?.startTime()
+  timeline.remove(timelinePositionProbe)
   return time ?? null
 }
 
@@ -32,4 +31,8 @@ export function stripScrollTriggerVars (vars: gsap.AnimationVars, defaultTrigger
   if (!scrollTriggerVars.trigger && defaultTrigger) scrollTriggerVars.trigger = defaultTrigger
 
   return scrollTriggerVars
+}
+
+function timelinePositionProbe () {
+  void 0
 }

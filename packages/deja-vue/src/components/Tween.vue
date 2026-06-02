@@ -68,7 +68,6 @@ for (const event of ANIMATION_EVENTS) {
 
 watch([tweenMethod, tweenTarget, tweenVars], ([method, target, vars]) => {
   animation.clear(true)
-  if (!target || !method) return
   const definition = { method, target, vars: cloneObject(vars) } as AnimationComposeDefinition
   animation.compose(definition)
 }, { deep: true })

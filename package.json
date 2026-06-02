@@ -22,6 +22,8 @@
     "lint:style": "stylelint \"**/*.{css,vue}\"",
     "lint:style:fix": "stylelint \"**/*.{css,vue}\" --fix",
     "release": "npm run release -w deja-vue",
+    "test": "npm run test -w deja-vue",
+    "test:coverage": "npm run test:coverage -w deja-vue",
     "typecheck": "npm run typecheck -w deja-vue && npm run typecheck -w @deja-vue/landing && npm run typecheck -w @deja-vue/docs",
     "commit": "cz"
   },
