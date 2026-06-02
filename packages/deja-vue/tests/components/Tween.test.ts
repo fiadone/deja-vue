@@ -94,10 +94,10 @@ describe('Tween', () => {
         setup () {
           return () => h(Timeline, null, {
             default: () => h(Tween, {
+              to: { duration: 0.1 },
               trigger: trigger.value,
               triggerAction: 'reverse',
-              triggerOptions: { immediate: true },
-              to: { duration: 0.1 }
+              triggerOptions: { immediate: true }
             }, { default: tweenTargetSlot })
           })
         }

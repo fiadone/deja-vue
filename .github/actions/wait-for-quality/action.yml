@@ -1,0 +1,23 @@
+name: Wait for Quality
+description: Block until quality.yml completes successfully for the current commit
+runs:
+  using: composite
+  steps:
+    - name: Wait for Quality
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        echo "Waiting for Quality on commit ${GITHUB_SHA}..."
+        for _ in $(seq 1 90); do
+          run_id=$(gh run list --workflow=quality.yml --commit="${GITHUB_SHA}" \
+            --json databaseId --limit 1 -q '.[0].databaseId // empty')
+          if [[ -n "$run_id" ]]; then
+            gh run watch "$run_id" --exit-status
+            exit 0
+          fi
+          sleep 10
+        done
+        echo "Timed out waiting for Quality workflow to start"
+        exit 1

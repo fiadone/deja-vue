@@ -3,11 +3,12 @@ import { gsap } from 'gsap'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 
-import { resolveChildrenTweenTarget } from '../../src/composables/useAnimationScope'
 import Timeline from '../../src/components/Timeline.vue'
 import Tween from '../../src/components/Tween.vue'
+import { resolveChildrenTweenTarget } from '../../src/composables/useAnimationScope'
 import type { DejaVueAnimationInstance } from '../../src/types'
 import {
+  expectTweenTargetNonEmpty,
   getExposed,
   getTweenExposed,
   mountTimeline,
@@ -35,8 +36,8 @@ describe('useAnimationScope', () => {
   })
 
   it('resolves tweenTarget from children when tweenTarget is children', async () => {
-    const wrapper = await mountTimelineWithTween({ tweenTarget: 'children', to: { duration: 0.1 } })
-    expect(getTweenExposed(wrapper).tweenTarget.length).toBeGreaterThan(0)
+    const wrapper = await mountTimelineWithTween({ to: { duration: 0.1 }, tweenTarget: 'children' })
+    expectTweenTargetNonEmpty(wrapper)
     wrapper.unmount()
   })
 

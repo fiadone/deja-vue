@@ -8,9 +8,21 @@ See the [README](./README.md) for install, workspace layout, and common scripts 
 
 Before opening a PR:
 
-1. Run `npm run typecheck`, `npm run lint`, and `npm run test` (library).
+1. Run `npm run typecheck`, `npm run lint:script`, and `npm run test` (library) — the same checks run in [Quality](.github/workflows/quality.yml) on every pull request.
 2. If you changed docs, run `npm run build:docs`.
 3. If you changed the library, run `npm run build:lib`.
+
+### Workflows (quality, release, pages)
+
+| Workflow | When it runs | What it does |
+|----------|----------------|--------------|
+| **[Quality](.github/workflows/quality.yml)** | Every PR; push to `main` / `develop` | `lint:script` → `typecheck` (lib + landing + docs) → `test` |
+| **[Release](.github/workflows/release.yml)** | Push to `main` with publish-relevant `paths`, or manual `workflow_dispatch` | Waits for Quality on the same commit (push only) → `npm audit signatures` → `semantic-release` |
+| **[Pages](.github/workflows/pages.yml)** | Push to `main` with `apps/docs/`, `apps/landing/`, or `pages.yml` changes | Waits for Quality on the same commit → build docs + landing → GitHub Pages deploy |
+
+Quality and Release/Pages start in parallel on matching pushes; deploy/publish jobs block until Quality succeeds. Push to `main` that only touches the library does not start Pages; publish-only doc changes do not start Release. Configure branch protection on `main` so merges require the **Quality / check** status.
+
+npm publish uses [trusted publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC, no `NPM_TOKEN`). On npmjs.com the trusted publisher must target workflow file **`release.yml`** in this repository (not `quality.yml`).
 
 ## Documentation (`apps/docs`)
 

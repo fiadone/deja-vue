@@ -23,7 +23,7 @@ describe('useSplitText', () => {
     target.textContent = 'Hi'
     const onSplit = vi.fn()
 
-    runComposable(() => useSplitText(ref(target), ref({ type: 'words', onSplit })))
+    runComposable(() => useSplitText(ref(target), ref({ onSplit, type: 'words' })))
     await nextTick()
 
     expect(onSplit).toHaveBeenCalled()

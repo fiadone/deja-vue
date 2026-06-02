@@ -9,6 +9,7 @@ on:
       - ".github/workflows/pages.yml"
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -22,27 +23,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Wait for Quality
+        uses: ./.github/actions/wait-for-quality
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build docs
         run: npm run build:docs
+
       - name: Build landing
         run: npm run build:landing
+
       - name: Compose Pages artifact
         run: |
           rm -rf apps/landing/dist/docs
           mkdir -p apps/landing/dist/docs
           cp -R apps/docs/.vitepress/dist/. apps/landing/dist/docs
+          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

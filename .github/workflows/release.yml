@@ -4,32 +4,48 @@ on:
   push:
     branches: [main]
     paths:
-      - "packages/deja-vue/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/release.yml"
+      - packages/deja-vue/**
+      - package.json
+      - package-lock.json
+      - .github/workflows/release.yml
+  workflow_dispatch:
 
-permissions:
-  contents: write
-  id-token: write
+concurrency:
+  group: release-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Wait for Quality
+        if: github.event_name == 'push'
+        uses: ./.github/actions/wait-for-quality
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org/
+          package-manager-cache: false
+
       - name: Install deps
         run: npm ci
-      - name: Build
-        run: npm run build -w deja-vue
+
+      - name: Verify dependency attestations
+        run: npm audit signatures
+
+      - name: Upgrade npm
+        run: npm install -g npm@latest
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

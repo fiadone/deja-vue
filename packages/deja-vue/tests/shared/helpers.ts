@@ -1,6 +1,7 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { gsap } from 'gsap'
+import { expect } from 'vitest'
 import type { ModelRef, VNode } from 'vue'
 import { defineComponent, h, provide, ref, shallowRef } from 'vue'
 
@@ -79,6 +80,13 @@ export function getExposed<T> (wrapper: VueWrapper) {
 
 export function getTweenExposed (wrapper: VueWrapper) {
   return getExposed<DejaVueAnimationExposed>(wrapper.findComponent(Tween))
+}
+
+export function expectTweenTargetNonEmpty (wrapper: VueWrapper) {
+  const { tweenTarget } = getTweenExposed(wrapper)
+  const elements = Array.isArray(tweenTarget) ? tweenTarget : []
+  expect(elements.length).toBeGreaterThan(0)
+  return elements
 }
 
 export function tweenTargetSlot () {
