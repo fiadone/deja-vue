@@ -17,7 +17,7 @@ Use **`v-model:progress`** with a defined number. Pause manually if **`trigger`*
 
 ## `trigger` does unexpected action
 
-Bind **`trigger-action`** in the same template as **`trigger`**, e.g. **`:trigger-action="trigger ? 'reverse' : 'play'"`**. See **[Controls](./controls.md)** and **[Controls — Trigger](./controls.md#trigger)**.
+Bind **`trigger-action`** in the same template as **`trigger`**, e.g. **`:trigger-action="trigger ? 'play' : 'reverse'"`**. See **[Controls](./controls.md)** and **[Controls — Trigger](./controls.md#trigger)**.
 
 ## Tween kind / prop mismatch
 

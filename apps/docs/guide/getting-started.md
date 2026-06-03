@@ -5,11 +5,31 @@ Déjà Vue lets you define and nest GSAP animations as Vue components.
 ## Installation
 
 ```bash
-npm install deja-vue gsap vue
+npm install deja-vue@latest
 ```
 
-- **vue**: ^3.5.0
-- **gsap**: ^3.0.0
+Déjà Vue does not bundle **Vue** or **GSAP** — your app must provide them as [peer dependencies](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#peerdependencies):
+
+| Package | Version |
+|---------|---------|
+| `vue` | ^3.5.0 |
+| `gsap` | ^3.0.0 |
+
+If they are not already in your project:
+
+```bash
+npm install vue gsap
+```
+
+::: tip Greenfield projects
+Install everything in one step:
+
+```bash
+npm install deja-vue@latest vue gsap
+```
+:::
+
+npm 7+ may install missing peers automatically; if you see peer warnings, add `vue` and `gsap` explicitly.
 
 ## GSAP plugins {#gsap-plugins}
 

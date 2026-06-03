@@ -13,7 +13,7 @@ This guide upgrades from **v1** (published **1.x**, [latest release: v1.0.1](htt
 | **`group`** prop (animate wrapper children) | Multiple slot roots + **`stagger`**; **`is`** + **`tweenTarget`** prop for custom resolution |
 | **`Timeline` `tweens` prop** — sequence of definitions on the **same** wrapper target | Nested **`Tween`** chain with **`seamless`** on inner steps (same target, sequenced on the parent timeline) |
 | **`Callback`** + **`PositionMarker`** | Single **`Marker`** component |
-| Parent **`provide`** = raw **`Animation`** | **`provide(dejaVueParentInstance)`** → **`DejaVueAnimationInstance`**; use **`parent.animation`** for GSAP |
+| **`provide(parentAnimationInjectionKey)`** = raw **`Animation`** | **`provide(dejaVueParentInstance)`** → **`DejaVueAnimationInstance`**; use **`parent.animation`** for GSAP |
 | Manual **`parent`** = **`Animation`** ref | **`parent`** from nested slot, or **`DejaVueAnimationParent`** when override is required |
 | **`defineExpose({ animation, … })`** | Registers **`DejaVueAnimationInstance`**; template refs surface **`DejaVueAnimationExposed`** (unwrapped) |
 
@@ -262,8 +262,11 @@ If you call **`useAnimationNesting`** in your own component, mirror the built-in
 | — | **`applyTimelineTotalDuration`**, **`resolveTimelinePosition`**, **`stripScrollTriggerVars`** |
 | — | **`AnimationControls`**, **`AnimationNestingTarget`**, **`AnimationNestingOptions`**, **`AnimationScopeOptions`**, **`SplitTextOptions`**, **`AnimationTriggerOptions`** |
 | — | **`DejaVueMarkerInstance`**, **`DejaVueMarkerExposed`**, **`DejaVueMarkerScopeProps`**, **`DejaVueSplitTextInstance`**, **`DejaVueSplitTextExposed`**, **`DejaVueSplitTextScopeProps`**, **`AnimationNestableChild`** |
+| **`parentAnimationInjectionKey`** (`InjectionKey<Animation>`) | **`dejaVueParentInstance`** (`InjectionKey<DejaVueAnimationInstance>`) |
 
-Unchanged: **`Tween`**, **`Timeline`**, **`Animation`**, **`useAnimationControls`**, **`ANIMATION_EVENTS`**, **`dejaVueParentInstance`**.
+Unchanged: **`Tween`**, **`Timeline`**, **`Animation`**, **`useAnimationControls`**, **`ANIMATION_EVENTS`**.
+
+If you **`inject`** the parent timeline in custom components, rename the import and expect **`DejaVueAnimationInstance`** (refs) instead of a raw **`Animation`**.
 
 ## Types reference
 
