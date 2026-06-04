@@ -3,6 +3,7 @@ import { Marker, Timeline, Tween } from 'deja-vue'
 
 import ProgressBar from '@/components/atoms/ProgressBar.vue'
 
+const tweenTarget = { value: 0 }
 const cues = [
   { label: 'Start', position: 0 },
   { label: 'Center', position: 0.5 },
@@ -21,7 +22,14 @@ const cues = [
         toggleActions: 'play none none reset'
       }
     }"
+    v-slot="{ progress }"
   >
+    <Tween
+      :position="0"
+      :to="{ value: 1, duration: 1, ease: 'none' }"
+      :tween-target
+    />
+
     <div class="flex flex-col items-center gap-2">
       <Marker
         v-for="cue, index in cues"
@@ -73,14 +81,7 @@ const cues = [
         <span class="w-1px h-1 bg-white/50" />
         <span class="w-1px h-1 bg-white/50" />
       </div>
-      <Tween
-        :position="0"
-        :to="{ value: 1, duration: 1, ease: 'none' }"
-        :tween-target="{ value: 0 }"
-        v-slot="{ progress }"
-      >
-        <ProgressBar :progress />
-      </Tween>
+      <ProgressBar :progress />
     </div>
   </Timeline>
 </template>
