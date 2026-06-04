@@ -162,6 +162,8 @@ For **`fromTo`**, put **`scrollTrigger`** on the **`to`** vars.
 
 When **`scrollTrigger`** is removed or cleared from props, the linked instance is destroyed. Config changes re-attach after the DOM updates.
 
+If **`toggleActions`** includes **`reset`** on an edge, Déjà Vue emits **`update`** when that edge fires so **`v-model:progress`** and **`Marker`** slot **`crossed`** stay aligned after ScrollTrigger rewinds the timeline.
+
 ### Smooth scroll {#smooth-scroll}
 
 With smooth-scroll libraries (Lenis, etc.), call **`ScrollTrigger.update()`** on their scroll event so scrub positions stay in sync.

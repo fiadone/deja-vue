@@ -146,7 +146,7 @@ One-shot trigger inside a **`Marker`** slot (full pattern: **[Nesting — Marker
 
 ## Progress and trigger together
 
-Pause the timeline when the user scrubs so playback and **`v-model:progress`** do not conflict.
+Binding **`v-model:progress`** pauses the timeline before each seek, so scrubbing does not fight active playback. If you also drive playback with **`trigger`**, avoid overlapping triggers while scrubbing.
 
 Scroll-scrubbed timelines (**`scrollTrigger`** with **`scrub`**) follow scroll position; pairing them with manual progress scrubbing is usually redundant. See **[Animation targets — ScrollTrigger](./targeting.md#scrolltrigger)**.
 

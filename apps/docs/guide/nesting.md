@@ -97,7 +97,7 @@ function onMain (direction) {
 </template>
 ```
 
-Slot **`crossed`** is **`true`** on forward crossings only. Full API notes: **[Components API — Marker](../api/components.md#marker)**.
+Slot **`crossed`** follows playhead position relative to the marker (not crossing direction). Full API notes: **[Components API — Marker](../api/components.md#marker)**.
 
 ### Marker-driven trigger {#marker-driven-trigger}
 

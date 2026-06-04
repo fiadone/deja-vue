@@ -89,7 +89,7 @@ Use **`@split`** / **`@revert`** on the component. The composable **`useSplitTex
 
 ## Marker
 
-Timeline label (optional) and callback at **`position`**. Emits **`cross`** with **`direction`** (`1` forward, `-1` reverse). Slot: **`crossed`**, **`parent`**. Slot **`crossed`** is **`true`** only after a forward crossing; **`@cross`** receives direction on every crossing.
+Timeline label (optional) and callback at **`position`**. Emits **`cross`** with **`direction`** (`1` forward, `-1` reverse). Slot: **`crossed`**, **`parent`**. Slot **`crossed`** is **`true`** when the playhead is past the marker (or at the end of the timeline) and updates during scrub and playback; **`@cross`** still fires on every crossing with direction.
 
 ### Marker props
 

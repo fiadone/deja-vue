@@ -13,7 +13,7 @@
 
 ## `progress` does not scrub
 
-Use **`v-model:progress`** with a defined number. Pause manually if **`trigger`** also drives playback.
+Use **`v-model:progress`** with a defined number. Scrubbing pauses the timeline automatically; avoid changing **`trigger`** while scrubbing if both are bound.
 
 ## `trigger` does unexpected action
 
@@ -40,9 +40,9 @@ Set explicit **`position`** — see **[Dynamic children](./nesting.md#dynamic-ch
 
 While the parent **`Timeline`** is **playing**, **`useAnimationNesting`** defers **`remove`** until the parent finishes its current cycle (same as **[Types API — `remove`](../api/types.md#animation)**). Pause the parent or wait for **`complete`** / **`reverseComplete`** if you need the child off the GSAP timeline immediately. Unmounting the child component forces removal.
 
-## Marker `cross` fires oddly
+## Marker `cross` or `crossed` out of sync
 
-**`@cross`** receives **`direction`** from the parent at crossing time (`1` forward, `-1` reverse).
+**`@cross`** passes **`direction`** at the crossing (`1` forward, `-1` reverse). Slot **`crossed`** follows playhead position relative to the marker. During scroll-driven playback, see **[ScrollTrigger](./targeting.md#scrolltrigger)** if **`crossed`** or **`progress`** lag after a **`toggleActions`** **`reset`**.
 
 ## SplitText flicker
 
