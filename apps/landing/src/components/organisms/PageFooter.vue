@@ -31,7 +31,7 @@ const showCredits = ref(false)
 
     <a
       class="inline-flex items-center gap-2 hover:opacity-100 opacity-50 transition-opacity"
-      href="https://github.com/fiadone/deja-vue/apps/landing/src/page/index.vue"
+      href="https://github.com/fiadone/deja-vue/blob/main/apps/landing/src/page/index.vue"
       rel="noopener noreferrer"
       target="_blank"
     >

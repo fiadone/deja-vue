@@ -73,7 +73,7 @@ import CommandBox from '@/components/molecules/CommandBox.vue'
             is="a"
             outline
             class="w-full"
-            href="https://fiadone.github.io/deja-vue/docs"
+            href="https://github.com/fiadone/deja-vue"
             rel="noopener noreferrer"
             target="_blank"
           >
