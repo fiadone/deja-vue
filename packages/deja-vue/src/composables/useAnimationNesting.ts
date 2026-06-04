@@ -54,10 +54,11 @@ export function useAnimationNesting (target?: AnimationNestingTarget | Animation
       /* v8 ignore next */
       if (skip) return
 
-      currentChildren.forEach((child, index) => {
-        if (child === previousChildren?.[index] && currentPosition === previousPosition) return
-        if (previousChildren?.[index]) parent.animation.remove(previousChildren[index])
-        parent.animation.add(child, currentPosition)
+      currentChildren.forEach((currentChild, index) => {
+        const previousChild = previousChildren?.[index]
+        if (currentChild === previousChild && currentPosition === previousPosition) return
+        if (previousChild) parent.animation.remove(previousChild)
+        parent.animation.add(currentChild, currentPosition)
       })
     }, { immediate: true })
   }

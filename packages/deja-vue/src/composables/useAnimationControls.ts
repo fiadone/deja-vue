@@ -40,6 +40,7 @@ export function useAnimationControls (animation: Animation, controls: AnimationC
     if (previous === undefined || current === undefined || current === previous) return
     direction.value = current > previous ? 1 : -1
     if (animation.timeline.progress() === current) return
+    animation.timeline.pause()
     animation.timeline.progress(current)
   })
 

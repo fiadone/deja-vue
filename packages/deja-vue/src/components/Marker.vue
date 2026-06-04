@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, toValue } from 'vue'
+import { onUnmounted, ref, toValue } from 'vue'
 
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import type { AnimationDirection, AnimationNestableChild } from '../types'
@@ -22,9 +22,18 @@ const instance: DejaVueMarkerInstance = { crossed, parent }
 
 function onCross () {
   const direction = toValue(parent!.direction)
-  crossed.value = direction === 1
   emit('cross', direction)
 }
+
+function onUpdate () {
+  const currentTime = parent!.animation.timeline.time()
+  const position = parent!.animation.getChildPosition(onCross) ?? 0
+  crossed.value = currentTime > position || currentTime === parent!.animation.timeline.duration()
+}
+
+parent?.animation.on('update', onUpdate)
+
+onUnmounted(() => parent?.animation.off('update', onUpdate))
 
 defineExpose<DejaVueMarkerInstance>(instance)
 defineSlots<{ default(props: DejaVueMarkerScopeProps): any }>()

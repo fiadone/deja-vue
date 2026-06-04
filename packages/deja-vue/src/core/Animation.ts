@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import { ANIMATION_EVENTS } from '../constants'
 import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenAction } from '../types'
-import { applyTimelineTotalDuration, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
+import { applyTimelineTotalDuration, getScrollTriggerToggleActionByEvent, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
 import { EventBus } from './EventBus'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -37,7 +37,26 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
   attachScrollTrigger (vars: ScrollTrigger.Vars | null | undefined) {
     this.scrollTrigger?.kill()
     if (!vars) return
-    this.scrollTrigger = ScrollTrigger.create({ ...vars, animation: this.timeline })
+    this.scrollTrigger = ScrollTrigger.create({
+      ...vars,
+      animation: this.timeline,
+      onEnter: self => {
+        this.handleScrollTriggerReset('enter')
+        vars.onEnter?.(self)
+      },
+      onEnterBack: self => {
+        this.handleScrollTriggerReset('enterBack')
+        vars.onEnterBack?.(self)
+      },
+      onLeave: self => {
+        this.handleScrollTriggerReset('leave')
+        vars.onLeave?.(self)
+      },
+      onLeaveBack: self => {
+        this.handleScrollTriggerReset('leaveBack')
+        vars.onLeaveBack?.(self)
+      }
+    })
   }
 
   compose (definition: AnimationComposeDefinition, withContext = true) {
@@ -49,15 +68,16 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
     }
 
     const target = definition.target
+    const scope = definition.scope || definition.target
     let scrollTriggerVars: ScrollTrigger.Vars | null = null
 
     if (definition.method === 'fromTo') {
       const [from, to] = definition.vars as [gsap.TweenVars, gsap.TweenVars]
-      scrollTriggerVars = stripScrollTriggerVars(to, target)
+      scrollTriggerVars = stripScrollTriggerVars(to, scope)
       this.timeline.fromTo(target, from, to)
     } else if (definition.method in this.timeline) {
       const vars = definition.vars as gsap.TweenVars
-      scrollTriggerVars = stripScrollTriggerVars(vars, target)
+      scrollTriggerVars = stripScrollTriggerVars(vars, scope)
       this.timeline[definition.method](target, vars)
     } else {
       console.warn('[deja-vue] Missing or unknown gsap effect.')
@@ -107,6 +127,13 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
     }
   }
 
+  getChildPosition (child: AnimationChild) {
+    if (!this.timeline) return
+    if (typeof child === 'string') return this.timeline.labels[child]
+    if (typeof child === 'function') return this.timeline.getTweensOf(child)?.[0]?.startTime()
+    return this.timeline.getTweensOf(child.timeline)?.[0]?.startTime()
+  }
+
   run (action: TweenAction = 'play', ...args: any[]) {
     if (action === 'reset') {
       const [atTime = 0, ...rest] = args
@@ -129,5 +156,11 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
     this.ctx = null as unknown as gsap.Context
     this.scrollTrigger = null as unknown as ScrollTrigger
     this.timeline = null as unknown as gsap.core.Timeline
+  }
+
+  private handleScrollTriggerReset (event: 'enter' | 'enterBack' | 'leave' | 'leaveBack') {
+    const action = getScrollTriggerToggleActionByEvent(event, this.scrollTrigger)
+    if (action !== 'reset') return
+    this.dispatch('update', this)
   }
 }

@@ -5,6 +5,22 @@ export function applyTimelineTotalDuration (timeline: gsap.core.Timeline) {
   if (totalDuration) timeline.duration(totalDuration)
 }
 
+export function getScrollTriggerToggleActionByEvent (event: 'enter' | 'enterBack' | 'leave' | 'leaveBack', instance?: ScrollTrigger) {
+  if (!instance?.vars.toggleActions) return
+  const actions = instance.vars.toggleActions.split(' ')
+  switch (event) {
+    case 'enter': return actions[0]
+    case 'enterBack': return actions[2]
+    case 'leave': return actions[1]
+    case 'leaveBack': return actions[3]
+    default: return
+  }
+}
+
+export function isEmptyTarget (target: gsap.DOMTarget) {
+  return !target || (Array.isArray(target) && !target.length)
+}
+
 export function resolveTimelinePosition (
   timeline: gsap.core.Timeline,
   position?: gsap.Position

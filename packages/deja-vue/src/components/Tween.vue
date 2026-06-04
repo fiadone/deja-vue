@@ -18,6 +18,7 @@ import type {
   TweenDefinition
 } from '../types'
 import { cloneObject } from '../utils'
+import { isEmptyTarget } from '../utils/gsap'
 
 const props = defineProps<(
   & AnimationNestableChild
@@ -66,11 +67,12 @@ for (const event of ANIMATION_EVENTS) {
   animation.on(event, () => emit(event, animation, parent))
 }
 
-watch([tweenMethod, tweenTarget, tweenVars], ([method, target, vars]) => {
+watch([root, tweenMethod, tweenTarget, tweenVars], ([scope, method, target, vars]) => {
+  if (isEmptyTarget(target) || !method) return
   animation.clear(true)
-  const definition = { method, target, vars: cloneObject(vars) } as AnimationComposeDefinition
+  const definition = { method, scope, target, vars: cloneObject(vars) } as AnimationComposeDefinition
   animation.compose(definition)
-}, { deep: true })
+}, { deep: true, immediate: true })
 
 defineExpose<DejaVueAnimationInstance>(instance)
 defineSlots<{ default(props: DejaVueAnimationScopeProps): any }>()
