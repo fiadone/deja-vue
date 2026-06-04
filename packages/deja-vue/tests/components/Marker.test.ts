@@ -41,7 +41,7 @@ describe('Marker', () => {
     wrapper.unmount()
   })
 
-  it('emits cross and updates crossed when playback crosses the marker', async () => {
+  it('emits cross on callback and tracks crossed from playhead position', async () => {
     const wrapper = await mountTimeline({
       slots: {
         default: () => [
@@ -55,13 +55,24 @@ describe('Marker', () => {
     const instance = getExposed<DejaVueMarkerInstance>(marker)
 
     parent.animation.timeline.pause(0)
+    parent.animation.dispatch('update', parent.animation)
+    await flushPromises()
+    expect(instance.crossed).toBe(false)
+
     parent.animation.timeline.play(0)
     parent.animation.timeline.progress(0.6)
+    parent.animation.dispatch('update', parent.animation)
     await flushPromises()
 
     const direction = marker.emitted('cross')?.[0]?.[0] as number
     expect(direction).toBeDefined()
-    expect(instance.crossed).toBe(direction === 1)
+    expect(instance.crossed).toBe(true)
+
+    parent.animation.timeline.progress(0.3)
+    parent.animation.dispatch('update', parent.animation)
+    await flushPromises()
+    expect(instance.crossed).toBe(false)
+
     wrapper.unmount()
   })
 })

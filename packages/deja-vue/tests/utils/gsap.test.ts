@@ -1,8 +1,10 @@
 import { gsap } from 'gsap'
+import type { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
 
 import {
   applyTimelineTotalDuration,
+  getScrollTriggerToggleActionByEvent,
   resolveTimelinePosition,
   stripScrollTriggerVars
 } from '../../src/utils/gsap'
@@ -68,6 +70,17 @@ describe('applyTimelineTotalDuration', () => {
     applyTimelineTotalDuration(timeline)
 
     expect(duration).not.toHaveBeenCalled()
+  })
+})
+
+describe('getScrollTriggerToggleActionByEvent', () => {
+  it('maps GSAP toggleActions slots to scroll edges', () => {
+    const instance = { vars: { toggleActions: 'play pause none reset' } } as ScrollTrigger
+
+    expect(getScrollTriggerToggleActionByEvent('enter', instance)).toBe('play')
+    expect(getScrollTriggerToggleActionByEvent('leave', instance)).toBe('pause')
+    expect(getScrollTriggerToggleActionByEvent('enterBack', instance)).toBe('none')
+    expect(getScrollTriggerToggleActionByEvent('leaveBack', instance)).toBe('reset')
   })
 })
 

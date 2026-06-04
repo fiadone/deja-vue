@@ -295,6 +295,19 @@ describe('Animation', () => {
     })
   })
 
+  describe('getChildPosition', () => {
+    it('resolves labels and marker callbacks', () => {
+      const parent = new Animation()
+      const callback = vi.fn()
+
+      parent.add('mark', 0.25)
+      parent.add(callback, 0.5)
+
+      expect(parent.getChildPosition('mark')).toBe(0.25)
+      expect(parent.getChildPosition(callback)).toBe(0.5)
+    })
+  })
+
   describe('attachScrollTrigger', () => {
     it('replaces the previous instance', () => {
       const animation = new Animation()
@@ -306,6 +319,24 @@ describe('Animation', () => {
 
       expect(previous.kill).toHaveBeenCalled()
       create.mockRestore()
+    })
+
+    it('dispatches update when a toggleActions reset edge fires', () => {
+      const animation = new Animation()
+      const listener = vi.fn()
+      let vars: ScrollTrigger.Vars = {}
+
+      animation.on('update', listener)
+      vi.spyOn(ScrollTrigger, 'create').mockImplementation(config => {
+        vars = config
+        return { kill: vi.fn(), vars: config } as unknown as ScrollTrigger
+      })
+
+      animation.attachScrollTrigger({ start: 'top', toggleActions: 'play none none reset' })
+      vars.onLeaveBack?.({} as ScrollTrigger)
+
+      expect(listener).toHaveBeenCalledWith(animation)
+      vi.mocked(ScrollTrigger.create).mockRestore()
     })
   })
 })
