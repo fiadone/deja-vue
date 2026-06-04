@@ -382,10 +382,10 @@ describe('Animation', () => {
       })
 
       animation.attachScrollTrigger({
-        start: 'top',
         onEnter,
         onEnterBack,
-        onLeave
+        onLeave,
+        start: 'top'
       })
 
       const self = {} as ScrollTrigger
