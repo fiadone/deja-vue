@@ -13,6 +13,7 @@ import type {
   AnimationEventEmitter,
   AnimationNestableChild,
   ControllableAnimation,
+  DejaVueAnimationComponentProps,
   DejaVueAnimationInstance,
   DejaVueAnimationScopeProps,
   TweenDefinition
@@ -21,13 +22,10 @@ import { cloneObject } from '../utils'
 import { isEmptyTarget } from '../utils/gsap'
 
 const props = defineProps<(
+  & DejaVueAnimationComponentProps
   & AnimationNestableChild
   & ControllableAnimation
   & TweenDefinition
-  & {
-    seamless?: boolean
-    tweenTarget?: gsap.DOMTarget
-  }
 )>()
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter

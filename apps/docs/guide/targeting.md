@@ -142,6 +142,8 @@ import { Tween } from 'deja-vue'
 
 <template>
   <Tween
+    is="section"
+    tween-target="children"
     :to="{
       y: 100,
       scrollTrigger: {
@@ -156,7 +158,30 @@ import { Tween } from 'deja-vue'
 </template>
 ```
 
-Omit **`scrollTrigger.trigger`** to default it to the **tween target** (the resolved animated elements). Set **`trigger`** when the scroll sensor should differ from the animated nodes.
+### Default `scrollTrigger.trigger` {#scrolltrigger-default-trigger}
+
+When **`scrollTrigger.trigger`** is omitted, Déjà Vue sets it to the **component root** — the DOM element rendered for **`Tween`** / **`Timeline`** when the root attribute **`is`** is set (the same element as **`$el`** on the exposed instance).
+
+This default does **not** use the resolved **tween target**. Targets are **`gsap.TweenTarget`**, which can include values that are valid for tweens but not for ScrollTrigger’s **`trigger`**. The component root is always a concrete **`Element`**.
+
+**Requirement:** for the automatic default to work, set **`is`** so a single root element exists. Without **`is`**, there is no component root to bind — either add **`is`** or set **`scrollTrigger.trigger`** explicitly (selector, element, or another scroll sensor).
+
+Set **`scrollTrigger.trigger`** when the scroll sensor should differ from the component wrapper — for example scrubbing slotted children while observing a parent section:
+
+```html
+<Tween
+  :to="{
+    y: 100,
+    scrollTrigger: {
+      trigger: '.target',
+      start: 'top center',
+      scrub: true
+    }
+  }"
+>
+  <div class="target" />
+</Tween>
+```
 
 For **`fromTo`**, put **`scrollTrigger`** on the **`to`** vars.
 

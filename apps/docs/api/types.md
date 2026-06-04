@@ -53,7 +53,7 @@ Shared shape on animation-related components (`Tween`, `Timeline`, `SplitText`, 
 interface DejaVueComponent {
   $el: ShallowRef<Element | null>
   seamless?: MaybeRef<boolean | undefined>
-  tweenTarget: ComputedRef<gsap.DOMTarget>
+  tweenTarget: ComputedRef<gsap.TweenTarget>
 }
 ```
 
@@ -117,6 +117,17 @@ Accepted by the **`parent`** prop and returned from **`useAnimationNesting`**:
 
 ```typescript
 type DejaVueAnimationParent = DejaVueAnimationInstance | DejaVueAnimationExposed
+```
+
+### DejaVueAnimationComponentProps
+
+Shared props on **`Tween`** and **`Timeline`**:
+
+```typescript
+interface DejaVueAnimationComponentProps {
+  seamless?: boolean
+  tweenTarget?: 'children' | 'self' | gsap.TweenTarget
+}
 ```
 
 ### DejaVueAnimationScopeProps
@@ -223,7 +234,7 @@ type TweenDefinition = (
 ```typescript
 type AnimationComposeDefinition = {
   scope?: Element
-  target: gsap.DOMTarget
+  target: gsap.TweenTarget
 } & (
   | { method: 'fromTo'; vars: [gsap.TweenVars, gsap.TweenVars] }
   | { method: 'from' | 'to'; vars: gsap.TweenVars }
@@ -231,7 +242,9 @@ type AnimationComposeDefinition = {
 )
 ```
 
-Omit **`scrollTrigger.trigger`** in tween vars to default it to the **tween target**. For **`fromTo`**, put **`scrollTrigger`** on the **`to`** vars. See **[Animation targets — ScrollTrigger](../guide/targeting.md#scrolltrigger)**.
+**`scope`** is the component root element passed to **`stripScrollTriggerVars`** as the default ScrollTrigger **`trigger`** when tween vars omit **`scrollTrigger.trigger`**. It is **not** derived from **`target`** — see **[Default scrollTrigger.trigger](../guide/targeting.md#scrolltrigger-default-trigger)**.
+
+For **`fromTo`**, put **`scrollTrigger`** on the **`to`** vars.
 
 ### DejaVueNode
 
@@ -289,7 +302,7 @@ Argument to **`useAnimationScope`**. Exported from **`deja-vue`**.
 
 ```typescript
 interface AnimationScopeOptions {
-  tweenTarget?: MaybeRefOrGetter<gsap.DOMTarget | undefined>
+  tweenTarget?: MaybeRefOrGetter<gsap.TweenTarget | undefined>
   resolveChildrenTweenTarget?: (children: DejaVueNode[]) => Element[]
 }
 ```
@@ -357,6 +370,8 @@ function resolveTimelinePosition(
 ): number | null
 function stripScrollTriggerVars(
   vars: gsap.AnimationVars,
-  defaultTrigger?: gsap.DOMTarget
+  defaultTrigger?: gsap.DOMTarget // component root Element; not the tween target
 ): ScrollTrigger.Vars | null
 ```
+
+When **`defaultTrigger`** is set and vars omit **`scrollTrigger.trigger`**, that element becomes the ScrollTrigger sensor. **`Tween`** / **`Timeline`** pass the root from **`is`**. See **[Default scrollTrigger.trigger](../guide/targeting.md#scrolltrigger-default-trigger)**.

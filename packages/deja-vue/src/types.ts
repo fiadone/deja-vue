@@ -11,7 +11,7 @@ export type DejaVueNode = NodeRef | ShallowUnwrapRef<DejaVueComponent>
 export interface DejaVueComponent {
   $el: ShallowRef<Element | null>
   seamless?: MaybeRef<boolean | undefined>
-  tweenTarget: ComputedRef<gsap.DOMTarget>
+  tweenTarget: ComputedRef<gsap.TweenTarget>
 }
 
 export interface DejaVueAnimationInstance extends DejaVueComponent {
@@ -22,15 +22,18 @@ export interface DejaVueAnimationInstance extends DejaVueComponent {
   progress: ModelRef<ControllableAnimation['progress']>
 }
 
+export interface DejaVueAnimationComponentProps {
+  seamless?: boolean
+  tweenTarget?: 'children' | 'self' | gsap.TweenTarget
+}
+
 export type DejaVueAnimationExposed = ShallowUnwrapRef<DejaVueAnimationInstance>
-
 export type DejaVueAnimationParent = DejaVueAnimationInstance | DejaVueAnimationExposed
-
 export type DejaVueAnimationScopeProps = Pick<DejaVueAnimationExposed, 'animation' | 'direction' | 'parent' | 'progress'>
 
 export type AnimationChild = Animation | gsap.Callback | string
 
-export type AnimationComposeDefinition = { scope?: Element, target: gsap.DOMTarget } & (
+export type AnimationComposeDefinition = { scope?: Element, target: gsap.TweenTarget } & (
   | { method: 'fromTo', vars: [gsap.TweenVars, gsap.TweenVars] }
   | { method: 'from' | 'to', vars: gsap.TweenVars }
   | { method: string, vars: Record<string, unknown> }

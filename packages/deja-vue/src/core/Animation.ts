@@ -67,18 +67,16 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
       return
     }
 
-    const target = definition.target
-    const scope = definition.scope || definition.target
     let scrollTriggerVars: ScrollTrigger.Vars | null = null
 
     if (definition.method === 'fromTo') {
       const [from, to] = definition.vars as [gsap.TweenVars, gsap.TweenVars]
-      scrollTriggerVars = stripScrollTriggerVars(to, scope)
-      this.timeline.fromTo(target, from, to)
+      scrollTriggerVars = stripScrollTriggerVars(to, definition.scope)
+      this.timeline.fromTo(definition.target, from, to)
     } else if (definition.method in this.timeline) {
       const vars = definition.vars as gsap.TweenVars
-      scrollTriggerVars = stripScrollTriggerVars(vars, scope)
-      this.timeline[definition.method](target, vars)
+      scrollTriggerVars = stripScrollTriggerVars(vars, definition.scope)
+      this.timeline[definition.method](definition.target, vars)
     } else {
       console.warn('[deja-vue] Missing or unknown gsap effect.')
     }
@@ -161,6 +159,6 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
   private handleScrollTriggerReset (event: 'enter' | 'enterBack' | 'leave' | 'leaveBack') {
     const action = getScrollTriggerToggleActionByEvent(event, this.scrollTrigger)
     if (action !== 'reset') return
-    this.dispatch('update', this)
+    gsap.delayedCall(0, () => this.dispatch('update', this))
   }
 }

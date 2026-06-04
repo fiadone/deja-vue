@@ -15,7 +15,7 @@ Single GSAP tween per instance.
 | `effect` | `string` | Registered GSAP effect name |
 | `effectOptions` | `gsap.TweenVars` | Vars passed to the effect |
 | `seamless` | `boolean` | Contribute this instance’s resolved target to the parent tween scope |
-| `tweenTarget` | `gsap.DOMTarget` | How to resolve DOM targets (`'self'`, `'children'`, selector, or element) |
+| `tweenTarget` | `'children' \| 'self' \| gsap.TweenTarget` | How to resolve animation targets (`'self'`, `'children'`, selector, or element) |
 | `progress` | `number` | Two-way scrub value (0–1) via `v-model:progress` |
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |
 | `triggerAction` | `TweenAction` | `Animation.run()` action when `trigger` changes |
@@ -25,7 +25,7 @@ Single GSAP tween per instance.
 
 One tween kind per instance: **`to`**, **`from`**, **`from`** + **`to`**, or **`effect`**. Key the component when switching kind at runtime — see **[Troubleshooting](../guide/troubleshooting.md#tween-kind-prop-mismatch)**.
 
-Put **`scrollTrigger`** in **`from`** / **`to`** vars for scroll-linked playback — see **[Animation targets — ScrollTrigger](../guide/targeting.md#scrolltrigger)**.
+Put **`scrollTrigger`** in **`from`** / **`to`** vars for scroll-linked playback — see **[Animation targets — ScrollTrigger](../guide/targeting.md#scrolltrigger)**. If **`scrollTrigger.trigger`** is omitted, set **`is`** on the component (or pass an explicit **`trigger`**).
 
 Root attribute: **`is`**. See [Animation targets](../guide/targeting.md).
 
@@ -50,7 +50,7 @@ Container for nested **`Tween`**, **`Timeline`**, **`Marker`**, etc. Place **`Sp
 | `duration` | `number` | Fixed total duration; clearing restores natural timing |
 | `options` | `gsap.TimelineVars` | GSAP timeline vars (may include `scrollTrigger`) |
 | `seamless` | `boolean` | Contribute this instance’s resolved target to the parent tween scope |
-| `tweenTarget` | `gsap.DOMTarget` | How to resolve DOM targets |
+| `tweenTarget` | `'children' \| 'self' \| gsap.TweenTarget` | How to resolve animation targets |
 | `progress` | `number` | Two-way scrub value (0–1) via `v-model:progress` |
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |
 | `triggerAction` | `TweenAction` | `Animation.run()` action when `trigger` changes |

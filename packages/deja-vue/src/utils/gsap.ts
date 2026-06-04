@@ -17,7 +17,7 @@ export function getScrollTriggerToggleActionByEvent (event: 'enter' | 'enterBack
   }
 }
 
-export function isEmptyTarget (target: gsap.DOMTarget) {
+export function isEmptyTarget (target: gsap.TweenTarget) {
   return !target || (Array.isArray(target) && !target.length)
 }
 

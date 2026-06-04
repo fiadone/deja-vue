@@ -8,7 +8,7 @@ import { toNonEmptyArray } from '../utils'
 
 export interface AnimationScopeOptions {
   resolveChildrenTweenTarget?: (children: DejaVueNode[]) => Element[]
-  tweenTarget?: MaybeRefOrGetter<gsap.DOMTarget | undefined>
+  tweenTarget?: MaybeRefOrGetter<gsap.TweenTarget | undefined>
 }
 
 const AnimationScopePropTypes = {

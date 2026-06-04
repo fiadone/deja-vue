@@ -325,6 +325,10 @@ describe('Animation', () => {
       const animation = new Animation()
       const listener = vi.fn()
       let vars: ScrollTrigger.Vars = {}
+      const delayedCall = vi.spyOn(gsap, 'delayedCall').mockImplementation((_delay, callback) => {
+        callback()
+        return { kill: vi.fn() } as unknown as gsap.core.Tween
+      })
 
       animation.on('update', listener)
       vi.spyOn(ScrollTrigger, 'create').mockImplementation(config => {
@@ -335,7 +339,10 @@ describe('Animation', () => {
       animation.attachScrollTrigger({ start: 'top', toggleActions: 'play none none reset' })
       vars.onLeaveBack?.({} as ScrollTrigger)
 
+      expect(delayedCall).toHaveBeenCalledWith(0, expect.any(Function))
       expect(listener).toHaveBeenCalledWith(animation)
+
+      delayedCall.mockRestore()
       vi.mocked(ScrollTrigger.create).mockRestore()
     })
   })

@@ -8,14 +8,14 @@ Resolves DOM targets for **`Tween`** / **`Timeline`**.
 
 ```typescript
 interface AnimationScopeOptions {
-  tweenTarget?: MaybeRefOrGetter<gsap.DOMTarget | undefined>
+  tweenTarget?: MaybeRefOrGetter<gsap.TweenTarget | undefined>
   resolveChildrenTweenTarget?: (children: DejaVueNode[]) => Element[]
 }
 
 function useAnimationScope(options?: AnimationScopeOptions): {
   AnimationScope: Component
   root: ShallowRef<Element | null>
-  tweenTarget: ComputedRef<gsap.DOMTarget>
+  tweenTarget: ComputedRef<gsap.TweenTarget>
 }
 ```
 

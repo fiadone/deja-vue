@@ -56,6 +56,7 @@ Quick checks:
 
 1. Put **`scrollTrigger`** in tween **`from`** / **`to`** vars or timeline **`options`**.
 2. Import **`Tween`**, **`Timeline`**, or **`Animation`** from **`deja-vue`** once so the plugin registers — **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**.
+3. If you omit **`scrollTrigger.trigger`**, set **`is`** on **`Tween`** / **`Timeline`** so Déjà Vue can bind to the component root — or pass an explicit **`trigger`**. See **[Default scrollTrigger.trigger](./targeting.md#scrolltrigger-default-trigger)**.
 
 ## Still stuck
 

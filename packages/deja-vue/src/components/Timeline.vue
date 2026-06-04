@@ -12,6 +12,7 @@ import type {
   AnimationEventEmitter,
   AnimationNestableChild,
   ControllableAnimation,
+  DejaVueAnimationComponentProps,
   DejaVueAnimationInstance,
   DejaVueAnimationScopeProps
 } from '../types'
@@ -19,13 +20,12 @@ import { cloneObject } from '../utils'
 import { stripScrollTriggerVars } from '../utils/gsap'
 
 const props = defineProps<(
+  & DejaVueAnimationComponentProps
   & AnimationNestableChild
   & ControllableAnimation
   & {
     duration?: number
     options?: gsap.TimelineVars
-    seamless?: boolean
-    tweenTarget?: gsap.DOMTarget
   }
 )>()
 
