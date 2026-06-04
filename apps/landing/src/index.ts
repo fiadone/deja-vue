@@ -1,6 +1,11 @@
 import { createApp } from 'vue'
 
-import './style.css'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import 'virtual:uno.css'
+import './style.css'
+
+const app = createApp(App)
+
+app.config.globalProperties.$touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+app.mount('#app')
