@@ -1,5 +1,5 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 
 import type { DejaVueMarkerInstance } from '../../src/components/Marker.types'
@@ -38,6 +38,31 @@ describe('Marker', () => {
 
     expect(parent.animation.timeline.labels).toHaveProperty('b')
     expect(parent.animation.timeline.labels).not.toHaveProperty('a')
+    wrapper.unmount()
+  })
+
+  it('treats crossed position as zero when the callback is not on the timeline yet', async () => {
+    const Host = defineComponent({
+      setup () {
+        return () => h(Timeline, null, {
+          default: () => h(Marker, { position: 0.5 }, { default: () => h('span') })
+        })
+      }
+    })
+
+    const wrapper = mount(Host, { attachTo: document.body })
+    await flushPromises()
+    const parent = getExposed<DejaVueAnimationInstance>(wrapper.findComponent(Timeline))
+    const marker = wrapper.findComponent(Marker)
+    const instance = getExposed<DejaVueMarkerInstance>(marker)
+    const getChildPosition = vi.spyOn(parent.animation, 'getChildPosition').mockReturnValue(undefined)
+
+    parent.animation.timeline.pause(0.6)
+    parent.animation.dispatch('update', parent.animation)
+    await flushPromises()
+
+    expect(instance.crossed).toBe(true)
+    getChildPosition.mockRestore()
     wrapper.unmount()
   })
 

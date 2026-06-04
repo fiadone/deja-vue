@@ -306,6 +306,29 @@ describe('Animation', () => {
       expect(parent.getChildPosition('mark')).toBe(0.25)
       expect(parent.getChildPosition(callback)).toBe(0.5)
     })
+
+    it('returns undefined without a timeline or for unknown labels', () => {
+      const parent = new Animation()
+      const callback = vi.fn()
+
+      expect(parent.getChildPosition('missing')).toBeUndefined()
+      expect(parent.getChildPosition(callback)).toBeUndefined()
+
+      parent.dispose()
+      expect(parent.getChildPosition('mark')).toBeUndefined()
+    })
+
+    it('resolves nested animation start time from the parent timeline', () => {
+      const parent = new Animation()
+      const child = new Animation()
+      const startTime = vi.fn().mockReturnValue(1.25)
+
+      vi.spyOn(parent.timeline, 'getTweensOf').mockImplementation(target => (
+        target === child.timeline ? [{ startTime }] as never : parent.timeline.getTweensOf(target)
+      ))
+
+      expect(parent.getChildPosition(child)).toBe(1.25)
+    })
   })
 
   describe('attachScrollTrigger', () => {
@@ -343,6 +366,37 @@ describe('Animation', () => {
       expect(listener).toHaveBeenCalledWith(animation)
 
       delayedCall.mockRestore()
+      vi.mocked(ScrollTrigger.create).mockRestore()
+    })
+
+    it('forwards scroll edge callbacks and resets on enter, enterBack, and leave', () => {
+      const animation = new Animation()
+      let vars: ScrollTrigger.Vars = {}
+      const onEnter = vi.fn()
+      const onEnterBack = vi.fn()
+      const onLeave = vi.fn()
+
+      vi.spyOn(ScrollTrigger, 'create').mockImplementation(config => {
+        vars = config
+        return { kill: vi.fn(), vars: config } as unknown as ScrollTrigger
+      })
+
+      animation.attachScrollTrigger({
+        start: 'top',
+        onEnter,
+        onEnterBack,
+        onLeave
+      })
+
+      const self = {} as ScrollTrigger
+      vars.onEnter?.(self)
+      vars.onEnterBack?.(self)
+      vars.onLeave?.(self)
+
+      expect(onEnter).toHaveBeenCalledWith(self)
+      expect(onEnterBack).toHaveBeenCalledWith(self)
+      expect(onLeave).toHaveBeenCalledWith(self)
+
       vi.mocked(ScrollTrigger.create).mockRestore()
     })
   })

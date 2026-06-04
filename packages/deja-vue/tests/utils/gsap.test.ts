@@ -82,6 +82,14 @@ describe('getScrollTriggerToggleActionByEvent', () => {
     expect(getScrollTriggerToggleActionByEvent('enterBack', instance)).toBe('none')
     expect(getScrollTriggerToggleActionByEvent('leaveBack', instance)).toBe('reset')
   })
+
+  it('returns undefined without toggleActions or for unknown events', () => {
+    expect(getScrollTriggerToggleActionByEvent('enter')).toBeUndefined()
+    expect(getScrollTriggerToggleActionByEvent('enter', { vars: {} } as ScrollTrigger)).toBeUndefined()
+    expect(getScrollTriggerToggleActionByEvent('unknown' as 'enter', {
+      vars: { toggleActions: 'play pause none reset' }
+    } as ScrollTrigger)).toBeUndefined()
+  })
 })
 
 describe('stripScrollTriggerVars', () => {
