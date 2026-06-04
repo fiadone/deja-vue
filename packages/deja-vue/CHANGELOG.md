@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/fiadone/deja-vue/compare/v2.0.0...v2.0.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* update deps ([748c90f](https://github.com/fiadone/deja-vue/commit/748c90f2c24c3b15d80f8bd24436807cbb4e291a))
+
 # [2.0.0](https://github.com/fiadone/deja-vue/compare/v1.0.1...v2.0.0) (2026-06-04)
 
 
