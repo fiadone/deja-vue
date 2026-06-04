@@ -39,7 +39,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
-    "vue-unwrap": "^2.0.0"
+    "vue-unwrap": "^2.0.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
@@ -58,7 +58,7 @@
     "tsdown": "^0.22.1",
     "typescript": "^6.0.2",
     "vitest": "^4.0.18",
-    "vue": "^3.5.34",
+    "vue": "^3.5.35",
     "vue-tsc": "^3.3.3"
   }
 }
