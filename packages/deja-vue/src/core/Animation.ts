@@ -142,13 +142,24 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
   }
 
   clear (revert?: boolean) {
-    if (revert) this.ctx?.revert()
+    if (revert) {
+      this.ctx?.revert()
+    } else {
+      this.ctx?.kill()
+    }
+
     this.timeline?.clear(true)
   }
 
-  dispose () {
+  dispose (revert?: boolean) {
     super.dispose()
-    this.ctx?.revert()
+
+    if (revert) {
+      this.ctx?.revert()
+    } else {
+      this.ctx?.kill()
+    }
+    
     this.scrollTrigger?.kill()
     this.timeline?.kill()
     this.ctx = null as unknown as gsap.Context

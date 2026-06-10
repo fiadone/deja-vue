@@ -18,7 +18,7 @@ class Animation extends EventBus<AnimationEvent, [animation: Animation]> {
   attachScrollTrigger(vars: ScrollTrigger.Vars | null | undefined): void
   run(action?: TweenAction, ...args: any[]): void
   clear(revert?: boolean): void
-  dispose(): void
+  dispose(revert?: boolean): void
   // EventBus<AnimationEvent, [animation: Animation]>
   on(event: AnimationEvent | AnimationEvent[], callback: (animation: Animation) => void): void
   once(event: AnimationEvent | AnimationEvent[], callback: (animation: Animation) => void): void
@@ -36,6 +36,10 @@ animation.on('update', instance => {
 ```
 
 This is separate from Vue **`AnimationEventEmitter`** on **`Tween`** / **`Timeline`**, which emits **`(event, animation, parent)`** to the template.
+
+**`clear`** — removes timeline children. When **`revert`** is **`true`**, calls **`gsap.Context.revert()`** (restores inline styles). Otherwise calls **`gsap.Context.kill()`**.
+
+**`dispose`** — tears down the animation. Same **`revert`** / **`kill`** behavior on the GSAP context, then kills any linked ScrollTrigger and timeline. **`Tween`** / **`Timeline`** pass their **`revertOnDispose`** prop through **`useAnimationNesting`** on unmount and to **`clear`** when tween vars change.
 
 **`add`** — labels and callbacks use raw GSAP placement. Nested **`Animation`** children use raw **`timeline.add`** by default. Defers while the parent timeline is active.
 
@@ -125,6 +129,7 @@ Shared props on **`Tween`** and **`Timeline`**:
 
 ```typescript
 interface DejaVueAnimationComponentProps {
+  revertOnDispose?: boolean
   seamless?: boolean
   tweenTarget?: 'children' | 'self' | gsap.TweenTarget
 }
@@ -293,6 +298,7 @@ Second argument to **`useAnimationNesting`**. Exported from **`deja-vue`**.
 interface AnimationNestingOptions {
   parent?: DejaVueAnimationParent | null
   position?: MaybeRefOrGetter<gsap.Position | undefined>
+  revertOnDispose?: MaybeRefOrGetter<boolean>
 }
 ```
 

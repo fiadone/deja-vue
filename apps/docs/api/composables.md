@@ -61,6 +61,7 @@ type AnimationNestingTarget =
 interface AnimationNestingOptions {
   parent?: DejaVueAnimationParent | null
   position?: MaybeRefOrGetter<gsap.Position | undefined>
+  revertOnDispose?: MaybeRefOrGetter<boolean>
 }
 
 function useAnimationNesting(
@@ -79,7 +80,7 @@ function useAnimationNesting(
 | `null` | opt out of nesting |
 | slot **`parent`** / explicit **`DejaVueAnimationParent`** | override inject target |
 
-Watches children and **`options.position`**; re-registers on change. Without **`position`**, children append at the parent timeline end. Removing children defers **`Animation.remove`** while the parent is playing ( **`force`** on unmount) — see **[Nesting — Dynamic children](../guide/nesting.md#dynamic-children-v-if-lists)**. Does not pass **`Animation.add`**’s **`timeShift`** flag — use imperative **`animation.add(..., true)`** from script if you need sibling shifting.
+Watches children and **`options.position`**; re-registers on change. Without **`position`**, children append at the parent timeline end. Removing children defers **`Animation.remove`** while the parent is playing ( **`force`** on unmount) — see **[Nesting — Dynamic children](../guide/nesting.md#dynamic-children-v-if-lists)**. On unmount, nested **`Animation`** children call **`dispose(revertOnDispose)`** — see **`revertOnDispose`** on **[Tween](./components.md#tween)** / **[Timeline](./components.md#timeline)**. Does not pass **`Animation.add`**’s **`timeShift`** flag — use imperative **`animation.add(..., true)`** from script if you need sibling shifting.
 
 **`parent`** is resolved once at component setup. If an explicit **`parent`** is not ready when the child mounts, mount the child after the parent or guard with **`v-if`**. See **[Troubleshooting — Nesting / parent](../guide/troubleshooting.md#nesting-parent-not-found)**.
 

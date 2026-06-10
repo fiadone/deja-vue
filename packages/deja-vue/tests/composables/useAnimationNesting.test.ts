@@ -227,6 +227,40 @@ describe('useAnimationNesting', () => {
     })
   })
 
+  describe('revertOnDispose', () => {
+    it('passes revertOnDispose to child.dispose on unmount', async () => {
+      const { instance } = createParent()
+      const child = new Animation()
+      const dispose = vi.spyOn(child, 'dispose')
+
+      const wrapper = mountWithParent(() => {
+        useAnimationNesting({ animation: child }, { parent: instance, revertOnDispose: true })
+      }, instance)
+
+      await flushPromises()
+      wrapper.unmount()
+      await flushPromises()
+
+      expect(dispose).toHaveBeenCalledWith(true)
+    })
+
+    it('disposes without revert when revertOnDispose is omitted', async () => {
+      const { instance } = createParent()
+      const child = new Animation()
+      const dispose = vi.spyOn(child, 'dispose')
+
+      const wrapper = mountWithParent(() => {
+        useAnimationNesting({ animation: child }, { parent: instance })
+      }, instance)
+
+      await flushPromises()
+      wrapper.unmount()
+      await flushPromises()
+
+      expect(dispose).toHaveBeenCalledWith(undefined)
+    })
+  })
+
   describe('unmount', () => {
     it('force-removes and disposes nested animations', async () => {
       const { animation: parent, instance } = createParent()

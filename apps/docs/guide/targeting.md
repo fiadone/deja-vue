@@ -93,7 +93,7 @@ import { Tween } from 'deja-vue'
 </template>
 ```
 
-When the resolved target list changes, running tweens on the previous target are killed and inline styles cleared before recomposing.
+When the resolved target list changes, running tweens on the previous target are cleared before recomposing. By default inline styles are **not** reverted; set **`revert-on-dispose`** on the **`Tween`** to restore DOM state on clear and unmount.
 
 ## `seamless` {#seamless}
 

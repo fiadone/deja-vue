@@ -24,6 +24,10 @@ import { Tween } from 'deja-vue'
 
 Slotted elements are the default target. See **[Animation targets](./targeting.md)** for **`is`**, **`tween-target`**, and **`seamless`**.
 
+## Revert on dispose {#revert-on-dispose}
+
+By default, clearing or unmounting a **`Tween`** kills its GSAP context — animations stop but inline styles may remain. Set **`revert-on-dispose`** when you want DOM state restored (for example after **`v-if`** teardown or when tween vars change and the tween recomposes). Nested **`Timeline`** instances use the same prop on unmount only.
+
 ## Tween kinds {#tween-kinds}
 
 Use **`:to`**, **`:from`**, both for **`fromTo`**, or **`effect`** + **`effect-options`**. One kind per **`Tween`**. Key the component when switching kind at runtime — see **[Troubleshooting](./troubleshooting.md#tween-kind-prop-mismatch)**:

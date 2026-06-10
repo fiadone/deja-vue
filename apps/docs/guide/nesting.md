@@ -14,7 +14,7 @@ For a first timeline walkthrough (with demo), see **[Timeline — Basic timeline
 
 Without **`position`**, re-added children append at the timeline end. Set explicit **`position`** when conditional composition must land at a specific time.
 
-Removing a nested child (e.g. **`v-if`** turned off) uses the same **`Animation.remove`** rules as the imperative API: removal is **immediate** when the parent timeline is **paused**, and **deferred** until **`complete`** or **`reverseComplete`** while the parent is **playing**. Component unmount always forces removal. See **[Types API — `remove`](../api/types.md#animation)**.
+Removing a nested child (e.g. **`v-if`** turned off) uses the same **`Animation.remove`** rules as the imperative API: removal is **immediate** when the parent timeline is **paused**, and **deferred** until **`complete`** or **`reverseComplete`** while the parent is **playing**. Component unmount always forces removal. Set **`revert-on-dispose`** on the nested **`Tween`** or **`Timeline`** to restore inline styles when it unmounts — see **[Tween — Revert on dispose](./tween.md#revert-on-dispose)**. See **[Types API — `remove`](../api/types.md#animation)**.
 
 ```html
 <script setup>

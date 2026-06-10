@@ -9,6 +9,7 @@ import { toNonEmptyArray } from '../utils'
 export interface AnimationNestingOptions {
   parent?: DejaVueAnimationParent | null
   position?: MaybeRefOrGetter<gsap.Position | undefined>
+  revertOnDispose?: MaybeRefOrGetter<boolean>
 }
 
 export type AnimationNestingTarget = (
@@ -20,6 +21,7 @@ export type AnimationNestingTarget = (
 export function useAnimationNesting (target?: AnimationNestingTarget | AnimationNestingTarget[], options?: AnimationNestingOptions) {
   const parent = options?.parent === null ? null : options?.parent || inject(dejaVueParentInstance, null)
   const position = computed(() => toValue(options?.position))
+  const revertOnDispose = computed(() => toValue(options?.revertOnDispose))
   const children = computed(() => toNonEmptyArray<AnimationChild>(
     [target]
       .flat()
@@ -68,10 +70,10 @@ export function useAnimationNesting (target?: AnimationNestingTarget | Animation
     if (parent) {
       children.value.forEach(child => {
         parent.animation.remove(child, true)
-        if (child instanceof Animation) child.dispose()
+        if (child instanceof Animation) child.dispose(revertOnDispose.value)
       })
     } else {
-      children.value.forEach(child => child instanceof Animation && child.dispose())
+      children.value.forEach(child => child instanceof Animation && child.dispose(revertOnDispose.value))
     }
   })
 

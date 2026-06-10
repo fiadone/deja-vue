@@ -15,6 +15,7 @@ Single GSAP tween per instance.
 | `effect` | `string` | Registered GSAP effect name |
 | `effectOptions` | `gsap.TweenVars` | Vars passed to the effect |
 | `seamless` | `boolean` | Contribute this instance’s resolved target to the parent tween scope |
+| `revertOnDispose` | `boolean` | When `true`, revert the GSAP context on clear and unmount (restore inline styles). Default kills the context instead |
 | `tweenTarget` | `'children' \| 'self' \| gsap.TweenTarget` | How to resolve animation targets (`'self'`, `'children'`, selector, or element) |
 | `progress` | `number` | Two-way scrub value (0–1) via `v-model:progress` |
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |
@@ -50,6 +51,7 @@ Container for nested **`Tween`**, **`Timeline`**, **`Marker`**, etc. Place **`Sp
 | `duration` | `number` | Fixed total duration; clearing restores natural timing |
 | `options` | `gsap.TimelineVars` | GSAP timeline vars (may include `scrollTrigger`) |
 | `seamless` | `boolean` | Contribute this instance’s resolved target to the parent tween scope |
+| `revertOnDispose` | `boolean` | When `true`, revert the GSAP context on unmount (restore inline styles). Default kills the context instead |
 | `tweenTarget` | `'children' \| 'self' \| gsap.TweenTarget` | How to resolve animation targets |
 | `progress` | `number` | Two-way scrub value (0–1) via `v-model:progress` |
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |

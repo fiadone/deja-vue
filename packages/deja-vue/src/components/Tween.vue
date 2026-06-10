@@ -44,7 +44,8 @@ const controls: AnimationControls = {
 const { controlled, direction } = useAnimationControls(animation, controls)
 const { parent } = useAnimationNesting({ animation }, {
   parent: props.parent,
-  position: () => props.position
+  position: () => props.position,
+  revertOnDispose: () => props.revertOnDispose
 })
 
 const { method: tweenMethod, vars: tweenVars } = useTweenVars(props)
@@ -67,7 +68,7 @@ for (const event of ANIMATION_EVENTS) {
 
 watch([root, tweenMethod, tweenTarget, tweenVars], ([scope, method, target, vars]) => {
   if (isEmptyTarget(target) || !method) return
-  animation.clear(true)
+  animation.clear(props.revertOnDispose)
   const definition = { method, scope, target, vars: cloneObject(vars) } as AnimationComposeDefinition
   animation.compose(definition)
 }, { deep: true, immediate: true })

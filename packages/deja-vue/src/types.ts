@@ -23,6 +23,7 @@ export interface DejaVueAnimationInstance extends DejaVueComponent {
 }
 
 export interface DejaVueAnimationComponentProps {
+  revertOnDispose?: boolean
   seamless?: boolean
   tweenTarget?: 'children' | 'self' | gsap.TweenTarget
 }

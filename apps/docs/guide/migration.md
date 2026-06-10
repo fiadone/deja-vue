@@ -201,7 +201,7 @@ Use **`animation.timeline`** for imperative GSAP access.
 
 | v1 | v2 |
 |--------|-----|
-| **`compose`** ran once on mount; changing **`method`** / **`vars`** did not rebuild | Changing **`tweenTarget`**, tween kind, or **`from`** / **`to`** / **`effect-options`** triggers **`clear(true)`** and **`compose`** again |
+| **`compose`** ran once on mount; changing **`method`** / **`vars`** did not rebuild | Changing **`tweenTarget`**, tween kind, or **`from`** / **`to`** / **`effect-options`** triggers **`clear(revertOnDispose)`** and **`compose`** again (default keeps inline styles; pass **`revert-on-dispose`** to restore DOM state) |
 
 ## `Animation.compose` (imperative)
 

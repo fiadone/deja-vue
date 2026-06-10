@@ -75,6 +75,28 @@ describe('Tween', () => {
       expect(instance.animation.timeline.getChildren().length).toBeGreaterThanOrEqual(before)
       wrapper.unmount()
     })
+
+    it('passes revertOnDispose to animation.clear on recompose', async () => {
+      const to = ref({ duration: 0.1, x: 0 })
+      const clear = vi.spyOn(Animation.prototype, 'clear')
+      const Host = defineComponent({
+        setup () {
+          return () => h(Timeline, null, {
+            default: () => h(Tween, { revertOnDispose: true, to: to.value }, { default: tweenTargetSlot })
+          })
+        }
+      })
+
+      const wrapper = mount(Host, { attachTo: document.body })
+      await flushPromises()
+
+      to.value = { duration: 0.1, x: 100 }
+      await flushPromises()
+
+      expect(clear).toHaveBeenCalledWith(true)
+      clear.mockRestore()
+      wrapper.unmount()
+    })
   })
 
   describe('controls', () => {

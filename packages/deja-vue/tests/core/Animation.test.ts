@@ -76,23 +76,76 @@ describe('Animation', () => {
       expect(animation.timeline.getChildren()).toHaveLength(0)
     })
 
+    it('clear() kills the gsap context when revert is omitted', () => {
+      const animation = new Animation()
+      const revert = vi.fn()
+      const kill = vi.fn()
+      vi.spyOn(gsap, 'context').mockImplementation(fn => {
+        if (typeof fn === 'function') (fn as () => void)()
+        return { revert, kill } as unknown as gsap.Context
+      })
+
+      animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
+      animation.clear()
+
+      expect(kill).toHaveBeenCalled()
+      expect(revert).not.toHaveBeenCalled()
+      vi.mocked(gsap.context).mockRestore()
+    })
+
     it('clear(revert) reverts the gsap context', () => {
       const animation = new Animation()
       const revert = vi.fn()
+      const kill = vi.fn()
       vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert } as unknown as gsap.Context
+        return { revert, kill } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
       animation.clear(true)
 
       expect(revert).toHaveBeenCalled()
+      expect(kill).not.toHaveBeenCalled()
       vi.mocked(gsap.context).mockRestore()
     })
   })
 
   describe('dispose', () => {
+    it('kills the gsap context by default', () => {
+      const animation = new Animation()
+      const revert = vi.fn()
+      const kill = vi.fn()
+      vi.spyOn(gsap, 'context').mockImplementation(fn => {
+        if (typeof fn === 'function') (fn as () => void)()
+        return { revert, kill } as unknown as gsap.Context
+      })
+
+      animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
+      animation.dispose()
+
+      expect(kill).toHaveBeenCalled()
+      expect(revert).not.toHaveBeenCalled()
+      vi.mocked(gsap.context).mockRestore()
+    })
+
+    it('dispose(revert) reverts the gsap context', () => {
+      const animation = new Animation()
+      const revert = vi.fn()
+      const kill = vi.fn()
+      vi.spyOn(gsap, 'context').mockImplementation(fn => {
+        if (typeof fn === 'function') (fn as () => void)()
+        return { revert, kill } as unknown as gsap.Context
+      })
+
+      animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
+      animation.dispose(true)
+
+      expect(revert).toHaveBeenCalled()
+      expect(kill).not.toHaveBeenCalled()
+      vi.mocked(gsap.context).mockRestore()
+    })
+
     it('kills the timeline', () => {
       const animation = new Animation()
       animation.dispose()
@@ -258,15 +311,16 @@ describe('Animation', () => {
     it('uses gsap.context when withContext is true', () => {
       const animation = new Animation()
       const revert = vi.fn()
+      const kill = vi.fn()
       const context = vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert } as unknown as gsap.Context
+        return { revert, kill } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
       expect(context).toHaveBeenCalled()
       animation.dispose()
-      expect(revert).toHaveBeenCalled()
+      expect(kill).toHaveBeenCalled()
       context.mockRestore()
     })
 
