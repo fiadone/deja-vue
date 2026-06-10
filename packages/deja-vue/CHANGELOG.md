@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/fiadone/deja-vue/compare/v2.0.1...v2.1.0) (2026-06-10)
+
+
+### Features
+
+* make animation revert optional ([6344d26](https://github.com/fiadone/deja-vue/commit/6344d26f15f622a5d68dde30d1822ba7428c94ea))
+
 ## [2.0.1](https://github.com/fiadone/deja-vue/compare/v2.0.0...v2.0.1) (2026-06-04)
 
 
