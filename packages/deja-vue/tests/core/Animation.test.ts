@@ -82,7 +82,7 @@ describe('Animation', () => {
       const kill = vi.fn()
       vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert, kill } as unknown as gsap.Context
+        return { kill, revert } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
@@ -99,7 +99,7 @@ describe('Animation', () => {
       const kill = vi.fn()
       vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert, kill } as unknown as gsap.Context
+        return { kill, revert } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
@@ -118,7 +118,7 @@ describe('Animation', () => {
       const kill = vi.fn()
       vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert, kill } as unknown as gsap.Context
+        return { kill, revert } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
@@ -135,7 +135,7 @@ describe('Animation', () => {
       const kill = vi.fn()
       vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert, kill } as unknown as gsap.Context
+        return { kill, revert } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
@@ -314,7 +314,7 @@ describe('Animation', () => {
       const kill = vi.fn()
       const context = vi.spyOn(gsap, 'context').mockImplementation(fn => {
         if (typeof fn === 'function') (fn as () => void)()
-        return { revert, kill } as unknown as gsap.Context
+        return { kill, revert } as unknown as gsap.Context
       })
 
       animation.compose({ method: 'to', target: document.createElement('div'), vars: { x: 1 } })
