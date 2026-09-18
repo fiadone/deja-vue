@@ -1,5 +1,5 @@
 import { flushPromises } from '@vue/test-utils'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
@@ -8,11 +8,11 @@ import { ANIMATION_EVENTS } from '../../src/constants'
 import { Animation } from '../../src/core/Animation'
 import type { DejaVueAnimationInstance } from '../../src/types'
 import {
-  getExposed,
-  getTweenExposed,
-  mountTimeline,
-  mountTimelineWithTween,
-  nestedTimelines
+    getExposed,
+    getTweenExposed,
+    mountTimeline,
+    mountTimelineWithTween,
+    nestedTimelines
 } from '../shared/helpers'
 
 describe('Timeline', () => {

@@ -10,7 +10,10 @@ const data = [0.6, 0.85, 0.7, 1, 0.75]
     class="flex items-end justify-center gap-3 size-full"
     :from="{
       scaleY: 0,
-      transformOrigin: 'bottom center',
+      transformOrigin: 'bottom center'
+    }"
+    :to="{
+      scaleY: 1,
       delay: 0.5,
       stagger: 0.1,
       scrollTrigger: {

@@ -59,6 +59,8 @@ Full prop and event reference: **[Components API — Tween](../api/components.md
 
 Scroll-linked tweens: put **`scrollTrigger`** in **`from`** / **`to`** vars — **[Animation targets — ScrollTrigger](./targeting.md#scrolltrigger)**.
 
+Note: `from`-only tweens used with `scrollTrigger` can occasionally leave start values applied after ScrollTrigger refreshes (for example on layout/resize). If you encounter persistent or "stuck" styles, implement the animation as `fromTo` and put `scrollTrigger` on the `to` vars.
+
 ## Default slot {#default-slot}
 
 **`animation`**, **`direction`**, **`parent`**, **`progress`**.

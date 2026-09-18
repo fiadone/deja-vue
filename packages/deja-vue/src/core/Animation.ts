@@ -1,5 +1,5 @@
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import { ANIMATION_EVENTS } from '../constants'
 import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenAction } from '../types'

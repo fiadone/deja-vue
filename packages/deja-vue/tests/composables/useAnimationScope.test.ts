@@ -8,12 +8,12 @@ import Tween from '../../src/components/Tween.vue'
 import { resolveChildrenTweenTarget } from '../../src/composables/useAnimationScope'
 import type { DejaVueAnimationInstance } from '../../src/types'
 import {
-  expectTweenTargetNonEmpty,
-  getExposed,
-  getTweenExposed,
-  mountTimeline,
-  mountTimelineWithTween,
-  TWEEN_TARGET_CLASS
+    expectTweenTargetNonEmpty,
+    getExposed,
+    getTweenExposed,
+    mountTimeline,
+    mountTimelineWithTween,
+    TWEEN_TARGET_CLASS
 } from '../shared/helpers'
 
 describe('resolveChildrenTweenTarget', () => {

@@ -57,6 +57,7 @@ Quick checks:
 1. Put **`scrollTrigger`** in tween **`from`** / **`to`** vars or timeline **`options`**.
 2. Import **`Tween`**, **`Timeline`**, or **`Animation`** from **`deja-vue`** once so the plugin registers — **[Getting started — GSAP plugins](./getting-started.md#gsap-plugins)**.
 3. If you omit **`scrollTrigger.trigger`**, set **`is`** on **`Tween`** / **`Timeline`** so Déjà Vue can bind to the component root — or pass an explicit **`trigger`**. See **[Default scrollTrigger.trigger](./targeting.md#scrolltrigger-default-trigger)**.
+4. Be aware of `from` + `scrollTrigger` edge cases — using `from` alone can sometimes leave the styles defined in the `from` vars applied after ScrollTrigger performs an internal refresh (for example on layout/resize or when ScrollTrigger recalculates). If you observe persistent or "stuck" styles after a refresh, implement the animation using `fromTo` so both start and end values are explicitly set, which avoids leaving transient styles applied.
 
 ## Still stuck
 

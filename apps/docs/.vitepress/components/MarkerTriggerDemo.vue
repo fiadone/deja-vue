@@ -18,7 +18,7 @@ import { Marker, Timeline, Tween } from 'deja-vue'
           :trigger="crossed"
           :trigger-action="crossed ? 'play' : 'reverse'"
         >
-          <div class="demo-box demo-box--muted" />
+          <div class="demo-box" />
         </Tween>
       </Marker>
       <Tween :to="{ x: 56 }">
