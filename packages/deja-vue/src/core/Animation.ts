@@ -1,4 +1,4 @@
-import { gsap } from 'gsap'
+import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import { ANIMATION_EVENTS } from '../constants'
