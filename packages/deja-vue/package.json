@@ -1,7 +1,7 @@
 {
   "name": "deja-vue",
   "type": "module",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Declarative GSAP Animations for Vue 3",
   "author": "Andrea 'Fiad' Fiadone <hello@fiad.one>",
   "license": "MIT",

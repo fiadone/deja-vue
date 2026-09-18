@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/fiadone/deja-vue/compare/v2.1.1...v2.1.2) (2026-09-18)
+
+
+### Bug Fixes
+
+* import gsap core as default export rather than named export to avoid issues in serverless environments like Nuxt ([c582631](https://github.com/fiadone/deja-vue/commit/c58263135f1b46d95e3768da3af77c322a8ce6cf))
+
 ## [2.1.1](https://github.com/fiadone/deja-vue/compare/v2.1.0...v2.1.1) (2026-09-18)
 
 
