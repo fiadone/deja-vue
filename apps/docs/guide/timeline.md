@@ -70,3 +70,5 @@ A positive **`duration`** preserves fixed total timing as children are added or 
 ## ScrollTrigger
 
 Pass **`scrollTrigger`** inside **`options`**. Full setup, defaults, and smooth-scroll notes: **[Animation targets — ScrollTrigger](./targeting.md#scrolltrigger)**.
+
+Caution: using `from` without an explicit `to` in scroll-driven tweens can, in rare cases, leave `from` styles applied after an internal ScrollTrigger refresh — when that occurs, prefer `fromTo` and place `scrollTrigger` in the `to` vars.

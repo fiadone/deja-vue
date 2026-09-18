@@ -150,6 +150,8 @@ Binding **`v-model:progress`** pauses the timeline before each seek, so scrubbin
 
 Scroll-scrubbed timelines (**`scrollTrigger`** with **`scrub`**) follow scroll position; pairing them with manual progress scrubbing is usually redundant. See **[Animation targets — ScrollTrigger](./targeting.md#scrolltrigger)**.
 
+Small warning: if a scrubbed tween uses `from` only, you may see `from` styles remain after ScrollTrigger refreshes; switch to `fromTo` (put `scrollTrigger` in the `to`) if you encounter stuck styling.
+
 ## Instance access {#template-ref}
 
 Prefer **`trigger`**, **`v-model:progress`**, and slot props for playback and nesting. **`useTemplateRef<DejaVueAnimationExposed>`** is for script-side access when the template alone is not enough — see **[Component instance types](../api/types.md#component-instance-types)**:

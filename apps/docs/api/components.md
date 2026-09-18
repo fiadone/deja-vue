@@ -28,6 +28,8 @@ One tween kind per instance: **`to`**, **`from`**, **`from`** + **`to`**, or **`
 
 Put **`scrollTrigger`** in **`from`** / **`to`** vars for scroll-linked playback — see **[Animation targets — ScrollTrigger](../guide/targeting.md#scrolltrigger)**. If **`scrollTrigger.trigger`** is omitted, set **`is`** on the component (or pass an explicit **`trigger`**).
 
+Implementation note: `from`-only scroll-linked tweens may sometimes persist start styles after ScrollTrigger recalculation; use `fromTo` (with `scrollTrigger` in the `to` vars) to explicitly set both start and end values and avoid stuck styles.
+
 Root attribute: **`is`**. See [Animation targets](../guide/targeting.md).
 
 ### Tween events
