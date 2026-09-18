@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type SplitText from 'gsap/SplitText'
+import type SplitText from 'gsap/dist/SplitText'
 import type { PropType } from 'vue'
 import { computed, useAttrs } from 'vue'
 import { getNodeElement, useUnwrap } from 'vue-unwrap'

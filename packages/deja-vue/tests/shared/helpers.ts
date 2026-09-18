@@ -1,6 +1,6 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
-import gsap from 'gsap'
+import gsap from 'gsap/dist'
 import { expect } from 'vitest'
 import type { ModelRef, VNode } from 'vue'
 import { defineComponent, h, provide, ref, shallowRef } from 'vue'
