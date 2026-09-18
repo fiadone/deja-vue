@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/fiadone/deja-vue/compare/v2.1.0...v2.1.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* import gsap plugins as default exports rather than named exports to avoid issues in serverless environments like Nuxt ([6faeb23](https://github.com/fiadone/deja-vue/commit/6faeb239f209b5b009f0115d4801d035c36a0196))
+
 # [2.1.0](https://github.com/fiadone/deja-vue/compare/v2.0.1...v2.1.0) (2026-06-10)
 
 
