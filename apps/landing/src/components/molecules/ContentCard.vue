@@ -37,7 +37,11 @@ defineProps<{
       tween-target=".label"
       :from="{
         autoAlpha: 0,
-        yPercent: 100,
+        yPercent: 100
+      }"
+      :to="{
+        autoAlpha: 1,
+        yPercent: 0,
         stagger: 0.25,
         scrollTrigger: {
           start: 'top bottom',

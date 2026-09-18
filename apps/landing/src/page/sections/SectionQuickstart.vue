@@ -45,7 +45,11 @@ import CommandBox from '@/components/molecules/CommandBox.vue'
       tween-target="code,li"
       :from="{
         autoAlpha: 0,
-        y: 48,
+        y: 48
+      }"
+      :to="{
+        autoAlpha: 1,
+        y: 0,
         stagger: 0.1,
         scrollTrigger: {
           start: 'top 75%',
