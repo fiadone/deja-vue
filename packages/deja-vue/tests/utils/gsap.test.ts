@@ -1,12 +1,12 @@
 import { gsap } from 'gsap'
-import type { ScrollTrigger } from 'gsap/ScrollTrigger'
+import type ScrollTrigger from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
 
 import {
-  applyTimelineTotalDuration,
-  getScrollTriggerToggleActionByEvent,
-  resolveTimelinePosition,
-  stripScrollTriggerVars
+    applyTimelineTotalDuration,
+    getScrollTriggerToggleActionByEvent,
+    resolveTimelinePosition,
+    stripScrollTriggerVars
 } from '../../src/utils/gsap'
 
 describe('resolveTimelinePosition', () => {
