@@ -1,4 +1,4 @@
-import { gsap } from 'gsap'
+import gsap from 'gsap'
 import type ScrollTrigger from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
 
