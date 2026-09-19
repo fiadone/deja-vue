@@ -22,6 +22,7 @@ const cues = [
         toggleActions: 'play none none reset'
       }
     }"
+    :reduced-motion="false"
     v-slot="{ progress }"
   >
     <Tween

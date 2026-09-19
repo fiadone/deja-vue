@@ -64,6 +64,30 @@ interface AnimationNestingOptions {
   revertOnDispose?: MaybeRefOrGetter<boolean>
 }
 
+## useReducedMotion
+
+Detects reduced-motion preference and provides a computed boolean suitable for components.
+
+```typescript
+type ReducedMotionMode = boolean | 'auto'
+
+function useReducedMotion(
+  mode?: MaybeRefOrGetter<ReducedMotionMode | undefined>
+): {
+  computed: ComputedRef<boolean>
+  system: Ref<boolean>
+}
+```
+
+`mode` accepts `true`, `false`, or `'auto'`. When omitted or `undefined`, the composable inherits the nearest parent timeline's reactive `reducedMotion` value (if present) and falls back to `'auto'`. When `'auto'`, the returned `computed` value follows the user's `prefers-reduced-motion` system setting.
+
+Example:
+
+```ts
+const { computed: reducedMotion } = useReducedMotion(() => props.reducedMotion)
+// use `reducedMotion.value` when creating Animation instances
+```
+
 function useAnimationNesting(
   target?: AnimationNestingTarget | AnimationNestingTarget[],
   options?: AnimationNestingOptions

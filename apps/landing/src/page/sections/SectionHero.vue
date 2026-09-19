@@ -17,6 +17,7 @@ import { SplitText, Tween } from 'deja-vue'
         type="chars"
       >
         <Tween
+          :reduced-motion="false"
           :to="{
             autoAlpha: 0,
             yPercent: -50,
@@ -52,6 +53,7 @@ import { SplitText, Tween } from 'deja-vue'
           seamless
           class="flex justify-center w-6 h-10 p-2 border border-white rounded-4"
           tween-target="self"
+          :reduced-motion="false"
           :to="{
             opacity: 0,
             scrollTrigger: {
@@ -68,6 +70,7 @@ import { SplitText, Tween } from 'deja-vue'
               seamless
               class="size-1 bg-white rounded-1/2"
               tween-target="self"
+              :reduced-motion="false"
               :to="{
                 yPercent: 500,
                 duration: 2,

@@ -1,6 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import gsap from 'gsap'
 import { describe, expect, it, vi } from 'vitest'
+import type { Component } from 'vue'
 import { defineComponent, h, ref } from 'vue'
 
 import Timeline from '../../src/components/Timeline.vue'
@@ -8,12 +9,12 @@ import Tween from '../../src/components/Tween.vue'
 import { resolveChildrenTweenTarget } from '../../src/composables/useAnimationScope'
 import type { DejaVueAnimationInstance } from '../../src/types'
 import {
-    expectTweenTargetNonEmpty,
-    getExposed,
-    getTweenExposed,
-    mountTimeline,
-    mountTimelineWithTween,
-    TWEEN_TARGET_CLASS
+  expectTweenTargetNonEmpty,
+  getExposed,
+  getTweenExposed,
+  mountTimeline,
+  mountTimelineWithTween,
+  TWEEN_TARGET_CLASS
 } from '../shared/helpers'
 
 describe('resolveChildrenTweenTarget', () => {
@@ -84,8 +85,8 @@ describe('useAnimationScope', () => {
     const phase = ref(0)
     const Host = defineComponent({
       setup () {
-        return () => h(Timeline, null, {
-          default: () => h(Tween, { to: { duration: 0.1, opacity: 1 } }, {
+        return () => h(Timeline as Component, null, {
+          default: () => h(Tween as Component, { to: { duration: 0.1, opacity: 1 } }, {
             default: () => (phase.value === 0
               ? h('div', { class: TWEEN_TARGET_CLASS })
               : h('section', { class: TWEEN_TARGET_CLASS }))

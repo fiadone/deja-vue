@@ -47,6 +47,28 @@ describe('Animation', () => {
     })
   })
 
+  describe('reduced motion', () => {
+    it('skips ScrollTrigger creation when reduced motion is active', () => {
+      const create = vi.spyOn(ScrollTrigger, 'create')
+      const animation = new Animation({ reducedMotion: true })
+
+      animation.attachScrollTrigger({ trigger: document.body })
+
+      expect(create).not.toHaveBeenCalled()
+      create.mockRestore()
+    })
+
+    it('replaces to/fromTo tweens with an immediate set when reduced motion is active', () => {
+      const animation = new Animation({ reducedMotion: true })
+      const target = document.createElement('div')
+
+      animation.compose({ method: 'fromTo', target, vars: [{ x: -100 }, { duration: 2, x: 100 }] })
+
+      expect(animation.timeline.duration()).toBe(0)
+      expect(animation.timeline.getTweensOf(target)).toHaveLength(1)
+    })
+  })
+
   describe('run', () => {
     it('run("play") starts playback', () => {
       const animation = new Animation()

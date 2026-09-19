@@ -21,6 +21,7 @@ Single GSAP tween per instance.
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |
 | `triggerAction` | `TweenAction` | `Animation.run()` action when `trigger` changes |
 | `triggerOptions` | `AnimationTriggerOptions` | Vue `WatchOptions` for the trigger watcher, plus optional `actionArgs` for `Animation.run` |
+| `reducedMotion` | `boolean` \| `'auto'` | Prefer reduced motion for this instance. When omitted the value is inherited from the nearest parent timeline's `reducedMotion` (if any); `'auto'` follows the system `prefers-reduced-motion`. |
 | `parent` | `DejaVueAnimationParent \| null` | Parent timeline for nesting — usually omit (inject); override with slot **`parent`** or **`:parent="null"`** to opt out of inject ([Nesting](../guide/nesting.md#manual-parent-assignment)) |
 | `position` | `gsap.Position` | Insertion point on the parent timeline |
 
@@ -59,6 +60,7 @@ Container for nested **`Tween`**, **`Timeline`**, **`Marker`**, etc. Place **`Sp
 | `trigger` | `unknown` | Watched value; each change runs `trigger-action` (default `play`) |
 | `triggerAction` | `TweenAction` | `Animation.run()` action when `trigger` changes |
 | `triggerOptions` | `AnimationTriggerOptions` | Vue `WatchOptions` for the trigger watcher, plus optional `actionArgs` for `Animation.run` |
+| `reducedMotion` | `boolean` \| `'auto'` | Prefer reduced motion for this instance. When omitted the value is inherited from the nearest parent timeline's `reducedMotion` (if any); `'auto'` follows the system `prefers-reduced-motion`. |
 | `parent` | `DejaVueAnimationParent \| null` | Parent timeline for nesting — usually omit (inject); override with slot **`parent`** or **`:parent="null"`** to opt out of inject ([Nesting](../guide/nesting.md#manual-parent-assignment)) |
 | `position` | `gsap.Position` | Insertion point on the parent timeline |
 

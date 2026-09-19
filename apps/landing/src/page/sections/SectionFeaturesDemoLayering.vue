@@ -15,6 +15,7 @@ import ProgressBar from '@/components/atoms/ProgressBar.vue'
         toggleActions: 'play none none reset'
       }
     }"
+    :reduced-motion="false"
     v-slot="{ progress }"
   >
     <div class="grid grid-cols-2 w-full">
