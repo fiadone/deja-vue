@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import type { Component } from 'vue'
 import { defineComponent, h, ref } from 'vue'
 
 import Timeline from '../../src/components/Timeline.vue'
@@ -15,6 +16,45 @@ import {
 } from '../shared/helpers'
 
 describe('Tween', () => {
+  describe('reduced motion inheritance', () => {
+    it('inherits reducedMotion from parent timeline when prop is undefined', async () => {
+      const wrapper = await mountTimelineWithTween({}, { reducedMotion: true })
+      const tween = getTweenExposed(wrapper)
+
+      expect(tween.reducedMotion).toBe(true)
+      expect(tween.animation.reducedMotion).toBe(true)
+
+      wrapper.unmount()
+    })
+
+    it('reactively follows parent reducedMotion changes', async () => {
+      const reduced = ref(false)
+
+      const Host = defineComponent({
+        setup () {
+          return () => h(Timeline as Component, { reducedMotion: reduced.value }, {
+            default: () => h(Tween as Component, { to: { duration: 0.1, opacity: 1 } }, { default: tweenTargetSlot })
+          })
+        }
+      })
+
+      const wrapper = mount(Host, { attachTo: document.body })
+      await flushPromises()
+
+      const tween = getTweenExposed(wrapper)
+      expect(tween.reducedMotion).toBe(false)
+      expect(tween.animation.reducedMotion).toBe(false)
+
+      reduced.value = true
+      await flushPromises()
+
+      expect(tween.reducedMotion).toBe(true)
+      expect(tween.animation.reducedMotion).toBe(true)
+
+      wrapper.unmount()
+    })
+  })
+
   describe('instance', () => {
     it('exposes animation state and composes on the target', async () => {
       const wrapper = await mountTimelineWithTween({ to: { duration: 0.1, opacity: 0.5 } })
@@ -45,7 +85,7 @@ describe('Tween', () => {
   describe('compose', () => {
     it('skips compose when there is no tween target', async () => {
       const wrapper = await mountTimeline({
-        slots: { default: () => h(Tween, { to: { duration: 0.1, opacity: 1 } }) }
+        slots: { default: () => h(Tween as Component, { to: { duration: 0.1, opacity: 1 } }) }
       })
       const instance = getTweenExposed(wrapper)
 
@@ -58,8 +98,8 @@ describe('Tween', () => {
       const to = ref({ duration: 0.1, x: 0 })
       const Host = defineComponent({
         setup () {
-          return () => h(Timeline, null, {
-            default: () => h(Tween, { to: to.value }, { default: tweenTargetSlot })
+          return () => h(Timeline as Component, null, {
+            default: () => h(Tween as Component, { to: to.value }, { default: tweenTargetSlot })
           })
         }
       })
@@ -81,8 +121,8 @@ describe('Tween', () => {
       const clear = vi.spyOn(Animation.prototype, 'clear')
       const Host = defineComponent({
         setup () {
-          return () => h(Timeline, null, {
-            default: () => h(Tween, { revertOnDispose: true, to: to.value }, { default: tweenTargetSlot })
+          return () => h(Timeline as Component, null, {
+            default: () => h(Tween as Component, { revertOnDispose: true, to: to.value }, { default: tweenTargetSlot })
           })
         }
       })
@@ -114,8 +154,8 @@ describe('Tween', () => {
       const trigger = ref(false)
       const Host = defineComponent({
         setup () {
-          return () => h(Timeline, null, {
-            default: () => h(Tween, {
+          return () => h(Timeline as Component, null, {
+            default: () => h(Tween as Component, {
               to: { duration: 0.1 },
               trigger: trigger.value,
               triggerAction: 'reverse',

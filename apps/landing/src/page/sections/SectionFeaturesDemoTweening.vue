@@ -12,6 +12,7 @@ const data = [0.6, 0.85, 0.7, 1, 0.75]
       scaleY: 0,
       transformOrigin: 'bottom center'
     }"
+    :reduced-motion="false"
     :to="{
       scaleY: 1,
       delay: 0.5,

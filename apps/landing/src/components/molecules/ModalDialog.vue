@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useMagicKeys } from '@vueuse/core'
-import { Timeline, Tween } from 'deja-vue'
+import { Timeline, Tween, useReducedMotion } from 'deja-vue'
 import { watch } from 'vue'
 
 import CloseIcon from '@/assets/icons/close.svg'
 import lenis from '@/utils/lenis'
 
 const visible = defineModel<boolean>('visible')
+const { system: reducedMotion } = useReducedMotion()
 const { escape } = useMagicKeys()
 
 if (visible.value) lenis.stop()
@@ -22,6 +23,7 @@ watch(visible, value => value ? lenis.stop() : lenis.start())
       :class="{ 'pointer-events-none': !visible }"
     >
       <Timeline
+        :reduced-motion="false"
         :trigger="visible"
         :trigger-action="visible ? 'play' : 'reverse'"
       >
@@ -46,12 +48,13 @@ watch(visible, value => value ? lenis.stop() : lenis.start())
           tween-target="self"
           :from="{
             autoAlpha: 0,
-            yPercent: 25,
+            yPercent: reducedMotion ? 0 : 25,
             ease: 'power2.inOut'
           }"
         >
           <Tween
             position="<"
+            reduced-motion="auto"
             :from="{
               scale: 0.4,
               transformOrigin: 'right bottom'

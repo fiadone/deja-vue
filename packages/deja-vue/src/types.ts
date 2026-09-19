@@ -1,6 +1,7 @@
 import type { Component, ComputedRef, MaybeRef, ModelRef, Ref, ShallowRef, ShallowUnwrapRef, WatchOptions } from 'vue'
 import type { NodeRef } from 'vue-unwrap'
 
+import type { ReducedMotionMode } from './composables/useReducedMotion'
 import type { Animation } from './core/Animation'
 
 export type NonEmptyArray<T> = [T, ...T[]]
@@ -19,10 +20,12 @@ export interface DejaVueAnimationInstance extends DejaVueComponent {
   controlled: boolean
   direction: Ref<AnimationDirection>
   parent: DejaVueAnimationParent | null
+  reducedMotion: ComputedRef<boolean>
   progress: ModelRef<ControllableAnimation['progress']>
 }
 
 export interface DejaVueAnimationComponentProps {
+  reducedMotion?: ReducedMotionMode
   revertOnDispose?: boolean
   seamless?: boolean
   tweenTarget?: 'children' | 'self' | gsap.TweenTarget
@@ -30,15 +33,17 @@ export interface DejaVueAnimationComponentProps {
 
 export type DejaVueAnimationExposed = ShallowUnwrapRef<DejaVueAnimationInstance>
 export type DejaVueAnimationParent = DejaVueAnimationInstance | DejaVueAnimationExposed
-export type DejaVueAnimationScopeProps = Pick<DejaVueAnimationExposed, 'animation' | 'direction' | 'parent' | 'progress'>
+export type DejaVueAnimationScopeProps = Pick<DejaVueAnimationExposed, 'animation' | 'direction' | 'parent' | 'progress' | 'reducedMotion'>
 
 export type AnimationChild = Animation | gsap.Callback | string
 
-export type AnimationComposeDefinition = { scope?: Element, target: gsap.TweenTarget } & (
+export type AnimationComposeTween = (
   | { method: 'fromTo', vars: [gsap.TweenVars, gsap.TweenVars] }
   | { method: 'from' | 'to', vars: gsap.TweenVars }
   | { method: string, vars: Record<string, unknown> }
 )
+
+export type AnimationComposeDefinition = { scope?: Element, target: gsap.TweenTarget } & AnimationComposeTween
 
 export type AnimationDirection = 1 | -1 | 0
 

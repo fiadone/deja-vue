@@ -3,23 +3,29 @@ import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import { ANIMATION_EVENTS } from '../constants'
 import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenAction } from '../types'
-import { applyTimelineTotalDuration, getScrollTriggerToggleActionByEvent, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
+import { applyTimelineTotalDuration, getReducedMotionTween, getScrollTriggerToggleActionByEvent, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
 import { EventBus } from './EventBus'
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger)
 }
 
+export type AnimationOptions = gsap.TimelineVars & { reducedMotion?: boolean }
+
 export class Animation extends EventBus<AnimationEvent, [animation: Animation]> {
   private ctx?: gsap.Context
   private scrollTrigger?: ScrollTrigger
+  public reducedMotion: boolean
   public timeline: gsap.core.Timeline
 
-  constructor (options?: gsap.TimelineVars) {
+  constructor (options?: AnimationOptions) {
     super(ANIMATION_EVENTS)
 
+    const { reducedMotion, ...timelineOptions } = options ?? {}
+
+    this.reducedMotion = !!reducedMotion
     this.timeline = gsap.timeline({
-      ...options,
+      ...timelineOptions,
       onComplete: () => this.dispatch('complete', this),
       onInterrupt: () => this.dispatch('interrupt', this),
       onRepeat: () => this.dispatch('repeat', this),
@@ -38,7 +44,7 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
 
   attachScrollTrigger (vars: ScrollTrigger.Vars | null | undefined) {
     this.scrollTrigger?.kill()
-    if (!vars) return
+    if (!vars || this.reducedMotion) return
     this.scrollTrigger = ScrollTrigger.create({
       ...vars,
       animation: this.timeline,
@@ -66,6 +72,13 @@ export class Animation extends EventBus<AnimationEvent, [animation: Animation]> 
 
     if (withContext) {
       this.ctx = gsap.context(() => this.compose(definition, false))
+      return
+    }
+
+    if (this.reducedMotion) {
+      this.attachScrollTrigger(null)
+      const { method, vars } = getReducedMotionTween(definition) || {}
+      if (method && vars) this.timeline[method](definition.target, vars)
       return
     }
 

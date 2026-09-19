@@ -101,6 +101,7 @@ interface DejaVueAnimationInstance extends DejaVueComponent {
   controlled: boolean
   direction: Ref<AnimationDirection>
   parent: DejaVueAnimationParent | null
+  reducedMotion: ComputedRef<boolean>
   progress: ModelRef<number | undefined>
 }
 ```
@@ -142,7 +143,7 @@ Default slot props on **`Tween`** / **`Timeline`**:
 ```typescript
 type DejaVueAnimationScopeProps = Pick<
   DejaVueAnimationExposed,
-  'animation' | 'direction' | 'parent' | 'progress'
+  'animation' | 'direction' | 'parent' | 'progress' | 'reducedMotion'
 >
 ```
 

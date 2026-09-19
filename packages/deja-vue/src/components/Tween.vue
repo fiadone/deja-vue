@@ -5,6 +5,7 @@ import type { AnimationControls } from '../composables/useAnimationControls'
 import { useAnimationControls } from '../composables/useAnimationControls'
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import { useAnimationScope } from '../composables/useAnimationScope'
+import { useReducedMotion } from '../composables/useReducedMotion'
 import { useTweenVars } from '../composables/useTweenVars'
 import { ANIMATION_EVENTS } from '../constants'
 import { Animation } from '../core/Animation'
@@ -21,18 +22,21 @@ import type {
 import { cloneObject } from '../utils'
 import { isEmptyTarget } from '../utils/gsap'
 
-const props = defineProps<(
+const props = withDefaults(defineProps<(
   & DejaVueAnimationComponentProps
   & AnimationNestableChild
   & ControllableAnimation
   & TweenDefinition
-)>()
+)>(), {
+  reducedMotion: undefined
+})
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
 const { AnimationScope, root, tweenTarget } = useAnimationScope({ tweenTarget: () => props.tweenTarget })
 
-const animation = new Animation()
+const { computed: reducedMotion } = useReducedMotion(() => props.reducedMotion)
+const animation = new Animation({ reducedMotion: reducedMotion.value })
 const progress = defineModel<number>('progress', { default: undefined })
 const controls: AnimationControls = {
   progress,
@@ -58,6 +62,7 @@ const instance: DejaVueAnimationInstance = {
   direction,
   parent,
   progress,
+  reducedMotion,
   seamless,
   tweenTarget
 }
@@ -66,7 +71,8 @@ for (const event of ANIMATION_EVENTS) {
   animation.on(event, () => emit(event, animation, parent))
 }
 
-watch([root, tweenMethod, tweenTarget, tweenVars], ([scope, method, target, vars]) => {
+watch([root, tweenMethod, tweenTarget, tweenVars, reducedMotion], ([scope, method, target, vars, hasReducedMotion]) => {
+  animation.reducedMotion = hasReducedMotion
   if (isEmptyTarget(target) || !method) return
   animation.clear(props.revertOnDispose)
   const definition = { method, scope, target, vars: cloneObject(vars) } as AnimationComposeDefinition
@@ -83,5 +89,6 @@ defineSlots<{ default(props: DejaVueAnimationScopeProps): any }>()
     :direction
     :parent
     :progress
+    :reduced-motion
   />
 </template>

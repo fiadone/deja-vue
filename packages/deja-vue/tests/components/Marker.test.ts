@@ -1,5 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import type { Component } from 'vue'
 import { defineComponent, h, ref } from 'vue'
 
 import type { DejaVueMarkerInstance } from '../../src/components/Marker.types'
@@ -23,7 +24,7 @@ describe('Marker', () => {
     const label = ref('a')
     const Host = defineComponent({
       setup () {
-        return () => h(Timeline, null, {
+        return () => h(Timeline as Component, null, {
           default: () => h(Marker, { label: label.value, position: 0 }, { default: () => h('span') })
         })
       }
@@ -44,7 +45,7 @@ describe('Marker', () => {
   it('treats crossed position as zero when the callback is not on the timeline yet', async () => {
     const Host = defineComponent({
       setup () {
-        return () => h(Timeline, null, {
+        return () => h(Timeline as Component, null, {
           default: () => h(Marker, { position: 0.5 }, { default: () => h('span') })
         })
       }
@@ -70,7 +71,7 @@ describe('Marker', () => {
     const wrapper = await mountTimeline({
       slots: {
         default: () => [
-          h(Tween, { to: { duration: 1, ease: 'none' } }, { default: () => h('div') }),
+          h(Tween as Component, { to: { duration: 1, ease: 'none' } }, { default: () => h('div') }),
           h(Marker, { label: 'mid', position: 0.5 }, { default: () => h('span') })
         ]
       }

@@ -2,7 +2,7 @@ import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import gsap from 'gsap'
 import { expect } from 'vitest'
-import type { ModelRef, VNode } from 'vue'
+import type { Component, ModelRef, VNode } from 'vue'
 import { defineComponent, h, provide, ref, shallowRef } from 'vue'
 
 import Marker from '../../src/components/Marker.vue'
@@ -115,7 +115,7 @@ export async function mountTimelineWithTween (
   return mountTimeline({
     props: timelineProps,
     slots: {
-      default: () => h(Tween, tweenProps, { default: tweenTargetSlot })
+      default: () => h(Tween as Component, tweenProps, { default: tweenTargetSlot })
     }
   })
 }

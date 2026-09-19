@@ -18,6 +18,7 @@ const trigger = ref(false)
         class="flex items-center justify-center w-2/3 aspect-square rounded-2 bg-primary origin-center"
         tween-target="self"
         type="button"
+        :reduced-motion="false"
         :to="{
           scale: 1.15,
           rotation: 360,

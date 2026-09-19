@@ -5,6 +5,7 @@ import type { AnimationControls } from '../composables/useAnimationControls'
 import { useAnimationControls } from '../composables/useAnimationControls'
 import { useAnimationNesting } from '../composables/useAnimationNesting'
 import { useAnimationScope } from '../composables/useAnimationScope'
+import { useReducedMotion } from '../composables/useReducedMotion'
 import { useStableObjectProp } from '../composables/useStableObjectProp'
 import { ANIMATION_EVENTS, dejaVueParentInstance } from '../constants'
 import { Animation } from '../core/Animation'
@@ -19,7 +20,7 @@ import type {
 import { cloneObject } from '../utils'
 import { stripScrollTriggerVars } from '../utils/gsap'
 
-const props = defineProps<(
+const props = withDefaults(defineProps<(
   & DejaVueAnimationComponentProps
   & AnimationNestableChild
   & ControllableAnimation
@@ -27,13 +28,18 @@ const props = defineProps<(
     duration?: number
     options?: gsap.TimelineVars
   }
-)>()
+)>(), {
+  duration: -Infinity,
+  reducedMotion: undefined,
+  options: () => ({})
+})
 
 const emit = defineEmits(ANIMATION_EVENTS) as AnimationEventEmitter
 
 const { AnimationScope, root, tweenTarget } = useAnimationScope({ tweenTarget: () => props.tweenTarget })
 
 const options = useStableObjectProp<gsap.TimelineVars>(() => props.options)
+const { computed: reducedMotion } = useReducedMotion(() => props.reducedMotion)
 const vars = computed(() => {
   const tl = cloneObject(options)
   const st = stripScrollTriggerVars(tl, root.value)
@@ -44,7 +50,8 @@ const animation = new Animation({
   ...vars.value?.timeline,
   data: typeof props.duration === 'number' && props.duration > 0
     ? { ...vars.value?.timeline.data, totalDuration: props.duration }
-    : vars.value?.timeline.data
+    : vars.value?.timeline.data,
+  reducedMotion: reducedMotion.value
 })
 
 const progress = defineModel<number>('progress', { default: undefined })
@@ -71,6 +78,7 @@ const instance: DejaVueAnimationInstance = {
   direction,
   parent,
   progress,
+  reducedMotion,
   seamless,
   tweenTarget
 }
@@ -84,13 +92,16 @@ watch(() => vars.value.timeline, vars => {
   animation.timeline.invalidate()
 })
 
-watch(() => vars.value.scrollTrigger, async vars => {
-  if (Object.keys(vars || {}).length) {
-    await nextTick()
-    animation.attachScrollTrigger(vars)
-  } else {
+watch([reducedMotion, () => vars.value.scrollTrigger], async ([hasReducedMotion, scrollTrigger]) => {
+  animation.reducedMotion = hasReducedMotion
+
+  if (animation.reducedMotion || !scrollTrigger || !Object.keys(scrollTrigger).length) {
     animation.attachScrollTrigger(null)
+    return
   }
+
+  await nextTick()
+  animation.attachScrollTrigger(scrollTrigger)
 }, { immediate: true })
 
 watch(() => props.duration, duration => {
@@ -116,5 +127,6 @@ defineSlots<{ default(props: DejaVueAnimationScopeProps): any }>()
     :direction
     :parent
     :progress
+    :reduced-motion
   />
 </template>

@@ -1,6 +1,7 @@
 import { flushPromises } from '@vue/test-utils'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
+import type { Component } from 'vue'
 import { h } from 'vue'
 
 import Timeline from '../../src/components/Timeline.vue'
@@ -8,11 +9,11 @@ import { ANIMATION_EVENTS } from '../../src/constants'
 import { Animation } from '../../src/core/Animation'
 import type { DejaVueAnimationInstance } from '../../src/types'
 import {
-    getExposed,
-    getTweenExposed,
-    mountTimeline,
-    mountTimelineWithTween,
-    nestedTimelines
+  getExposed,
+  getTweenExposed,
+  mountTimeline,
+  mountTimelineWithTween,
+  nestedTimelines
 } from '../shared/helpers'
 
 describe('Timeline', () => {
@@ -38,7 +39,7 @@ describe('Timeline', () => {
     it('nests a child timeline with position', async () => {
       const wrapper = await mountTimeline({
         slots: {
-          default: () => h(Timeline, { position: 0.5 }, { default: () => h('div', 'nested') })
+          default: () => h(Timeline as Component as Component, { position: 0.5 }, { default: () => h('div', 'nested') })
         }
       })
       const parent = getExposed<DejaVueAnimationInstance>(wrapper)

@@ -1,8 +1,19 @@
+import type { AnimationComposeTween } from '../types'
+
 export function applyTimelineTotalDuration (timeline: gsap.core.Timeline) {
   const totalDuration = 'totalDuration' in (timeline.data || {})
     ? timeline.data.totalDuration as number
     : undefined
   if (totalDuration) timeline.duration(totalDuration)
+}
+
+export function getReducedMotionTween ({ method, vars }: AnimationComposeTween): AnimationComposeTween | undefined {
+  if (method === 'from') return
+  if (method === 'fromTo') {
+    const [_, to] = vars as [gsap.TweenVars, gsap.TweenVars]
+    return { method: 'set', vars: to }
+  }
+  return { method: 'set', vars: vars as gsap.TweenVars }
 }
 
 export function getScrollTriggerToggleActionByEvent (event: 'enter' | 'enterBack' | 'leave' | 'leaveBack', instance?: ScrollTrigger) {
