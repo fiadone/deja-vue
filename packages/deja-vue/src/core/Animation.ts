@@ -6,7 +6,9 @@ import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenA
 import { applyTimelineTotalDuration, getScrollTriggerToggleActionByEvent, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
 import { EventBus } from './EventBus'
 
-gsap.registerPlugin(ScrollTrigger)
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 export class Animation extends EventBus<AnimationEvent, [animation: Animation]> {
   private ctx?: gsap.Context

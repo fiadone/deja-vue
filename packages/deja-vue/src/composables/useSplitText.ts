@@ -5,7 +5,9 @@ import { onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watch } from
 
 import { cloneObject } from '../utils'
 
-gsap.registerPlugin(SplitText)
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(SplitText)
+}
 
 // reconstruct the SplitText.Vars to make it compatible with Vue's props definition,
 // since the original type from GSAP includes an index signature ([key: string]: any)
