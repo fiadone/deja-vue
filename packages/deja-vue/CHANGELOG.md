@@ -1,3 +1,11 @@
+## [2.1.3](https://github.com/fiadone/deja-vue/compare/v2.1.2...v2.1.3) (2026-09-19)
+
+
+### Bug Fixes
+
+* improve compatibility by importing all gsap modules from its dist subfolder ([ec157c5](https://github.com/fiadone/deja-vue/commit/ec157c5f6c5fa5f2a1bddce2e64875973497fa4a))
+* improve ssr support by ensuring client-only gsap plugins registration ([352e9cf](https://github.com/fiadone/deja-vue/commit/352e9cfbf7c6662126e700099f1402d0360393d3))
+
 ## [2.1.2](https://github.com/fiadone/deja-vue/compare/v2.1.1...v2.1.2) (2026-09-18)
 
 
