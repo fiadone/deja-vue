@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/fiadone/deja-vue/compare/v2.1.3...v2.2.0) (2026-09-19)
+
+
+### Features
+
+* add built-in reduced motion handling ([c864e18](https://github.com/fiadone/deja-vue/commit/c864e18b93ab7b97719a3d5fe6722a23dad878a2))
+
 ## [2.1.3](https://github.com/fiadone/deja-vue/compare/v2.1.2...v2.1.3) (2026-09-19)
 
 
