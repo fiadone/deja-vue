@@ -1,4 +1,4 @@
-import gsap from 'gsap/dist'
+import gsap from 'gsap'
 import type { MaybeRefOrGetter, PropType } from 'vue'
 import { computed, toValue, useAttrs, watch } from 'vue'
 import { getNodeElement, useUnwrap } from 'vue-unwrap'

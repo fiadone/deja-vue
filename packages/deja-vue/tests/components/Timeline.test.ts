@@ -1,5 +1,5 @@
 import { flushPromises } from '@vue/test-utils'
-import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 

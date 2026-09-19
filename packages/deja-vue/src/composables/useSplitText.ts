@@ -1,5 +1,5 @@
-import gsap from 'gsap/dist'
-import SplitText from 'gsap/dist/SplitText'
+import gsap from 'gsap'
+import SplitText from 'gsap/SplitText'
 import type { MaybeRefOrGetter } from 'vue'
 import { onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watch } from 'vue'
 
