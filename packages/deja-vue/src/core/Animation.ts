@@ -1,12 +1,14 @@
-import gsap from 'gsap/dist'
-import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 
 import { ANIMATION_EVENTS } from '../constants'
 import type { AnimationChild, AnimationComposeDefinition, AnimationEvent, TweenAction } from '../types'
 import { applyTimelineTotalDuration, getScrollTriggerToggleActionByEvent, resolveTimelinePosition, stripScrollTriggerVars } from '../utils/gsap'
 import { EventBus } from './EventBus'
 
-gsap.registerPlugin(ScrollTrigger)
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 export class Animation extends EventBus<AnimationEvent, [animation: Animation]> {
   private ctx?: gsap.Context

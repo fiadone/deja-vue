@@ -1,4 +1,4 @@
-import gsap from 'gsap/dist'
+import gsap from 'gsap'
 import { afterEach } from 'vitest'
 
 afterEach(() => {

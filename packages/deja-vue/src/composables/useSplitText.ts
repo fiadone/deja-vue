@@ -1,11 +1,13 @@
-import gsap from 'gsap/dist'
-import SplitText from 'gsap/dist/SplitText'
+import gsap from 'gsap'
+import SplitText from 'gsap/SplitText'
 import type { MaybeRefOrGetter } from 'vue'
 import { onUnmounted, shallowReactive, shallowRef, toRefs, toValue, watch } from 'vue'
 
 import { cloneObject } from '../utils'
 
-gsap.registerPlugin(SplitText)
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(SplitText)
+}
 
 // reconstruct the SplitText.Vars to make it compatible with Vue's props definition,
 // since the original type from GSAP includes an index signature ([key: string]: any)
